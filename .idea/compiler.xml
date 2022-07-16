@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="achivements.core" target="16" />
+      <module name="achivements.core.main" target="16" />
+      <module name="achivements.core.test" target="16" />
+      <module name="achivements.mod-src" target="16" />
+      <module name="achivements.mod-src.main" target="16" />
+      <module name="achivements.mod-src.test" target="16" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

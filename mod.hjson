@@ -1,0 +1,11 @@
+name: "achievements"
+description: '''
+WIP
+'''
+displayName: "Mindustry Achievements"
+author: "Mnemotechnician"
+minGameVersion: "136"
+version: "v0.1"
+
+main: "com.github.mnemotechnician.achievements.mod.AchievementsMod"
+hidden: true
