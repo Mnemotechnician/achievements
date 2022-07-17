@@ -3,6 +3,7 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="EmptyTryBlock" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="LanguageDetectionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="MemberVisibilityCanBePrivate" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <replaceConfiguration name="UselessNonNullCheck" problemDescriptor="This null check can be replaced with safe access." text="if ($expr$ != null) $expr$!!.$operation$" recursive="false" caseInsensitive="true" type="Kotlin" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="false" replacement="$expr$?.$operation$">
         <constraint name="__context__" within="" contains="" />

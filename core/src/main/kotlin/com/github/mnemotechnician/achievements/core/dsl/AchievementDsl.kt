@@ -1,3 +1,4 @@
+@file:Suppress("UNSUPPORTED_FEATURE") // false positive error in intellij
 package com.github.mnemotechnician.achievements.core.dsl
 
 import arc.scene.style.Drawable
@@ -32,8 +33,9 @@ inline fun Achievement.achievement(
 	AchievementManager.register(it)
 }
 
-/** Adds an objective to this achievement. */
-context(Objective, Achievement)
-operator fun Objective.unaryPlus() {
-
-}
+// todo context receivers don't work in intellij
+// /** Adds an objective to this achievement. */
+// context(Objective, Achievement)
+// operator fun Objective.unaryPlus() {
+// 	objectives.add(this)
+// }

@@ -1,6 +1,8 @@
 package com.github.mnemotechnician.achievements.mod
 
 import arc.Events
+import arc.graphics.g2d.TextureRegion
+import arc.scene.style.TextureRegionDrawable
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.dsl.achievement
 import com.github.mnemotechnician.achievements.core.dsl.rootAchievement
@@ -15,19 +17,21 @@ class AchievementsMod : Mod() {
 
 	init {
 		Events.on(ClientLoadEvent::class.java) {
-			achievement = rootAchievement("test", Icon.terminal) {
-				addObjective(BuildBlocksObjective(Blocks.router, 5))
+			achievement = rootAchievement("first", Icon.terminal) {
+				+ BuildBlocksObjective(Blocks.router, 5)
 
-				achievement("oh") {
-					addObjective(BuildBlocksObjective(Blocks.conveyor, 2))
+				achievement("oh-no", Blocks.conveyor.uiIcon.drawable()) {
+					+ BuildBlocksObjective(Blocks.conveyor, 2)
 				}
 
-				achievement("when-the") {
-					addObjective(BuildBlocksObjective(Blocks.copperWall, 10))
+				achievement("when-the", Blocks.copperWall.region.drawable()) {
+					+ BuildBlocksObjective(Blocks.copperWall, 10)
 
 					achievement("auto") {}
 				}
 			}
 		}
 	}
+
+	private fun TextureRegion.drawable() = TextureRegionDrawable(this)
 }

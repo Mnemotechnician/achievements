@@ -130,6 +130,9 @@ open class Achievement(
 		if (isInit) objective.init()
 	}
 
+	/** Same as `this@Achievement.addObjective(this)`. */
+	open operator fun Objective.unaryPlus() = objectives.add(this)
+
 	/**
 	 * Notifies this achievement that an event has occurred,
 	 * progressing this achievement if the event is related to its objectives,
