@@ -3,8 +3,7 @@ package com.github.mnemotechnician.achievements.mod.ui
 import arc.graphics.Color
 import arc.graphics.g2d.Draw
 import arc.graphics.g2d.Lines
-import arc.math.Angles
-import arc.math.Mathf
+import arc.math.*
 import arc.math.geom.Rect
 import arc.math.geom.Vec2
 import arc.scene.event.ElementGestureListener
@@ -121,8 +120,9 @@ open class AchievementTreePane : WidgetGroup() {
 		hexPositions[3].set(oddOffset).add(middleLine, 0f) // bottom right
 
 		repeat(hexVertices.size) {
+			val r = radius + gridHexThickness * 2 * zoom
 			val angle = hexVertexAngleStart + (360f / hexGridSides) * it
-			hexVertices[it].set(Angles.trnsx(angle, radius), Angles.trnsy(angle, radius))
+			hexVertices[it].set(Angles.trnsx(angle, r), Angles.trnsy(angle, r))
 		}
 
 		hexMiddleLine = middleLine
@@ -141,16 +141,16 @@ open class AchievementTreePane : WidgetGroup() {
 
 		// what the fuck
 		val diameter = gridHexRadius * zoom * 2
-		val xStep = (hexMiddleLine * 2).toInt()
-		val yStep = (hexVerticalOffset).toInt()
+		val xStep = (hexMiddleLine * 2 + gridHexThickness * zoom * 2).toInt()
+		val yStep = (hexVerticalOffset + gridHexThickness * zoom * 2).toInt()
 
-		val xStart = (x + -diameter - position.x % xStep).toInt()
-		val yStart = (y + -diameter - position.y % yStep).toInt()
-		val xEnd = (x + diameter + width - position.x % xStep).toInt()
-		val yEnd = (y + diameter + height - position.y % yStep).toInt()
+		val xStart = (x + -diameter - position.x % xStep).toInt() + 1
+		val yStart = (y + -diameter - position.y % yStep).toInt() + 1
+		val xEnd = (x + diameter + width - position.x % xStep).toInt() + 1
+		val yEnd = (y + diameter + height - position.y % yStep).toInt() + 1
 
 		Draw.color(AStyles.accent)
-		Lines.stroke(5f * zoom)
+		Lines.stroke(gridHexThickness * zoom)
 
 		for (hx in xStart..xEnd step xStep) {
 			for (hy in yStart..yEnd step yStep) {
@@ -173,6 +173,16 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 
 		if (clip) clipEnd()
+	}
+
+	override fun computeTransform(): Mat {
+		return super.computeTransform().also {
+			// this mat is an affine transform
+			it.`val`[Mat.M00] *= zoom
+			it.`val`[Mat.M11] *= zoom
+			it.`val`[Mat.M20] += position.x * zoom
+			it.`val`[Mat.M21] += position.y * zoom
+		}
 	}
 
 	override fun layout() {
@@ -291,16 +301,16 @@ open class AchievementTreePane : WidgetGroup() {
 						left().defaults().growX()
 
 						// description
-						addLabel(Bundles.description, alignment = Align.left).color(Color.gray).row()
-						addLabel(achievement.description, wrap = true, alignment = Align.left).expand(false, false).row()
+						addLabel(Bundles.description, align = Align.left).color(Color.gray).row()
+						addLabel(achievement.description, wrap = true, align = Align.left).expand(false, false).row()
 
 						// objectives
-						addLabel(Bundles.objectives, alignment = Align.left).color(Color.gray).row()
+						addLabel(Bundles.objectives, align = Align.left).color(Color.gray).row()
 						achievement.objectives.forEach { obj ->
 							addTable {
 								addLabel(if (obj.isFulfilled) "[Done] " else "").color(Color.green)
 
-								addLabel({ obj.description }, wrap = true, alignment = Align.left).color(Pal.lightishGray).growX()
+								addLabel({ obj.description }, wrap = true, align = Align.left).color(Pal.lightishGray).growX()
 							}.row()
 						}
 					}.also { collapser = it.get() }.growX().row()
@@ -332,6 +342,7 @@ open class AchievementTreePane : WidgetGroup() {
 		val zoomRange = 0.5f..3f
 		val radiusRange = 10f..500f
 
+		const val gridHexThickness = 5f
 		const val hexGridSides = 6
 		const val hexVertexAngleStart = 90f
 

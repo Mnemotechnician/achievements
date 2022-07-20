@@ -16,7 +16,7 @@ dependencies {
 	compileOnly("com.github.Anuken.Arc:arc-core:master-da27a54ef9-1") // 2022.06.27.
 	compileOnly("com.github.Anuken:MindustryJitpack:d380051459")
 
-	implementation("com.github.mnemotechnician:mkui:v1.0")
+	implementation("com.github.mnemotechnician:mkui:-SNAPSHOT")
 }
 
 tasks.withType<KotlinCompile> {
