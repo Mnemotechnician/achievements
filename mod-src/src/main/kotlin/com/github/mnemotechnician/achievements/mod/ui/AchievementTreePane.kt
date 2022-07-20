@@ -199,7 +199,7 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 	}
 
-	override fun hit(x: Float, y: Float, touchable: Boolean): Element {
+	override fun hit(x: Float, y: Float, touchable: Boolean): Element? {
 		return super.hit(x / zoom + position.x, y / zoom + position.y, touchable)
 	}
 

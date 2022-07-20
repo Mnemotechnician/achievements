@@ -18,6 +18,10 @@ class AchievementTreeDialog : Dialog() {
 	val treePane = AchievementTreePane()
 
 	init {
+		setFillParent(true)
+		closeOnBack()
+		addCloseButton()
+
 		titleTable.apply {
 			val achievementsTitle by Bundles.adynamic({ AchievementManager.allAchievements.size })
 
@@ -27,8 +31,6 @@ class AchievementTreeDialog : Dialog() {
 		}
 
 		cont.add(treePane).grow()
-
-		addCloseButton()
 
 		Events.on(Achievement.AchievementUnlockEvent::class.java) {
 			isInvalid = true
