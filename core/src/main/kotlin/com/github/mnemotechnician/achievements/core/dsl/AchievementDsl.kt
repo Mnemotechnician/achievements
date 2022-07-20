@@ -1,6 +1,8 @@
-@file:Suppress("UNSUPPORTED_FEATURE") // false positive error in intellij
+@file:Suppress("UNSUPPORTED_FEATURE" /* false positive */, "unused")
 package com.github.mnemotechnician.achievements.core.dsl
 
+import arc.graphics.Color
+import arc.graphics.g2d.TextureRegion
 import arc.scene.style.Drawable
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
@@ -21,6 +23,19 @@ inline fun rootAchievement(
 }
 
 /**
+ * Same as [rootAchievement].
+ */
+inline fun rootAchievement(
+	name: String,
+	region: TextureRegion,
+	color: Color? = null,
+	constructor: Achievement.() -> Unit
+): Achievement = Achievement(name, region, color).also {
+	it.apply(constructor)
+	AchievementManager.register(it)
+}
+
+/**
  * Adds a child achievement to this achievement and configures it.
  */
 inline fun Achievement.achievement(
@@ -28,6 +43,20 @@ inline fun Achievement.achievement(
 	icon: Drawable? = null,
 	constructor: Achievement.() -> Unit
 ): Achievement = Achievement(name, icon).also {
+	addChild(it)
+	it.apply(constructor)
+	AchievementManager.register(it)
+}
+
+/**
+ * Same as [achievement].
+ */
+inline fun Achievement.achievement(
+	name: String,
+	region: TextureRegion,
+	color: Color? = null,
+	constructor: Achievement.() -> Unit
+): Achievement = Achievement(name, region, color).also {
 	addChild(it)
 	it.apply(constructor)
 	AchievementManager.register(it)

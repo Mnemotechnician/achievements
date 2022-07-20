@@ -2,7 +2,10 @@ package com.github.mnemotechnician.achievements.core
 
 import arc.Core
 import arc.Events
+import arc.graphics.Color
+import arc.graphics.g2d.TextureRegion
 import arc.scene.style.Drawable
+import arc.scene.style.TextureRegionDrawable
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.setting
@@ -72,6 +75,9 @@ open class Achievement(
 	/** Whether this achievement has been initialised yet. */
 	var isInit = false
 		protected set
+
+	constructor(name: String, region: TextureRegion, tint: Color? = null)
+		: this(name, TextureRegionDrawable(region).let { if (tint != null) it.tint(tint) else it })
 
 	/** Initialises this achievement. Called by the [AchievementManager] after the client load. */
 	open fun init() {
