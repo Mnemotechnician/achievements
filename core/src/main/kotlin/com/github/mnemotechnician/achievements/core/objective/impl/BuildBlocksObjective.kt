@@ -1,8 +1,8 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
-import com.github.mnemotechnician.achievements.core.objective.Objective
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.*
 import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent.*
+import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvents.*
 import com.github.mnemotechnician.achievements.core.util.lazyBundle
 import com.github.mnemotechnician.achievements.core.util.lazySetting
 import mindustry.world.Block
@@ -22,7 +22,7 @@ open class BuildBlocksObjective(
 	override val progress get() = built / number.toFloat()
 
 	init {
-		require(number >= 0) { "The required number of blocks must be >= 0: $number < 0"}
+		require(number >= 0) { "The number of required blocks must be >= 0: $number < 0"}
 	}
 
 	override fun handleEvent(event: ObjectiveEvent) {

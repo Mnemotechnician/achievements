@@ -1,14 +1,17 @@
 package com.github.mnemotechnician.achievements.mod.ui
 
 import arc.graphics.Color
-import arc.graphics.g2d.Draw
-import arc.graphics.g2d.Lines
+import arc.graphics.g2d.*
+import arc.input.KeyCode
 import arc.math.*
 import arc.math.geom.Rect
 import arc.math.geom.Vec2
+import arc.scene.Element
+import arc.scene.Group
 import arc.scene.event.ElementGestureListener
 import arc.scene.event.InputEvent
-import arc.scene.ui.*
+import arc.scene.ui.Image
+import arc.scene.ui.Label
 import arc.scene.ui.layout.*
 import arc.util.*
 import com.github.mnemotechnician.achievements.core.Achievement
@@ -60,11 +63,15 @@ open class AchievementTreePane : WidgetGroup() {
 
 		addCaptureListener(object : ElementGestureListener() {
 			override fun pan(event: InputEvent?, x: Float, y: Float, deltaX: Float, deltaY: Float) {
-				position.add(deltaX, deltaY)
+				position.add(deltaX / zoom, deltaY / zoom)
 			}
 
 			override fun zoom(event: InputEvent?, initialDistance: Float, distance: Float) {
-				zoom *= distance / initialDistance
+				zoom *= sqrt(distance / initialDistance)
+			}
+
+			override fun fling(event: InputEvent?, velocityX: Float, velocityY: Float, button: KeyCode?) {
+				cameraVelocity.add(velocityX / zoom, velocityY / zoom)
 			}
 		})
 
@@ -109,20 +116,20 @@ open class AchievementTreePane : WidgetGroup() {
 		val middleCorner = 180f - cornerAngle
 		val sideSqr = 2 * radius * radius * (1 - Mathf.cosDeg(middleCorner))
 		val middleLine = Mathf.sqrt(radius * radius - sideSqr / 4) * 2
+		val distance = middleLine + gridHexThickness
 
 		val oddOffsetAngle = hexVertexAngleStart - 360 / hexGridSides * 3.5f
-		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, middleLine), Angles.trnsy(oddOffsetAngle, middleLine))
-		hexVerticalOffset = abs(oddOffset.y * 2)
+		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, distance), Angles.trnsy(oddOffsetAngle, distance))
+		hexVerticalOffset = abs(Angles.trnsy(oddOffsetAngle, middleLine) * 2)
 
 		hexPositions[0].set(0f, 0f) // left top
-		hexPositions[1].set(middleLine, 0f) // right top
+		hexPositions[1].set(distance, 0f) // right top
 		hexPositions[2].set(oddOffset) // bottom left
-		hexPositions[3].set(oddOffset).add(middleLine, 0f) // bottom right
+		hexPositions[3].set(oddOffset).add(distance, 0f) // bottom right
 
 		repeat(hexVertices.size) {
-			val r = radius + gridHexThickness * 2 * zoom
 			val angle = hexVertexAngleStart + (360f / hexGridSides) * it
-			hexVertices[it].set(Angles.trnsx(angle, r), Angles.trnsy(angle, r))
+			hexVertices[it].set(Angles.trnsx(angle, radius), Angles.trnsy(angle, radius))
 		}
 
 		hexMiddleLine = middleLine
@@ -131,6 +138,11 @@ open class AchievementTreePane : WidgetGroup() {
 	override fun draw() {
 		drawGrid()
 		super.draw()
+	}
+
+	override fun drawChildren() {
+		// todo render connections
+		super.drawChildren()
 	}
 
 	/** Draws the background grid of this element. */
@@ -144,10 +156,10 @@ open class AchievementTreePane : WidgetGroup() {
 		val xStep = (hexMiddleLine * 2 + gridHexThickness * zoom * 2).toInt()
 		val yStep = (hexVerticalOffset + gridHexThickness * zoom * 2).toInt()
 
-		val xStart = (x + -diameter - position.x % xStep).toInt() + 1
-		val yStart = (y + -diameter - position.y % yStep).toInt() + 1
-		val xEnd = (x + diameter + width - position.x % xStep).toInt() + 1
-		val yEnd = (y + diameter + height - position.y % yStep).toInt() + 1
+		val xStart = (x + -diameter + position.x % xStep).toInt() + 1
+		val yStart = (y + -diameter + position.y % yStep).toInt() + 1
+		val xEnd = (x + diameter + width + position.x % xStep).toInt() + 1
+		val yEnd = (y + diameter + height + position.y % yStep).toInt() + 1
 
 		Draw.color(AStyles.accent)
 		Lines.stroke(gridHexThickness * zoom)
@@ -180,9 +192,15 @@ open class AchievementTreePane : WidgetGroup() {
 			// this mat is an affine transform
 			it.`val`[Mat.M00] *= zoom
 			it.`val`[Mat.M11] *= zoom
-			it.`val`[Mat.M20] += position.x * zoom
-			it.`val`[Mat.M21] += position.y * zoom
+			it.`val`[Mat.M02] += position.x * zoom
+			it.`val`[Mat.M12] += position.y * zoom
+
+			(groupWorldTransformField.get(this) as Affine2).set(it)
 		}
+	}
+
+	override fun hit(x: Float, y: Float, touchable: Boolean): Element {
+		return super.hit(x / zoom + position.x, y / zoom + position.y, touchable)
 	}
 
 	override fun layout() {
@@ -279,9 +297,12 @@ open class AchievementTreePane : WidgetGroup() {
 				addTable {
 					// top bar
 					addStack {
-						add(ProgressBar(0f, 1f, 0.001f, false, AStyles.progressBar).also {
-							it.update { it.value = achievement.progress }
-							it.setColor(Pal.accent)
+						add(object : Element() {
+							override fun draw() {
+								Draw.color(Pal.accent)
+								val w = width * Mathf.clamp(achievement.progress, 0f, 1f)
+								Fill.rect(x + width / 2f, y + height / 2f, w, height)
+							}
 						})
 
 						add(createTable {
@@ -339,6 +360,10 @@ open class AchievementTreePane : WidgetGroup() {
 	}
 
 	companion object {
+		private val groupWorldTransformField = Group::class.java.getDeclaredField("worldTransform").also {
+			it.isAccessible = true
+		}
+
 		val zoomRange = 0.5f..3f
 		val radiusRange = 10f..500f
 

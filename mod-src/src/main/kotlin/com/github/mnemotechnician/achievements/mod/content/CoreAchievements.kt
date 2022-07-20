@@ -11,6 +11,7 @@ object CoreAchievements {
 	lateinit var achievement: Achievement
 
 	fun load() {
+		// todo these are temoorary
 		achievement = rootAchievement("first", Icon.terminal) {
 			+ BuildBlocksObjective(Blocks.router, 5)
 

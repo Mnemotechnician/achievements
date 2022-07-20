@@ -4,11 +4,7 @@ import arc.Events
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent.Listener
-import mindustry.Vars
-import mindustry.game.EventType.BlockBuildEndEvent
-import mindustry.gen.Building
 import kotlin.reflect.KClass
-import mindustry.gen.Unit as MindustryUnit
 
 // TODO(?)
 // this reflective approach may indeed simplify everything,
@@ -21,20 +17,6 @@ import mindustry.gen.Unit as MindustryUnit
  * It will be initialised during the first initialisation of the event, allowing it to set up event listeners.
  */
 abstract class ObjectiveEvent {
-	/** A building has been built. */
-	class ConstructionEvent(val build: Building) : ObjectiveEvent() {
-		class Init : Listener({ fireOn(BlockBuildEndEvent::class) {
-			computeIf(!breaking && tile?.build != null && unit.isThePlayer) { ConstructionEvent(tile.build) }
-		} })
-	}
-
-	/** A building has been deconstructed. */
-	class DeconstructionEvent(val building: Building) : ObjectiveEvent() {
-		class Init : Listener({ fireOn(BlockBuildEndEvent::class) {
-			computeIf(breaking && tile?.build != null && unit.isThePlayer) { DeconstructionEvent(tile.build) }
-		} })
-	}
-
 	/** An auxiliary class, see the KDoc of [ObjectiveEvent]. */
 	abstract class Listener() {
 		constructor(initAction: Listener.() -> Unit) : this() {
@@ -59,11 +41,21 @@ abstract class ObjectiveEvent {
 		inline fun <C : Any, T : ObjectiveEvent> fireOn(type: KClass<C>, crossinline transform: C.() -> T?) {
 			fireOn(type.java, transform)
 		}
+
+		/** Same as [fireOn], but fires only when [condition] returns true. */
+		inline fun <C : Any, T : ObjectiveEvent> fireOnIf(
+			type: Class<C>,
+			crossinline condition: C.() -> Boolean,
+			crossinline transform: C.() -> T?
+		) {
+			fireOn(type) {
+				if (condition()) transform() else null
+			}
+		}
+
+		/** @see fireOnIf */
+		inline fun <C : Any, T : ObjectiveEvent> fireOnIf(type: KClass<C>, crossinline condition: C.() -> Boolean, crossinline transform: C.() -> T?) {
+			fireOnIf(type.java, condition, transform)
+		}
 	}
-}
-
-private val MindustryUnit?.isThePlayer get() = this != null && this == Vars.player?.unit()
-
-inline fun <T> computeIf(condition: Boolean, block: () -> T): T? {
-	return if (condition) block() else null
 }

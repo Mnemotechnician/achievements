@@ -1,6 +1,7 @@
 package com.github.mnemotechnician.achievements.mod.util
 
 import com.github.mnemotechnician.mkui.delegates.bundle
+import com.github.mnemotechnician.mkui.delegates.dynamicBundle
 
 object Bundles {
 	val locked by abundle()
@@ -9,5 +10,6 @@ object Bundles {
 	val description by abundle()
 	val objectives by abundle()
 
-	fun abundle() = bundle("achievements-mod.")
+	fun abundle() = bundle("achievements-mod")
+	fun adynamic(vararg subs: () -> Any?) = dynamicBundle("achievements-mod", *subs)
 }

@@ -36,11 +36,10 @@ object AchievementManager {
 
 	/**
 	 * Notifies all achievements that this event has occurred,
-	 * or does nothing if no objectives have reported that they listen for this event class or if the current mode is sandbox.
+	 * or does nothing if no objectives have reported that they listen for this event class.
 	 */
 	fun fireEvent(event: ObjectiveEvent) {
-		if (Vars.net.server() || Vars.player?.unit() == null) return
-		if (Vars.state.rules.infiniteResources || event::class.java !in acceptedEvents) return
+		if (Vars.headless || event::class.java !in acceptedEvents) return
 
 		achievements.forEach {
 			it.handleEvent(event)
