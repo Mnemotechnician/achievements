@@ -10,6 +10,8 @@ object Bundles {
 	val description by abundle()
 	val objectives by abundle()
 
+	val unfairGame by abundle()
+
 	fun abundle() = bundle("achievements-mod")
 	fun adynamic(vararg subs: () -> Any?) = dynamicBundle("achievements-mod", *subs)
 }

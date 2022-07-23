@@ -54,15 +54,11 @@ object AchievementManager {
 		if (acceptedEvents.add(type)) {
 			// how optimal is this?
 			try {
-				Log.info("$type adding")
-
 				val cls = ObjectiveEvent.Listener::class.java
 
 				(type.declaredClasses.find {
 					cls.isAssignableFrom(it)
 				} ?: throw NullPointerException("The event class doesn't declare a listener subclass.")).getDeclaredConstructor().newInstance()
-
-				Log.info("added")
 			} catch (e: Exception) {
 				Log.warn("Couldn't init a listener for the $type class: $e")
 			}

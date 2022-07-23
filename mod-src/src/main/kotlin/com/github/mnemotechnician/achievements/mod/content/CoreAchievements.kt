@@ -5,24 +5,18 @@ import com.github.mnemotechnician.achievements.core.dsl.achievement
 import com.github.mnemotechnician.achievements.core.dsl.rootAchievement
 import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlocksObjective
 import mindustry.content.Blocks
-import mindustry.gen.Icon
+import mindustry.content.UnitTypes
 
 object CoreAchievements {
-	lateinit var achievement: Achievement
+	lateinit var root: Achievement
 
 	fun load() {
-		// todo these are temoorary
-		achievement = rootAchievement("first", Icon.terminal) {
-			+ BuildBlocksObjective(Blocks.router, 5)
+		root = rootAchievement("beginning", Blocks.conveyor.region) {
+			+ BuildBlocksObjective(1, Blocks.conveyor)
 
-			achievement("oh-no", Blocks.conveyor.uiIcon) {
-				+ BuildBlocksObjective(Blocks.conveyor, 2)
-			}
-
-			achievement("when-the", Blocks.copperWall.region) {
-				+ BuildBlocksObjective(Blocks.copperWall, 10)
-
-				achievement("auto") {}
+			achievement("enemies-coming", UnitTypes.dagger.region) {
+				+ BuildBlocksObjective(10, Blocks.copperWall, Blocks.copperWallLarge)
+				+ BuildBlocksObjective(2, Blocks.duo)
 			}
 		}
 	}

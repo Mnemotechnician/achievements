@@ -1,7 +1,6 @@
 package com.github.mnemotechnician.achievements.core.objective
 
 import arc.Events
-import arc.util.Log
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent.Listener
 import kotlin.reflect.KClass
@@ -32,7 +31,6 @@ abstract class ObjectiveEvent {
 		 */
 		inline fun <C, T : ObjectiveEvent> fireOn(type: Class<C>, crossinline transform: C.() -> T?) {
 			Events.on(type) { e ->
-				Log.info("firing $e")
 				transform(e)?.also { fire(it) }
 			}
 		}

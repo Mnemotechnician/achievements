@@ -1,19 +1,17 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
-import com.github.mnemotechnician.achievements.core.objective.Objective
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvents.ConstructionEvent
+import com.github.mnemotechnician.achievements.core.objective.*
 import com.github.mnemotechnician.achievements.core.util.lazyBundle
 import com.github.mnemotechnician.achievements.core.util.lazySetting
-import mindustry.world.Block
+import mindustry.type.UnitType
 
 /**
- * Requires the player to build [number] blocks of the specified [kinds].
+ * Requires the player to kill [number] enemy units of the specified [kinds].
  */
-open class BuildBlocksObjective(
+class BuildUnitsObjective(
 	val number: Int = 1,
-	vararg val kinds: Block
-) : Objective("build-blocks", acceptedEvents) {
+	vararg val kinds: UnitType
+) : Objective("build-units", acceptedEvents) {
 	var built by lazySetting(0) { uniqueName }
 
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.localizedName } }
@@ -26,17 +24,18 @@ open class BuildBlocksObjective(
 		require(number >= 0) { "number must be >= 0: $number < 0"}
 	}
 
-	constructor(number: Int, block: Block) : this(number, kinds = arrayOf(block))
+	constructor(number: Int, unit: UnitType) : this(number, kinds = arrayOf(unit))
 
-	constructor(block: Block) : this(1, block)
+	constructor(block: UnitType) : this(1, block)
 
 	override fun handleEvent(event: ObjectiveEvent) {
-		if (event is ConstructionEvent && event.build.block in kinds) {
+		if (event is ObjectiveEvents.UnitConstructionEvent && event.unit.type in kinds) {
 			built++
 		}
 	}
 
 	companion object {
-		val acceptedEvents = setOf(ConstructionEvent::class.java)
+		val acceptedEvents = setOf(ObjectiveEvents.UnitConstructionEvent::class.java)
 	}
 }
+

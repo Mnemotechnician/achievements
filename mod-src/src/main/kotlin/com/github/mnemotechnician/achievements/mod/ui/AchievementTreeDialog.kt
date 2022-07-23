@@ -1,12 +1,16 @@
 package com.github.mnemotechnician.achievements.mod.ui
 
 import arc.Events
+import arc.graphics.Color
 import arc.scene.ui.Dialog
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
+import com.github.mnemotechnician.achievements.core.util.isFair
 import com.github.mnemotechnician.achievements.mod.util.Bundles
-import com.github.mnemotechnician.mkui.extensions.dsl.addLabel
-import com.github.mnemotechnician.mkui.extensions.dsl.hsplitter
+import com.github.mnemotechnician.mkui.extensions.dsl.*
+import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
+import mindustry.gen.Icon
+import mindustry.ui.Styles
 
 /**
  * A dialog that allows to view the achievement tree.
@@ -30,7 +34,21 @@ class AchievementTreeDialog : Dialog() {
 			hsplitter(AStyles.accent, padBottom = 0f)
 		}
 
-		cont.add(treePane).grow()
+		cont.addStack {
+			add(treePane)
+			// unfair game mode warning
+			addTable {
+				center().bottom().addTable(Styles.black5) {
+					addImage(Icon.warning).color(Color.red).marginRight(10f)
+					addLabel(Bundles.unfairGame, wrap = true).color(Color.red).scaleFont(1.2f)
+				}.pad(5f).visible { !isFair }
+			}
+			// search bar
+			addTable {
+				top().right()
+				// todo: a search bar
+			}
+		}.grow()
 
 		Events.on(Achievement.AchievementUnlockEvent::class.java) {
 			isInvalid = true

@@ -8,8 +8,7 @@ import arc.math.geom.Rect
 import arc.math.geom.Vec2
 import arc.scene.Element
 import arc.scene.Group
-import arc.scene.event.ElementGestureListener
-import arc.scene.event.InputEvent
+import arc.scene.event.*
 import arc.scene.ui.Image
 import arc.scene.ui.Label
 import arc.scene.ui.layout.*
@@ -35,6 +34,8 @@ open class AchievementTreePane : WidgetGroup() {
 			field = value.coerceIn(zoomRange)
 			recalculateGrid()
 		}
+	val viewportWidth get() = width / zoom
+	val viewportHeight get() = height / zoom
 
 	val treeSize = Rect()
 
@@ -51,11 +52,14 @@ open class AchievementTreePane : WidgetGroup() {
 
 	/** Whether to clip this element. */
 	var clip = true
+	/** Whether to keep the camera within the bounds of the achievement tree */
+	var enforceBounds = true
 
 	/** Root achievement nodes. */
 	val rootNodes = ArrayList<Node>()
 	/** All nodes, both root and child ones. */
 	val allNodes = ArrayList<Node>()
+	var nodePadding = 20f
 
 	init {
 		transform = true
@@ -63,7 +67,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 		addCaptureListener(object : ElementGestureListener() {
 			override fun pan(event: InputEvent?, x: Float, y: Float, deltaX: Float, deltaY: Float) {
-				position.add(deltaX / zoom, deltaY / zoom)
+				position.sub(deltaX / zoom, deltaY / zoom)
 			}
 
 			override fun zoom(event: InputEvent?, initialDistance: Float, distance: Float) {
@@ -71,7 +75,7 @@ open class AchievementTreePane : WidgetGroup() {
 			}
 
 			override fun fling(event: InputEvent?, velocityX: Float, velocityY: Float, button: KeyCode?) {
-				cameraVelocity.add(velocityX / zoom, velocityY / zoom)
+				cameraVelocity.sub(velocityX / zoom / 60f, velocityY / zoom / 60f)
 			}
 		})
 
@@ -81,7 +85,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 	override fun act(delta: Float) {
 		super.act(delta)
-		keepInBounds()
+		if (enforceBounds) keepInBounds()
 
 		position.add(cameraVelocity.x * Time.delta, cameraVelocity.y * Time.delta)
 		cameraVelocity.lerpDelta(0f, 0f, 0.1f)
@@ -94,20 +98,21 @@ open class AchievementTreePane : WidgetGroup() {
 		val trns = Tmp.v3.set(0f, 0f)
 
 		if (position.x < treeSize.x) {
-			trns.add(-position.x, 0f)
-		} else if (position.x > treeSize.width) {
-			trns.add(treeSize.width - position.x, 0f)
+			trns.add(treeSize.x - position.x, 0f)
+		} else if (position.x > treeSize.x + treeSize.width) {
+			trns.add(treeSize.x + treeSize.width - position.x, 0f)
 		}
-		if (position.y < treeSize.x) {
-			trns.add(0f, -position.y)
-		} else if (position.y > treeSize.height) {
-			trns.add(0f, treeSize.height - position.y)
+		if (position.y < treeSize.y) {
+			trns.add(0f, treeSize.y - position.y)
+		} else if (position.y > treeSize.y + treeSize.height) {
+			trns.add(0f, treeSize.y + treeSize.height - position.y)
 		}
 
 		if (!trns.isZero) {
-			cameraVelocity.add(trns.lerpDelta(0f, 0f, 0.85f))
+			cameraVelocity.add(trns.scl(1 / 60f))
 		}
 	}
+
 	protected fun recalculateGrid() {
 		val radius = gridHexRadius * zoom
 
@@ -115,24 +120,23 @@ open class AchievementTreePane : WidgetGroup() {
 		val cornerAngle = 180f * (hexGridSides - 2) / hexGridSides
 		val middleCorner = 180f - cornerAngle
 		val sideSqr = 2 * radius * radius * (1 - Mathf.cosDeg(middleCorner))
-		val middleLine = Mathf.sqrt(radius * radius - sideSqr / 4) * 2
-		val distance = middleLine + gridHexThickness
+		val middleLine = Mathf.sqrt((radius * radius + gridHexThickness * 2) - sideSqr / 4) * 2
 
 		val oddOffsetAngle = hexVertexAngleStart - 360 / hexGridSides * 3.5f
-		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, distance), Angles.trnsy(oddOffsetAngle, distance))
-		hexVerticalOffset = abs(Angles.trnsy(oddOffsetAngle, middleLine) * 2)
+		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, middleLine), Angles.trnsy(oddOffsetAngle, middleLine))
+
+		hexMiddleLine = middleLine
+		hexVerticalOffset = abs(oddOffset.y * 2)
 
 		hexPositions[0].set(0f, 0f) // left top
-		hexPositions[1].set(distance, 0f) // right top
+		hexPositions[1].set(middleLine, 0f) // right top
 		hexPositions[2].set(oddOffset) // bottom left
-		hexPositions[3].set(oddOffset).add(distance, 0f) // bottom right
+		hexPositions[3].set(oddOffset).add(middleLine, 0f) // bottom right
 
 		repeat(hexVertices.size) {
 			val angle = hexVertexAngleStart + (360f / hexGridSides) * it
 			hexVertices[it].set(Angles.trnsx(angle, radius), Angles.trnsy(angle, radius))
 		}
-
-		hexMiddleLine = middleLine
 	}
 
 	override fun draw() {
@@ -153,13 +157,19 @@ open class AchievementTreePane : WidgetGroup() {
 
 		// what the fuck
 		val diameter = gridHexRadius * zoom * 2
-		val xStep = (hexMiddleLine * 2 + gridHexThickness * zoom * 2).toInt()
-		val yStep = (hexVerticalOffset + gridHexThickness * zoom * 2).toInt()
+		val xStep = (hexMiddleLine * 2).toInt()
+		val yStep = (hexVerticalOffset).toInt()
 
-		val xStart = (x + -diameter + position.x % xStep).toInt() + 1
-		val yStart = (y + -diameter + position.y % yStep).toInt() + 1
-		val xEnd = (x + diameter + width + position.x % xStep).toInt() + 1
-		val yEnd = (y + diameter + height + position.y % yStep).toInt() + 1
+		val middle = Tmp.v1.set(0f, 0f).sub(position).scl(zoom).also {
+			it.x %= xStep
+			it.y %= yStep
+		}.add(x, y)
+		val zoomc = Tmp.v2.set(width, height).scl(-1 / zoom).add(width, height).scl(0.5f)
+
+		val xStart = (middle.x - diameter - zoomc.x % xStep).toInt() - xStep
+		val yStart = (middle.y - diameter - zoomc.y % yStep).toInt() - yStep
+		val xEnd = (middle.x + diameter + width).toInt() + xStep
+		val yEnd = (middle.x + diameter + height).toInt() + yStep
 
 		Draw.color(AStyles.accent)
 		Lines.stroke(gridHexThickness * zoom)
@@ -192,15 +202,39 @@ open class AchievementTreePane : WidgetGroup() {
 			// this mat is an affine transform
 			it.`val`[Mat.M00] *= zoom
 			it.`val`[Mat.M11] *= zoom
-			it.`val`[Mat.M02] += position.x * zoom
-			it.`val`[Mat.M12] += position.y * zoom
+			it.`val`[Mat.M02] += -position.x * zoom + width / 2f
+			it.`val`[Mat.M12] += -position.y * zoom + height / 2f
 
 			(groupWorldTransformField.get(this) as Affine2).set(it)
 		}
 	}
 
 	override fun hit(x: Float, y: Float, touchable: Boolean): Element? {
-		return super.hit(x / zoom + position.x, y / zoom + position.y, touchable)
+		if (touchable && this.touchable == Touchable.disabled) return null
+
+		val children = this.children.items
+		((children.size - 1) downTo 0).forEach {
+			val child = children[it]
+			if (!child.visible) return@forEach
+
+			child.parentToLocalCoordinates(unproject(tmpVec.set(x, y)))
+			child.hit(tmpVec.x, tmpVec.y, touchable)?.also { return it }
+		}
+
+		if (x >= translation.x && x < width + translation.x && y >= translation.y && y < height + translation.y) return this
+		return null
+	}
+
+	/** Transforms a point in the pane coordinate system into a point in the element's coordinate system. */
+	fun project(point: Vec2) = point.also {
+		it.x = it.x * zoom - position.x * zoom + width / 2f
+		it.y = it.y * zoom - position.y * zoom + height / 2f
+	}
+
+	/** Transforms a point in the element's coordinate system into a point in the pane coordinate system. */
+	fun unproject(point: Vec2) = point.also {
+		it.x = (it.x - width / 2f) / zoom + position.x
+		it.y = (it.y - height / 2f) / zoom + position.y
 	}
 
 	override fun layout() {
@@ -222,17 +256,21 @@ open class AchievementTreePane : WidgetGroup() {
 
 			node.x = x + offset + node.branchSize / 2
 			node.y = y + 20f
-			offset += node.branchSize + 10f
+			offset += node.branchSize + nodePadding
 
 			rebuildNodeChildren(node)
 		}
 
 		treeSize.set(0f, 0f, 0f, 0f)
 		allNodes.forEach {
-			treeSize.x = min(it.x, treeSize.x)
-			treeSize.y = min(it.y, treeSize.y)
-			treeSize.width = max(it.getX(Align.right), treeSize.width - treeSize.x)
-			treeSize.height = max(it.getX(Align.top), treeSize.height - treeSize.y)
+			val coords = it.localToAscendantCoordinates(this, Tmp.v1.set(0f, 0f))
+			treeSize.x = min(coords.x, treeSize.x)
+			treeSize.y = min(coords.y, treeSize.y)
+		}
+		allNodes.forEach {
+			val coords = it.localToAscendantCoordinates(this, Tmp.v1.set(0f, 0f))
+			treeSize.width = max(coords.x - treeSize.x + it.width, treeSize.width)
+			treeSize.height = max(coords.y - treeSize.y + it.height, treeSize.height)
 		}
 	}
 
@@ -244,7 +282,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 			child.x = node.x + node.prefWidth / 2 - child.prefWidth / 2 + offset + child.branchSize / 2 - node.branchSize / 2
 			child.y = node.y + node.height + 40f
-			offset += child.branchSize
+			offset += child.branchSize + nodePadding
 
 			rebuildNodeChildren(child)
 		}
@@ -307,7 +345,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 						add(createTable {
 							addImage(achievement.icon ?: Icon.none).size(48f).margin(3f)
-							addLabel(achievement.displayName)
+							addLabel(achievement.displayName).pad(3f)
 						})
 					}.pad(5f).growX().row()
 
@@ -329,13 +367,13 @@ open class AchievementTreePane : WidgetGroup() {
 						addLabel(Bundles.objectives, align = Align.left).color(Color.gray).row()
 						achievement.objectives.forEach { obj ->
 							addTable {
-								addLabel(if (obj.isFulfilled) "[Done] " else "").color(Color.green)
+								addLabel(if (obj.isFulfilled) "[✓] " else "").color(Color.green)
 
 								addLabel({ obj.description }, wrap = true, align = Align.left).color(Pal.lightishGray).growX()
 							}.row()
 						}
 					}.also { collapser = it.get() }.growX().row()
-				}
+				}.minWidth(300f)
 			} else {
 				addStack {
 					add(Image(lockedIcon).also { it.setSize(96f) })
@@ -344,18 +382,41 @@ open class AchievementTreePane : WidgetGroup() {
 						it.setHeight(96f)
 						it.setColor(Color.red)
 					})
-				}
+				}.minWidth(100f)
 			}
 		}
 
 		override fun layout() {
-			var w = 0f
+			var w = -nodePadding
 			childNodes.forEach {
 				it.validate()
-				w += it.branchSize
+				w += it.branchSize + nodePadding
 			}
 			super.layout()
 			branchSize = max(prefWidth, w)
+		}
+
+		override fun draw() {
+			super.draw()
+
+			// lines between this and child nodes
+			Draw.color(Color.white)
+			Lines.stroke(2f)
+
+			val from = Tmp.v1.set(getX(Align.center), getY(Align.top))
+			childNodes.forEach { node ->
+				val to = Tmp.v2.set(node.getX(Align.center), node.getY(Align.bottom))
+				if (to.y <= from.y) return@forEach
+
+				val vmiddle = from.y + (to.y - from.y) / 2
+				Lines.curve(
+					from.x, from.y,
+					from.x, from.y + vmiddle,
+					from.x, from.y + vmiddle,
+					to.x, to.y,
+					from.dst(to).roundToInt()
+				)
+			}
 		}
 	}
 
@@ -363,6 +424,7 @@ open class AchievementTreePane : WidgetGroup() {
 		private val groupWorldTransformField = Group::class.java.getDeclaredField("worldTransform").also {
 			it.isAccessible = true
 		}
+		private val tmpVec = Vec2()
 
 		val zoomRange = 0.5f..3f
 		val radiusRange = 10f..500f
