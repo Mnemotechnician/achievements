@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.mod.ui
+package com.github.mnemotechnician.achievements.gui
 
 import arc.Events
 import arc.graphics.Color
@@ -6,7 +6,7 @@ import arc.scene.ui.Dialog
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.util.isFair
-import com.github.mnemotechnician.achievements.mod.util.Bundles
+import com.github.mnemotechnician.achievements.gui.util.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
 import mindustry.gen.Icon

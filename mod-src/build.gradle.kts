@@ -14,11 +14,12 @@ repositories {
 dependencies {
 	implementation(kotlin("stdlib-jdk8"))
 	
-	compileOnly("com.github.Anuken.Arc:arc-core:master-da27a54ef9-1") // 2022.06.27.
-	compileOnly("com.github.Anuken:MindustryJitpack:d380051459")
+	compileOnly("com.github.Anuken.Arc:arc-core:v136")
+	compileOnly("com.github.Anuken:MindustryJitpack:v136")
 
 	implementation("com.github.mnemotechnician:mkui:-SNAPSHOT")
 	implementation(project(":core"))
+	implementation(project(":gui"))
 }
 
 tasks.withType<KotlinCompile> {
@@ -28,6 +29,69 @@ tasks.withType<KotlinCompile> {
 			"-Xcontext-receivers"
 		)
 	}
+}
+
+val mergeBundles by tasks.registering {
+	outputs.upToDateWhen { false }
+	outputs.dir(layout.buildDirectory.dir("genBundles"))
+
+	doLast {
+		val projects = project.configurations
+			.flatMap { it.allDependencies }
+			.filterIsInstance<ProjectDependency>()
+			.map { it.dependencyProject }
+
+		val bundles = (projects + project)
+			.mapNotNull {
+				it.projectDir.resolve("assets/bundles").takeIf { it.exists() }
+			}
+			.distinct()
+			.flatMap {
+				it.listFiles().filter { it.name.endsWith(".properties") && it.name.startsWith("bundle") }
+			}
+			.also { if (it.isEmpty()) return@doLast }
+
+		val bundleMap = HashMap<String, List<File>>()
+		bundles.forEach {
+			val kind = it.name.removeSurrounding("bundle", ".properties")
+
+			if (kind !in bundleMap) {
+				bundleMap[kind] = bundles.filter { it.name.removeSurrounding("bundle", ".properties") == kind }
+			}
+		}
+
+		val outputDir = File("$buildDir/genBundles/bundles")
+		outputDir.deleteRecursively()
+		outputDir.mkdirs()
+
+		bundleMap.forEach { (kind, files) ->
+			val target = outputDir.resolve("bundle$kind.properties")
+
+			target.writeText("# Generated multibundle file")
+			files.forEach {
+				target.appendText("\n\n${"#".repeat(40)}\n")
+				target.appendText("# Included from ${it.absolutePath}:\n")
+				target.appendBytes(it.readBytes())
+			}
+		}
+	}
+}
+
+tasks.jar {
+	dependsOn(mergeBundles)
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	archiveFileName.set("${jarName}-desktop.jar")
+
+	from(rootDir) {
+		include("mod.hjson")
+		include("icon.png")
+	}
+
+	from("$buildDir/genBundles")
+	from("assets")
+	from(*configurations.runtimeClasspath.get().files.map { if (it.isDirectory()) it else zipTree(it) }.toTypedArray())
+
 }
 
 task("jarAndroid") {
@@ -96,19 +160,3 @@ task<Jar>("release") {
 	}
 }
 
-
-tasks.jar {
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	archiveFileName.set("${jarName}-desktop.jar")
-
-	from(*configurations.runtimeClasspath.get().files.map { if (it.isDirectory()) it else zipTree(it) }.toTypedArray())
-
-	from(rootDir) {
-		include("mod.hjson")
-		include("icon.png")
-	}
-
-	from("assets/") {
-		include("**")
-	}
-}

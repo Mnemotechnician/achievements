@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.mod.ui
+package com.github.mnemotechnician.achievements.gui
 
 import arc.Core
 import arc.graphics.Color

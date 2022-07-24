@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.mod.util
+package com.github.mnemotechnician.achievements.gui.util
 
 import com.github.mnemotechnician.mkui.delegates.bundle
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle

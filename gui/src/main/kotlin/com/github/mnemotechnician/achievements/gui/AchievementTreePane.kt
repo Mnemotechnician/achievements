@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.mod.ui
+package com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
 import arc.graphics.g2d.*
@@ -15,7 +15,7 @@ import arc.scene.ui.layout.*
 import arc.util.*
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
-import com.github.mnemotechnician.achievements.mod.util.Bundles
+import com.github.mnemotechnician.achievements.gui.util.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import mindustry.gen.Icon
 import mindustry.graphics.Pal
@@ -215,7 +215,7 @@ open class AchievementTreePane : WidgetGroup() {
 		val children = this.children.items
 		((children.size - 1) downTo 0).forEach {
 			val child = children[it]
-			if (!child.visible) return@forEach
+			if (child == null || !child.visible) return@forEach
 
 			child.parentToLocalCoordinates(unproject(tmpVec.set(x, y)))
 			child.hit(tmpVec.x, tmpVec.y, touchable)?.also { return it }
@@ -337,7 +337,7 @@ open class AchievementTreePane : WidgetGroup() {
 					addStack {
 						add(object : Element() {
 							override fun draw() {
-								Draw.color(Pal.accent)
+								Draw.color(Pal.accent, 0.5f)
 								val w = width * Mathf.clamp(achievement.progress, 0f, 1f)
 								Fill.rect(x + width / 2f, y + height / 2f, w, height)
 							}
