@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/gui" />
             <option value="$PROJECT_DIR$/mod-src" />
           </set>
         </option>

@@ -1,6 +1,6 @@
 package com.github.mnemotechnician.achievements.mod.content
 
-import arc.graphics.*
+import arc.graphics.Color
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.dsl.achievement
 import com.github.mnemotechnician.achievements.core.dsl.rootAchievement
@@ -32,6 +32,19 @@ object CoreAchievements {
 
 				achievement("find-amogus", UnitTypes.flare.uiIcon) {
 					+ BuildBlocksObjective(Blocks.mechanicalPump)
+				}
+			}
+
+			achievement("logistics", Blocks.conveyor.uiIcon) {
+				+ BuildBlocksObjective(35, Blocks.conveyor)
+				+ BuildBlocksObjective(2, Blocks.router)
+				+ BuildBlocksObjective(3, Blocks.junction)
+
+				achievement("upgrades-people", Icon.up.tint(Color.green)) {
+					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
+				}
+				achievement("better-choice", Blocks.overflowGate.uiIcon) {
+					+ BuildBlocksObjective(1, Blocks.overflowGate, Blocks.underflowGate)
 				}
 			}
 		}

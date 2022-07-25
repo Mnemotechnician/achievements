@@ -408,7 +408,7 @@ open class AchievementTreePane : WidgetGroup() {
 				val to = Tmp.v2.set(node.getX(Align.center), node.getY(Align.bottom))
 				if (to.y <= from.y) return@forEach
 
-				val vmiddle = from.y + (to.y - from.y) / 2
+				val vmiddle = (to.y - from.y) / 2
 				Lines.curve(
 					from.x, from.y,
 					from.x, from.y + vmiddle,
