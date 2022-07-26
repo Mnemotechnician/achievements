@@ -1,40 +1,38 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
-import com.github.mnemotechnician.achievements.core.objective.*
-import com.github.mnemotechnician.achievements.core.util.lazyBundle
-import com.github.mnemotechnician.achievements.core.util.lazySetting
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.UnitDestroyedEvent
+import com.github.mnemotechnician.achievements.core.util.emojiOrName
+import mindustry.Vars
+import mindustry.core.Version.number
+import mindustry.game.Team
 import mindustry.type.UnitType
 
 /**
  * Requires the player to kill [number] enemy units of the specified [kinds].
  */
 class KillUnitsObjective(
-	val number: Int = 1,
+	number: Int = 1,
 	vararg val kinds: UnitType
-) : Objective("kill-units", acceptedEvents) {
-	var killed by lazySetting(0) { uniqueName }
-
-	val kindsDescription by lazy { kinds.joinToString(", ") { it.localizedName } }
-	override val isFulfilled get() = killed >= number
-	override val description by lazyBundle({ bundleName }, { kindsDescription }, { killed }, { number })
-
-	override val progress get() = killed / number.toFloat()
-
-	init {
-		require(number >= 0) { "number must be >= 0: $number < 0"}
-	}
-
+) : AbstractCounterObjective(number, "kill-units", acceptedEvents) {
 	constructor(number: Int, unit: UnitType) : this(number, kinds = arrayOf(unit))
 
-	constructor(block: UnitType) : this(1, block)
+	constructor(unit: UnitType) : this(1, unit)
 
-	override fun handleEvent(event: ObjectiveEvent) {
-		if (event is ObjectiveEvents.UnitDestroyedEvent && event.unit.type in kinds) {
-			killed++
-		}
+	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
+		val kindsDescription = kinds.joinToString(", ") { it.emojiOrName() }
+		list.add(0) { kindsDescription }
+	}
+
+	override fun receiveEvent(event: ObjectiveEvent): Boolean {
+		return event is ObjectiveEvents.UnitDestroyedEvent
+			&& event.unit.team() != Vars.player.team()
+			&& event.unit.team != Team.derelict
+			&& event.unit.type in kinds
 	}
 
 	companion object {
-		val acceptedEvents = setOf(ObjectiveEvents.UnitDestroyedEvent::class.java)
+		val acceptedEvents = setOf(UnitDestroyedEvent::class.java)
 	}
 }

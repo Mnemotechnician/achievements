@@ -7,7 +7,7 @@ import arc.graphics.g2d.TextureRegion
 import arc.scene.style.Drawable
 import arc.scene.style.TextureRegionDrawable
 import com.github.mnemotechnician.achievements.core.objective.Objective
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.setting
 
 /**
@@ -92,6 +92,7 @@ open class Achievement(
 		isInit = true
 
 		validate()
+		update()
 	}
 
 	/**
@@ -109,6 +110,13 @@ open class Achievement(
 		while (parent != null) {
 			step(parent != this, "Cyclic achievement dependencies are not allowed.")
 			parent = parent.parent
+		}
+	}
+
+	/** Updates the state of this achievement. */
+	open fun update() {
+		if (objectives.all { it.isFulfilled }) {
+			complete()
 		}
 	}
 
@@ -149,10 +157,7 @@ open class Achievement(
 			children.forEach { it.handleEvent(event) }
 		} else {
 			objectives.forEach { it.handleEvent(event) }
-
-			if (objectives.all { it.isFulfilled }) {
-				complete()
-			}
+			update()
 		}
 	}
 

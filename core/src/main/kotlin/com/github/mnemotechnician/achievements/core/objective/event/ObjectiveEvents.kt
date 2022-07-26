@@ -1,25 +1,30 @@
-package com.github.mnemotechnician.achievements.core.objective
+package com.github.mnemotechnician.achievements.core.objective.event
 
 import com.github.mnemotechnician.achievements.core.util.isFair
 import com.github.mnemotechnician.achievements.core.util.playerTeam
-import mindustry.Vars
 import mindustry.game.EventType.*
 import mindustry.gen.Building
 import mindustry.gen.Entityc
 import mindustry.gen.Unit as MindustryUnit
 
 class ObjectiveEvents {
-	/** A building has been built by the player's team. */
+	/** A building has been built. */
 	class ConstructionEvent(val build: Building) : ObjectiveEvent() {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null && unit.playerTeam && isFair }) {
+		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null && isFair }) {
 			ConstructionEvent(tile.build)
 		} })
 	}
 
-	/** A building has been deconstructed by the player's team. */
+	/** A building has been deconstructed */
 	class DeconstructionEvent(val building: Building) : ObjectiveEvent() {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { breaking && tile?.build != null && unit.playerTeam && isFair }) {
+		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { breaking && tile?.build != null && isFair }) {
 			DeconstructionEvent(tile.build)
+		} })
+	}
+
+	class BuildingDestroyedEvent(val building: Building) : ObjectiveEvent() {
+		class Init : Listener({ fireOnIf(BlockDestroyEvent::class, { tile.build != null && isFair }) {
+			BuildingDestroyedEvent(tile.build)
 		} })
 	}
 

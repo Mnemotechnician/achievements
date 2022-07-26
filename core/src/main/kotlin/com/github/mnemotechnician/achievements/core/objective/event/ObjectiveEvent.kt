@@ -1,8 +1,8 @@
-package com.github.mnemotechnician.achievements.core.objective
+package com.github.mnemotechnician.achievements.core.objective.event
 
 import arc.Events
 import com.github.mnemotechnician.achievements.core.AchievementManager
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent.Listener
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent.Listener
 import kotlin.reflect.KClass
 
 // TODO(?)

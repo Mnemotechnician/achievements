@@ -1,7 +1,7 @@
 package com.github.mnemotechnician.achievements.core
 
 import arc.util.Log
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import mindustry.Vars
 
 /**

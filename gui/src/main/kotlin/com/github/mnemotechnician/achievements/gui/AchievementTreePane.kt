@@ -412,7 +412,7 @@ open class AchievementTreePane : WidgetGroup() {
 				Lines.curve(
 					from.x, from.y,
 					from.x, from.y + vmiddle,
-					from.x, from.y + vmiddle,
+					to.x, to.y - vmiddle,
 					to.x, to.y,
 					from.dst(to).roundToInt()
 				)

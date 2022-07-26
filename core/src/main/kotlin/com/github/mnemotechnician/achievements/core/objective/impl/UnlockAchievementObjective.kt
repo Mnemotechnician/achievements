@@ -2,7 +2,7 @@ package com.github.mnemotechnician.achievements.core.objective.impl
 
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.objective.Objective
-import com.github.mnemotechnician.achievements.core.objective.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.util.lazyBundle
 
 class UnlockAchievementObjective(

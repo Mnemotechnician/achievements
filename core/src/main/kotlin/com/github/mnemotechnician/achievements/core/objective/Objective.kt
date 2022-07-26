@@ -3,6 +3,7 @@ package com.github.mnemotechnician.achievements.core.objective
 import arc.Core
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 
 /**
  * Represents an objective of an [Achievement].
