@@ -24,7 +24,7 @@ abstract class AbstractCounterObjective(
 	override val progress get() = count / targetCount.toFloat()
 
 	init {
-		require(targetCount < 0) { "targetCount must be >= 0: $targetCount < 0"}
+		require(targetCount >= 0) { "targetCount must be >= 0: $targetCount < 0"}
 	}
 
 	@Suppress("UNCHECKED_CAST")

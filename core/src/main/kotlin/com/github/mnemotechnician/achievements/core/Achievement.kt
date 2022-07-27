@@ -69,7 +69,7 @@ open class Achievement(
 	 */
 	open val progress: Float
 		get() = if (isCompleted || objectives.isEmpty()) 1f else run {
-			objectives.fold(0f) { total, it -> total + it.progress } / objectives.size
+			objectives.fold(0f) { total, it -> total + it.progress.coerceIn(progressRange) } / objectives.size
 		}
 
 	/** Whether this achievement has been initialised yet. */
@@ -171,6 +171,10 @@ open class Achievement(
 
 	override fun toString(): String {
 		return "Achievement(name=$name, icon=$icon, isCompleted=$isCompleted)"
+	}
+
+	companion object {
+		val progressRange = 0f..1f
 	}
 
 	/**

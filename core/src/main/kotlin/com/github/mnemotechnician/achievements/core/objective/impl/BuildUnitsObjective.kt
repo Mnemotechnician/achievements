@@ -16,8 +16,9 @@ open class BuildUnitsObjective(
 ) : AbstractCounterObjective(number, "build-units", acceptedEvents) {
 	constructor(unit: UnitType) : this(1, unit)
 
+	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
+
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
-		val kindsDescription = kinds.joinToString(", ") { it.emojiOrName() }
 		list.add(0) { kindsDescription }
 	}
 

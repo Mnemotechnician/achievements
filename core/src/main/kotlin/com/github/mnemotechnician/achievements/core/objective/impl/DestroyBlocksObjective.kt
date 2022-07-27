@@ -25,8 +25,9 @@ open class DestroyBlocksObjective(
 	/** By destruction. */
 	constructor(number: Int, vararg kinds: Block) : this(number, false, *kinds)
 
+	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
+
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
-		val kindsDescription = kinds.joinToString(", ") { it.emojiOrName() }
 		list.add(0) { if (byDeconstruction) deconstruct else destroy }
 		list.add(1) { kindsDescription }
 	}

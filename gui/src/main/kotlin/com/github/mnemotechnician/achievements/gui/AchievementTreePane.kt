@@ -140,8 +140,14 @@ open class AchievementTreePane : WidgetGroup() {
 	}
 
 	override fun draw() {
+		if (clip) {
+			if (!clipBegin()) return
+		}
+
 		drawGrid()
 		super.draw()
+
+		if (clip) clipEnd()
 	}
 
 	override fun drawChildren() {
@@ -151,10 +157,6 @@ open class AchievementTreePane : WidgetGroup() {
 
 	/** Draws the background grid of this element. */
 	private fun drawGrid() {
-		if (clip) {
-			if (!clipBegin()) return
-		}
-
 		// what the fuck
 		val diameter = gridHexRadius * zoom * 2
 		val xStep = (hexMiddleLine * 2).toInt()
@@ -193,8 +195,6 @@ open class AchievementTreePane : WidgetGroup() {
 				}
 			}
 		}
-
-		if (clip) clipEnd()
 	}
 
 	override fun computeTransform(): Mat {
@@ -280,7 +280,7 @@ open class AchievementTreePane : WidgetGroup() {
 			child.rebuild()
 			child.pack()
 
-			child.x = node.x + node.prefWidth / 2 - child.prefWidth / 2 + offset + child.branchSize / 2 - node.branchSize / 2
+			child.x = node.x + node.prefWidth / 2 - child.prefWidth / 2 + offset + child.branchSize / 2 - node.childrenBranchSize / 2
 			child.y = node.y + node.height + 40f
 			offset += child.branchSize + nodePadding
 
@@ -296,7 +296,10 @@ open class AchievementTreePane : WidgetGroup() {
 		private var wasUnlocked = false
 		val childNodes = ArrayList<Node>()
 
-		var branchSize = 0f
+		/** The width child nodes occupy. */
+		var childrenBranchSize = 0f
+		/** The width this branch occupies. */
+		val branchSize get() = max(prefWidth, childrenBranchSize)
 
 		init {
 			rebuild(true)
@@ -339,7 +342,7 @@ open class AchievementTreePane : WidgetGroup() {
 							override fun draw() {
 								Draw.color(Pal.accent, 0.5f)
 								val w = width * Mathf.clamp(achievement.progress, 0f, 1f)
-								Fill.rect(x + width / 2f, y + height / 2f, w, height)
+								Fill.rect(x + w / 2f, y + height / 2f, w, height)
 							}
 						})
 
@@ -351,8 +354,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 					// more info
 					lateinit var collapser: Collapser
-					// todo custom style
-					textToggle(Bundles.lessInfo, Bundles.moreInfo) {
+					textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
 						collapser.isCollapsed = !it
 					}.expandX().right().row()
 
@@ -393,7 +395,7 @@ open class AchievementTreePane : WidgetGroup() {
 				w += it.branchSize + nodePadding
 			}
 			super.layout()
-			branchSize = max(prefWidth, w)
+			childrenBranchSize = w
 		}
 
 		override fun draw() {

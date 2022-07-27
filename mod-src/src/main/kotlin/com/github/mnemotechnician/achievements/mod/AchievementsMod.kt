@@ -5,7 +5,7 @@ import arc.scene.ui.layout.Table
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.Achievement.AchievementUnlockEvent
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
-import com.github.mnemotechnician.achievements.gui.AchievementTreeDialog
+import com.github.mnemotechnician.achievements.gui.*
 import com.github.mnemotechnician.mkui.extensions.dsl.imageButton
 import com.github.mnemotechnician.mkui.extensions.elements.findOrNull
 import mindustry.Vars
@@ -37,7 +37,7 @@ class AchievementsMod : Mod() {
 		}
 
 		// todo create an icon
-		target.imageButton(Icon.none) {
+		target.imageButton(AStyles.achievementsIcon) {
 			achievementTree.show()
 		}.fill()
 	}
