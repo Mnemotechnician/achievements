@@ -16,7 +16,13 @@ import kotlin.reflect.KClass
  * It will be initialised during the first initialisation of the event, allowing it to set up event listeners.
  */
 abstract class ObjectiveEvent {
-	/** An auxiliary class, see the KDoc of [ObjectiveEvent]. */
+	/**
+	 * An auxiliary class, see the KDoc of [ObjectiveEvent].
+	 *
+	 * Instances of this class should only be created by [AchievementManager],
+	 * which creates them via reflection when an objective demands an event type,
+	 * listener class of which hasn't been instantiated yet.
+	 */
 	abstract class Listener() {
 		constructor(initAction: Listener.() -> Unit) : this() {
 			initAction(this)

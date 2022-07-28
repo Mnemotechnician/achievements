@@ -2,6 +2,8 @@ package com.github.mnemotechnician.achievements.gui
 
 import arc.Events
 import arc.graphics.Color
+import arc.scene.Action
+import arc.scene.Scene
 import arc.scene.ui.Dialog
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
@@ -58,5 +60,10 @@ class AchievementTreeDialog : Dialog() {
 	override fun draw() {
 		if (isInvalid) treePane.rebuild()
 		super.draw()
+	}
+
+	override fun show(stage: Scene?, action: Action?): Dialog {
+		isInvalid = true
+		return super.show(stage, action)
 	}
 }

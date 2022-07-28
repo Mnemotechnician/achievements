@@ -9,6 +9,7 @@ import arc.scene.style.TextureRegionDrawable
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.setting
+import mindustry.ctype.UnlockableContent
 
 /**
  * Represents a mindustry achievement.
@@ -78,6 +79,9 @@ open class Achievement(
 
 	constructor(name: String, region: TextureRegion, tint: Color? = null)
 		: this(name, TextureRegionDrawable(region).let { if (tint != null) it.tint(tint) else it })
+
+	constructor(name: String, iconContent: UnlockableContent, tint: Color? = null)
+		: this(name, iconContent.uiIcon, tint)
 
 	/** Initialises this achievement. Called by the [AchievementManager] after the client load. */
 	open fun init() {

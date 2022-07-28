@@ -10,7 +10,7 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEve
  * Like achievements, has an [internal name][name], a [displayed name][displayName] and a [description].
  *
  * The display name of this objective is taken from a bundle entry
- * whose name is `objective.<objective-name>.name.
+ * whose name is `objective.<[name]>.name.
  *
  * @param name the name of this objective. Must be shared between all instances of the same subclass.
  * @param acceptedEvents the event types this objective accepts.
@@ -49,6 +49,8 @@ abstract class Objective(
 
 	/** Progress of this achievement. By default, returns 1 or 0 based on whether it's completed. */
 	open val progress get() = if (isFulfilled) 1f else 0f
+	/** Objective filters. If one of these returns false, the event is to be ignored. */
+	val filters = ArrayList<Filter<Objective, ObjectiveEvent>>(3)
 
 	/**
 	 * Initialises this achievement.
@@ -62,18 +64,47 @@ abstract class Objective(
 		acceptedEvents.forEach { AchievementManager.addEvent(it) }
 	}
 
+	/** Resets this objective to the uncompleted state. */
+	abstract fun reset()
+
 	/**
-	 * Notifies this objective that an event has occurred,
-	 * possibly making it progress.
+	 * Notifies this objective that an event has occurred, possibly making it progress.
+	 * If one of the [filters] returns false, the event is ignored.
+	 *
+	 * Implementations of this method should pass the event to [isAccepted]
+	 * after performing own checks and ignore the event if the method returns false.
 	 *
 	 * If the event is accepted, it must be mentioned in [acceptedEvents].
 	 */
 	abstract fun handleEvent(event: ObjectiveEvent)
+
+	/**
+	 * Checks whether this event passes all [filters].
+	 * If this method returns false, this objective should ignore the providen event.
+	 */
+	protected open fun isAccepted(event: ObjectiveEvent) = filters.all {
+		with(it) { this@Objective(event) }
+	}
+
+	/**
+	 * Adds an objective filter. The providen function is invoked whenever this objective
+	 * receives an [ObjectiveEvent]. If it returns false, the event is ignored.
+	 *
+	 * @return this objective for chaining.
+	 */
+	open fun filter(filter: Filter<Objective, ObjectiveEvent>) = this.also {
+		filters.add(filter)
+	}
 
 	override fun toString() = "${super.toString().substringBefore('@')}(name=$name, isFulfilled=$isFulfilled)"
 
 	companion object {
 		/** An empty set of objective events. */
 		val NO_EVENTS: Set<Class<out ObjectiveEvent>> = setOf()
+	}
+
+	/** `Filter<O : Objective, E : ObjectiveEvent> = O.(E) -> Boolean` */
+	fun interface Filter<in O : Objective, in E : ObjectiveEvent> {
+		operator fun O.invoke(event: E): Boolean
 	}
 }

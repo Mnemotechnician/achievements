@@ -7,12 +7,11 @@ import arc.scene.style.Drawable
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.objective.Objective
+import mindustry.ctype.UnlockableContent
 
 typealias Objectives = ArrayList<Objective>
 
-/**
- * Creates a root achievement, configures it and adds it to the [AchievementManager].
- */
+/** Creates a root achievement, configures it and adds it to the [AchievementManager]. */
 inline fun rootAchievement(
 	name: String,
 	icon: Drawable? = null,
@@ -22,9 +21,7 @@ inline fun rootAchievement(
 	AchievementManager.register(it)
 }
 
-/**
- * Same as [rootAchievement].
- */
+/** Same as [rootAchievement]. */
 inline fun rootAchievement(
 	name: String,
 	region: TextureRegion,
@@ -35,9 +32,18 @@ inline fun rootAchievement(
 	AchievementManager.register(it)
 }
 
-/**
- * Adds a child achievement to this achievement and configures it.
- */
+/** Same as [rootAchievement]. */
+inline fun rootAchievement(
+	name: String,
+	iconContent: UnlockableContent,
+	color: Color? = null,
+	constructor: Achievement.() -> Unit
+): Achievement = Achievement(name, iconContent, color).also {
+	it.apply(constructor)
+	AchievementManager.register(it)
+}
+
+/** Adds a child achievement to this achievement and configures it. */
 inline fun Achievement.achievement(
 	name: String,
 	icon: Drawable? = null,
@@ -48,15 +54,25 @@ inline fun Achievement.achievement(
 	AchievementManager.register(it)
 }
 
-/**
- * Same as [achievement].
- */
+/** Same as [achievement]. */
 inline fun Achievement.achievement(
 	name: String,
 	region: TextureRegion,
 	color: Color? = null,
 	constructor: Achievement.() -> Unit
 ): Achievement = Achievement(name, region, color).also {
+	addChild(it)
+	it.apply(constructor)
+	AchievementManager.register(it)
+}
+
+/** Same as [achievement]. */
+inline fun Achievement.achievement(
+	name: String,
+	iconContent: UnlockableContent,
+	color: Color? = null,
+	constructor: Achievement.() -> Unit
+): Achievement = Achievement(name, iconContent, color).also {
 	addChild(it)
 	it.apply(constructor)
 	AchievementManager.register(it)

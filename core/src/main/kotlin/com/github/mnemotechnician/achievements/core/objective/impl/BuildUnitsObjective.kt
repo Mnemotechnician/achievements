@@ -13,7 +13,7 @@ import mindustry.type.UnitType
 open class BuildUnitsObjective(
 	number: Int = 1,
 	vararg val kinds: UnitType
-) : AbstractCounterObjective(number, "build-units", acceptedEvents) {
+) : AbstractCounterObjective(number, "building-units", acceptedEvents) {
 	constructor(unit: UnitType) : this(1, unit)
 
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }

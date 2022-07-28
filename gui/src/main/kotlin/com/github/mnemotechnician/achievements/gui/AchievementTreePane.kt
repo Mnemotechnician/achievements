@@ -21,6 +21,7 @@ import mindustry.gen.Icon
 import mindustry.graphics.Pal
 import kotlin.math.*
 
+// this class might be partially backported to mkui as ViewPane or smth.
 /**
  * Displays all achievements registered in tue [AchievementManager] in the form of a tree.
  */
@@ -32,7 +33,7 @@ open class AchievementTreePane : WidgetGroup() {
 	var zoom = 1f
 		set(value) {
 			field = value.coerceIn(zoomRange)
-			recalculateGrid()
+//			recalculateGrid()
 		}
 	val viewportWidth get() = width / zoom
 	val viewportHeight get() = height / zoom
@@ -114,13 +115,13 @@ open class AchievementTreePane : WidgetGroup() {
 	}
 
 	protected fun recalculateGrid() {
-		val radius = gridHexRadius * zoom
+		val radius = gridHexRadius
 
 		// you better not know.
 		val cornerAngle = 180f * (hexGridSides - 2) / hexGridSides
 		val middleCorner = 180f - cornerAngle
 		val sideSqr = 2 * radius * radius * (1 - Mathf.cosDeg(middleCorner))
-		val middleLine = Mathf.sqrt((radius * radius + gridHexThickness * 2) - sideSqr / 4) * 2
+		val middleLine = Mathf.sqrt((radius * radius + gridHexThickness * 3) - sideSqr / 4) * 2
 
 		val oddOffsetAngle = hexVertexAngleStart - 360 / hexGridSides * 3.5f
 		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, middleLine), Angles.trnsy(oddOffsetAngle, middleLine))
@@ -143,38 +144,32 @@ open class AchievementTreePane : WidgetGroup() {
 		if (clip) {
 			if (!clipBegin()) return
 		}
-
-		drawGrid()
 		super.draw()
-
 		if (clip) clipEnd()
 	}
 
 	override fun drawChildren() {
-		// todo render connections
+		drawGrid()
 		super.drawChildren()
 	}
 
 	/** Draws the background grid of this element. */
 	private fun drawGrid() {
-		// what the fuck
-		val diameter = gridHexRadius * zoom * 2
 		val xStep = (hexMiddleLine * 2).toInt()
 		val yStep = (hexVerticalOffset).toInt()
 
-		val middle = Tmp.v1.set(0f, 0f).sub(position).scl(zoom).also {
-			it.x %= xStep
-			it.y %= yStep
-		}.add(x, y)
-		val zoomc = Tmp.v2.set(width, height).scl(-1 / zoom).add(width, height).scl(0.5f)
+		fun Float.roundStep(step: Int) = this - this % step
 
-		val xStart = (middle.x - diameter - zoomc.x % xStep).toInt() - xStep
-		val yStart = (middle.y - diameter - zoomc.y % yStep).toInt() - yStep
-		val xEnd = (middle.x + diameter + width).toInt() + xStep
-		val yEnd = (middle.x + diameter + height).toInt() + yStep
+		val cx = position.x.roundStep(xStep)
+		val cy = position.y.roundStep(yStep)
+
+		val xStart = (cx - (viewportWidth / 2).roundStep(xStep)).toInt() - xStep * 2
+		val yStart = (cy - (viewportHeight / 2).roundStep(yStep)).toInt() - yStep * 2
+		val xEnd = (cx + viewportWidth / 2).toInt() + xStep * 2
+		val yEnd = (cy + viewportHeight / 2).toInt() + yStep * 2
 
 		Draw.color(AStyles.accent)
-		Lines.stroke(gridHexThickness * zoom)
+		Lines.stroke(gridHexThickness)
 
 		for (hx in xStart..xEnd step xStep) {
 			for (hy in yStart..yEnd step yStep) {
@@ -327,7 +322,7 @@ open class AchievementTreePane : WidgetGroup() {
 			rebuildImpl()
 			wasUnlocked = completed
 
-			if (achievement.parent?.isCompleted != false) createChildren()
+			if (achievement.parent?.isCompleted != false) createChildren() // != includes true and null
 
 			childNodes.forEach { it.rebuild() }
 		}
@@ -348,7 +343,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 						add(createTable {
 							addImage(achievement.icon ?: Icon.none).size(48f).margin(3f)
-							addLabel(achievement.displayName).pad(3f)
+							addLabel(achievement.displayName).pad(5f)
 						})
 					}.pad(5f).growX().row()
 
@@ -356,7 +351,7 @@ open class AchievementTreePane : WidgetGroup() {
 					lateinit var collapser: Collapser
 					textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
 						collapser.isCollapsed = !it
-					}.expandX().right().row()
+					}.expandX().pad(5f).right().row()
 
 					addCollapser(false) {
 						left().defaults().growX()
@@ -369,7 +364,8 @@ open class AchievementTreePane : WidgetGroup() {
 						addLabel(Bundles.objectives, align = Align.left).color(Color.gray).row()
 						achievement.objectives.forEach { obj ->
 							addTable {
-								addLabel(if (obj.isFulfilled) "[✓] " else "").color(Color.green)
+								addLabel({ if (obj.isFulfilled) "[green][X]" else "[gray][ ]" }, wrap = false)
+								addSpace(5f)
 
 								addLabel({ obj.description }, wrap = true, align = Align.left).color(Pal.lightishGray).growX()
 							}.row()
@@ -402,15 +398,17 @@ open class AchievementTreePane : WidgetGroup() {
 			super.draw()
 
 			// lines between this and child nodes
-			Draw.color(Color.white)
 			Lines.stroke(2f)
 
-			val from = Tmp.v1.set(getX(Align.center), getY(Align.top))
+			val lineMargin = min(prefWidth / childNodes.size, 10f)
+			val from = Tmp.v1.set(getX(Align.center), getY(Align.top)).sub(lineMargin * (childNodes.size - 1) / 2, 0f)
+
 			childNodes.forEach { node ->
 				val to = Tmp.v2.set(node.getX(Align.center), node.getY(Align.bottom))
 				if (to.y <= from.y) return@forEach
 
 				val vmiddle = (to.y - from.y) / 2
+				Draw.color(if (wasUnlocked) Color.white else Color.crimson)
 				Lines.curve(
 					from.x, from.y,
 					from.x, from.y + vmiddle,
@@ -418,6 +416,8 @@ open class AchievementTreePane : WidgetGroup() {
 					to.x, to.y,
 					from.dst(to).roundToInt()
 				)
+
+				from.add(lineMargin, 0f)
 			}
 		}
 	}

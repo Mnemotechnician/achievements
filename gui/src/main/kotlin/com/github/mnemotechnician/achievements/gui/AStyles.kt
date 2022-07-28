@@ -3,11 +3,9 @@ package com.github.mnemotechnician.achievements.gui
 import arc.Core
 import arc.graphics.Color
 import arc.scene.style.TextureRegionDrawable
-import arc.scene.ui.TextButton.*
+import arc.scene.ui.TextButton.TextButtonStyle
 import mindustry.gen.Tex
 import mindustry.ui.Fonts
-import mindustry.ui.Styles
-import mindustry.Vars
 
 object AStyles {
 	val accent = Color.valueOf("2C2D38FF")!!
@@ -23,5 +21,9 @@ object AStyles {
 
 	val achievementb = TextButtonStyle(achievementCornerUp, achievementCornerDown, achievementCornerDown, Fonts.def)
 
-	fun drawable(name: String) = Core.atlas.drawable("achievements-$name")!!
+	/** Finds a drawable of this mod or throws an exception. */
+	fun drawable(name: String) = Core.atlas.drawable("achievements-$name")!!.also {
+		if (it !is TextureRegionDrawable) return@also // probably always false
+		if (!Core.atlas.isFound(it.region)) throw RuntimeException("Region $name is not found! (Are you accessing AStyles before the end of texture packing?)")
+	}
 }

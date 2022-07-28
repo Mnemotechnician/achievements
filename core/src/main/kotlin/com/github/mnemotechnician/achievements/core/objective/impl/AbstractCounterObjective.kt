@@ -36,14 +36,22 @@ abstract class AbstractCounterObjective(
 	)
 
 	override fun handleEvent(event: ObjectiveEvent) {
-		if (receiveEvent(event)) {
+		if (receiveEvent(event) && isAccepted(event)) {
 			count++
 		}
+	}
+
+	override fun reset() {
+		count = 0
 	}
 
 	/**
 	 * Should modify the list of bundle parameters, if necessary.
 	 * Called during the construction of the class.
+	 *
+	 * This method is invoked before the class is fully initialised!
+	 * It's implementations must not access any fields in a non-lazy way,
+	 * as these are very likely to be uninitialised by the invocation time.
 	 */
 	protected abstract fun modifyBundleParams(list: MutableList<() -> Any?>)
 

@@ -1,13 +1,14 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
-import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.*
 import com.github.mnemotechnician.achievements.core.util.emojiOrName
 import com.github.mnemotechnician.mkui.delegates.bundle
 import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.game.Team
 import mindustry.world.Block
+import mindustry.world.blocks.environment.Floor
 
 /**
  * Requires the player to destroy [number] blocks of the specified [kinds].
@@ -34,22 +35,32 @@ open class DestroyBlocksObjective(
 
 	override fun receiveEvent(event: ObjectiveEvent): Boolean {
 		if (byDeconstruction) {
-			return event is ObjectiveEvents.DeconstructionEvent
+			return event is DeconstructionEvent
 				&& event.building.team() == Vars.player.team()
 				&& event.building.block in kinds
 		} else {
-			return event is ObjectiveEvents.BuildingDestroyedEvent
+			return event is BuildingDestroyedEvent
 				&& event.building.team() != Vars.player.team()
 				&& event.building.team() != Team.derelict
 				&& event.building.block in kinds
 		}
 	}
 
+	/** Adds a placement floor requirement. */
+	fun onFloor(floor: Floor) = this.also {
+		filter { (it as? BuildingEvent)?.building?.floor() == floor }
+	}
+
+	/** Adds a placement overlay requirement. */
+	fun onOverlay(overlay: Floor) = this.also {
+		filter { (it as? BuildingEvent)?.building?.tile?.overlay() == overlay }
+	}
+
 	companion object {
 		val deconstruct by bundle("achievements-core")
 		val destroy by bundle("achievements-core")
 
-		val deconstructionEvent = setOf(ObjectiveEvents.DeconstructionEvent::class.java)
-		val destructionEvent = setOf(ObjectiveEvents.BuildingDestroyedEvent::class.java)
+		val deconstructionEvent = setOf(DeconstructionEvent::class.java)
+		val destructionEvent = setOf(BuildingDestroyedEvent::class.java)
 	}
 }

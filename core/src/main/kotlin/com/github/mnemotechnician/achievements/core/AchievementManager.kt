@@ -69,4 +69,20 @@ object AchievementManager {
 	fun getForName(name: String, ignoreCase: Boolean = true): Achievement? {
 		return allAchievements.find { it.name.equals(name, ignoreCase) }
 	}
+
+	/**
+	 * Resets everything. For debug purposes only.
+	 */
+	fun hardReset() {
+		allAchievements.forEach {
+			it.isCompleted = false
+			it.objectives.forEach {
+				it.reset()
+			}
+		}
+
+		achievements.forEach {
+			it.update()
+		}
+	}
 }
