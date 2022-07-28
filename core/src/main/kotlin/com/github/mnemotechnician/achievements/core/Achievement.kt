@@ -149,7 +149,7 @@ open class Achievement(
 	}
 
 	/** Same as `this@Achievement.addObjective(this)`. */
-	open operator fun Objective.unaryPlus() = objectives.add(this)
+	open operator fun Objective.unaryPlus() = addObjective(this)
 
 	/**
 	 * Notifies this achievement that an event has occurred,

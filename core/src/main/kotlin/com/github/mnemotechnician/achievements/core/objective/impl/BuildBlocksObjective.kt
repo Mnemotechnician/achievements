@@ -14,7 +14,7 @@ import mindustry.world.blocks.environment.Floor
 open class BuildBlocksObjective(
 	number: Int = 1,
 	vararg val kinds: Block
-) : AbstractCounterObjective(number, "building-blocks", acceptedEvents) {
+) : AbstractCounterObjective(number, "build-blocks", acceptedEvents) {
 	constructor(block: Block) : this(1, block)
 
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }

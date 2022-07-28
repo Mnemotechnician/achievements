@@ -364,8 +364,7 @@ open class AchievementTreePane : WidgetGroup() {
 						addLabel(Bundles.objectives, align = Align.left).color(Color.gray).row()
 						achievement.objectives.forEach { obj ->
 							addTable {
-								addLabel({ if (obj.isFulfilled) "[green][X]" else "[gray][ ]" }, wrap = false)
-								addSpace(5f)
+								addLabel({ if (obj.isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false)
 
 								addLabel({ obj.description }, wrap = true, align = Align.left).color(Pal.lightishGray).growX()
 							}.row()
