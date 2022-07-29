@@ -74,7 +74,7 @@ object CoreAchievements {
 				achievement("let-be-light", Blocks.combustionGenerator) {
 					+ BuildBlocksObjective(3, Blocks.combustionGenerator)
 					+ BuildBlocksObjective(5, Blocks.mechanicalDrill, Blocks.pneumaticDrill).filter {
-						((it as? BuildingEvent)?.building as? DrillBuild)?.dominantItem == it
+						((it as? BuildingEvent)?.building as? DrillBuild)?.dominantItem == Items.coal
 					}
 
 					achievement("steampunk", Blocks.steamGenerator) {

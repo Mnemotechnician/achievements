@@ -24,6 +24,7 @@ abstract class ObjectiveEvent {
 	 * listener class of which hasn't been instantiated yet.
 	 */
 	abstract class Listener() {
+		/** Executes [initAction] on creation. */
 		constructor(initAction: Listener.() -> Unit) : this() {
 			initAction(this)
 		}

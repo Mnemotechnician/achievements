@@ -23,7 +23,7 @@ abstract class Objective(
 	 * A unique name of this objective, which should be used to store the state.
 	 * This property depends on the name of the parent achievement and the position of the objective.
 	 *
-	 * Returns an empty string if the parent property hasn't been initialised yet.
+	 * Returns null if the parent property hasn't been initialised yet.
 	 */
 	var uniqueName: String = ""
 		get() {

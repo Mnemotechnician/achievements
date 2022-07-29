@@ -304,14 +304,20 @@ open class AchievementTreePane : WidgetGroup() {
 
 		/** Creates nodes for the child achievements. */
 		fun createChildren() {
-			if (childNodes.isNotEmpty()) childNodes.forEach { it.remove() }
-			childNodes.clear()
-
+			destroyChildren()
 			achievement.children.forEach {
 				childNodes.add(Node(it))
 			}
 
 			invalidate()
+		}
+
+		fun destroyChildren() {
+			if (childNodes.isNotEmpty()) childNodes.forEach {
+				it.destroyChildren()
+				it.remove()
+			}
+			childNodes.clear()
 		}
 
 		/** Rebuilds this node or does nothing if it doesn't have to be rebuilt and [force] is false. */
@@ -322,9 +328,12 @@ open class AchievementTreePane : WidgetGroup() {
 			rebuildImpl()
 			wasUnlocked = completed
 
-			if (achievement.parent?.isCompleted != false) createChildren() // != includes true and null
-
-			childNodes.forEach { it.rebuild() }
+			if (achievement.parent?.isCompleted != false) { // != includes true and null
+				createChildren()
+				childNodes.forEach { it.rebuild() }
+			} else {
+				destroyChildren() // can be required if some unlocked achievements havw gone locked
+			}
 		}
 
 		private fun rebuildImpl() {

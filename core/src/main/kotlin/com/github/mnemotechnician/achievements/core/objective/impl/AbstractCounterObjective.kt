@@ -1,16 +1,16 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
+import com.github.mnemotechnician.achievements.core.StateManager
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle
-import com.github.mnemotechnician.mkui.delegates.setting
 import kotlin.math.min
 
 /**
  * Represents a simple objective that requires the player to do the same thing [targetCount] times.
  *
  * It's assumed that the bundle entry associated with this objective
- * accepts at least 2 parameters (total, target count),
+ * accepts at least 2 parameters (total count, target count),
  * more can be added by implementing [modifyBundleParams]
  */
 abstract class AbstractCounterObjective(
@@ -19,7 +19,7 @@ abstract class AbstractCounterObjective(
 	acceptedEvents: Set<Class<out ObjectiveEvent>>
 ) : Objective(name, acceptedEvents) {
 	/** How many times the desired thing has been done. */
-	var count by setting(0) { uniqueName }
+	var count by StateManager.state(0) { uniqueName }
 	override val isFulfilled get() = count >= targetCount
 	override val progress get() = count / targetCount.toFloat()
 

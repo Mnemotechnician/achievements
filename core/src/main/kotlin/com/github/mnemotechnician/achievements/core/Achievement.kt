@@ -8,7 +8,6 @@ import arc.scene.style.Drawable
 import arc.scene.style.TextureRegionDrawable
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
-import com.github.mnemotechnician.mkui.delegates.setting
 import mindustry.ctype.UnlockableContent
 
 /**
@@ -63,14 +62,17 @@ open class Achievement(
 	 * Whether the user has unlocked this achievement.
 	 * This property delegates to a setting named "achievement.achievement-name.isCompleted".
 	 */
-	var isCompleted by setting(false, "achievement.$name.")
+	var isCompleted by StateManager.state(false) { "achievement.$name." }
+
 	/**
 	 * If [isCompleted] has forcibly been set to true, returns 1.
 	 * Otherwise, returns an average of the progress of every achievement.
 	 */
 	open val progress: Float
 		get() = if (isCompleted || objectives.isEmpty()) 1f else run {
-			objectives.fold(0f) { total, it -> total + it.progress.coerceIn(progressRange) } / objectives.size
+			var p = 0f
+			objectives.forEach{ p =+ it.progress.coerceIn(progressRange) }
+			p / objectives.size
 		}
 
 	/** Whether this achievement has been initialised yet. */

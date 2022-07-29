@@ -1,6 +1,6 @@
 name: "achievements"
 description: '''
-WIP
+WIP mod, adding an achievement tree and also providing an API for other mods to add their own achievements.
 '''
 displayName: "Mindustry Achievements"
 author: "Mnemotechnician"

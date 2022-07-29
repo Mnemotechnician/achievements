@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 class UnlockAchievementObjective(
 	val achievementName: String
 ) : Objective("unlock-achievement") {
-	override val description by dynamicBundle(bundleName, { achievement.name }, { (achievement.progress * 100).roundToInt() })
+	override val description by dynamicBundle(bundleName, { achievement.displayName }, { (achievement.progress * 100).roundToInt() })
 	override val isFulfilled: Boolean get() = achievement.isCompleted
 	override val progress get() = achievement.progress
 
