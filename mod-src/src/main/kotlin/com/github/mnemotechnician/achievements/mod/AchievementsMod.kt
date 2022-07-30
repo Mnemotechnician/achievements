@@ -4,13 +4,13 @@ import arc.Events
 import arc.scene.ui.layout.Table
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.Achievement.AchievementUnlockEvent
+import com.github.mnemotechnician.achievements.gui.AchievementTreeDialog
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
-import com.github.mnemotechnician.achievements.gui.*
+import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import com.github.mnemotechnician.mkui.extensions.dsl.imageButton
 import com.github.mnemotechnician.mkui.extensions.elements.findOrNull
 import mindustry.Vars
 import mindustry.game.EventType
-import mindustry.gen.Icon
 import mindustry.mod.Mod
 
 class AchievementsMod : Mod() {
@@ -36,9 +36,17 @@ class AchievementsMod : Mod() {
 			return
 		}
 
-		// todo create an icon
-		target.imageButton(AStyles.achievementsIcon) {
+		target.imageButton(ASprites.iconAchievements) {
 			achievementTree.show()
-		}.fill()
+		}.fill().with { button ->
+			// move the button
+			target.children.items.let {
+				val pos = it.indexOf(button)
+				if (pos >= 1) {
+					it[pos] = it[pos - 1]
+					it[pos - 1] = button
+				}
+			}
+		}
 	}
 }

@@ -22,14 +22,7 @@ dependencies {
 	implementation(project(":gui"))
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs += arrayOf(
-			"-Xuse-k2",
-			"-Xcontext-receivers"
-		)
-	}
-}
+sourceSets["main"].java.srcDir("$buildDir/gen/kotlin")
 
 val mergeBundles by tasks.registering {
 	outputs.upToDateWhen { false }
@@ -47,7 +40,7 @@ val mergeBundles by tasks.registering {
 			}
 			.distinct()
 			.flatMap {
-				it.listFiles().filter { it.name.endsWith(".properties") && it.name.startsWith("bundle") }
+				it.listFiles()?.filter { it.name.endsWith(".properties") && it.name.startsWith("bundle") } ?: listOf()
 			}
 			.also { if (it.isEmpty()) return@doLast }
 
@@ -60,7 +53,7 @@ val mergeBundles by tasks.registering {
 			}
 		}
 
-		val outputDir = File("$buildDir/genBundles/bundles")
+		val outputDir = layout.buildDirectory.dir("genBundles").get().file("bundles").asFile
 		outputDir.deleteRecursively()
 		outputDir.mkdirs()
 
@@ -74,6 +67,67 @@ val mergeBundles by tasks.registering {
 				target.appendBytes(it.readBytes())
 			}
 		}
+	}
+}
+
+val generateIconAccessors by tasks.registering {
+	val className = "ASprites"
+	outputs.file(layout.buildDirectory.file("gen/kotlin/$className.kt"))
+
+	doLast {
+		layout.buildDirectory.file("gen/kotlin/$className.kt").get().asFile.apply {
+			writeText(buildString {
+				appendLine("""
+					package com.github.mnemotechnician.achievements.mod.gen
+
+					import arc.Core
+					import arc.graphics.g2d.*
+					import arc.scene.style.*
+					
+					
+					/** Generated class containing compile-time accessors for icon assets. */
+					object $className {
+					    fun drawable(name: String) = Core.atlas.drawable("achievements-" + name)!!.also {
+					        if (it !is TextureRegionDrawable) return@also
+					        if (!Core.atlas.isFound(it.region)) throw RuntimeException("Region " + name + " is not found! (Are you accessing AIcon before the end of texture packing?)")
+					    }
+				""".trimIndent())
+
+				projectDir.resolve("assets/sprites/")
+					.walkTopDown()
+					.filter { !it.isDirectory }
+					.filter { it.name.endsWith(".png") }
+					.forEach { file ->
+						val name = file.name.removeSuffix(".png")
+						val canonicalName = buildString {
+							var nextCapital = false
+							name.forEach {
+								if (!it.isLetter() && !it.isDigit()) {
+									nextCapital = true
+								} else {
+									append(if (nextCapital) it.toUpperCase() else it)
+									nextCapital = false
+								}
+							}
+						}
+
+						appendLine("""    val $canonicalName = drawable("$name")""")
+					}
+
+				append("}")
+			})
+		}
+	}
+}
+
+tasks.withType<KotlinCompile> {
+	dependsOn(generateIconAccessors)
+
+	kotlinOptions {
+		freeCompilerArgs += arrayOf(
+			"-Xuse-k2",
+			"-Xcontext-receivers"
+		)
 	}
 }
 
