@@ -5,6 +5,7 @@ import com.github.mnemotechnician.mkui.delegates.dynamicBundle
 
 object Bundles {
 	val locked by abundle()
+	val completed by abundle()
 	val moreInfo by abundle()
 	val lessInfo by abundle()
 	val description by abundle()

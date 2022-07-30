@@ -13,6 +13,7 @@ import arc.scene.ui.Image
 import arc.scene.ui.Label
 import arc.scene.ui.layout.*
 import arc.util.*
+import arc.util.Align.*
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.gui.util.Bundles
@@ -64,7 +65,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 	init {
 		transform = true
-		setOrigin(Align.bottomLeft)
+		setOrigin(bottomLeft)
 
 		addCaptureListener(object : ElementGestureListener() {
 			override fun pan(event: InputEvent?, x: Float, y: Float, deltaX: Float, deltaY: Float) {
@@ -171,6 +172,7 @@ open class AchievementTreePane : WidgetGroup() {
 		Draw.color(AStyles.accent)
 		Lines.stroke(gridHexThickness)
 
+		// todo optimise this mess, jit compilation is unreliable
 		for (hx in xStart..xEnd step xStep) {
 			for (hy in yStart..yEnd step yStep) {
 				hexPositions.forEachIndexed { i, hex ->
@@ -247,6 +249,7 @@ open class AchievementTreePane : WidgetGroup() {
 			}
 
 			node.rebuild()
+			node.layout()
 			node.pack()
 
 			node.x = x + offset + node.branchSize / 2
@@ -273,6 +276,7 @@ open class AchievementTreePane : WidgetGroup() {
 		var offset = 0f
 		node.childNodes.forEach { child ->
 			child.rebuild()
+			child.layout()
 			child.pack()
 
 			child.x = node.x + node.prefWidth / 2 - child.prefWidth / 2 + offset + child.branchSize / 2 - node.childrenBranchSize / 2
@@ -342,6 +346,7 @@ open class AchievementTreePane : WidgetGroup() {
 				addTable {
 					// top bar
 					addStack {
+						// progress bar
 						add(object : Element() {
 							override fun draw() {
 								Draw.color(Pal.accent, 0.5f)
@@ -351,44 +356,56 @@ open class AchievementTreePane : WidgetGroup() {
 						})
 
 						add(createTable {
-							addImage(achievement.icon ?: Icon.none).size(48f).margin(3f)
-							addLabel(achievement.displayName).pad(5f)
+							// icon + background
+							addStack {
+								add(Image(achievement.icon ?: Icon.none))
+								// todo add(Image(ASprites.iconBackground))
+							}.size(48f).margin(5f)
+							addLabel(achievement.displayName, align = Align.right).pad(5f).height(56f).growX()
 						})
 					}.pad(5f).growX().row()
 
-					// more info
 					lateinit var collapser: Collapser
-					textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
-						collapser.isCollapsed = !it
-					}.expandX().pad(5f).right().row()
+					// progress percentage + more info
+					addTable {
+						addLabel({
+							if (achievement.isCompleted) Bundles.completed else "${(achievement.progress * 100f).roundToInt()}%"
+						}, align = left).color(Color.gray).growX()
+
+						textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
+							collapser.isCollapsed = !it
+						}.expandX().pad(5f).right()
+					}.growX().row()
 
 					addCollapser(false) {
 						left().defaults().growX()
 
 						// description
-						addLabel(Bundles.description, align = Align.left).color(Color.gray).row()
-						addLabel(achievement.description, wrap = true, align = Align.left).expand(false, false).row()
+						addLabel(Bundles.description, align = left).color(Color.gray).row()
+						addLabel(achievement.description, wrap = true, align = left).expand(false, false).row()
 
 						// objectives
-						addLabel(Bundles.objectives, align = Align.left).color(Color.gray).row()
+						addLabel(Bundles.objectives, align = left).color(Color.gray).row()
 						achievement.objectives.forEach { obj ->
 							addTable {
-								addLabel({ if (obj.isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false)
+								addLabel({ if (obj.isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false, align = left)
 
-								addLabel({ obj.description }, wrap = true, align = Align.left).color(Pal.lightishGray).growX()
+								addLabel({ obj.description }, wrap = true, align = left).color(Pal.lightishGray).growX()
 							}.row()
 						}
 					}.also { collapser = it.get() }.growX().row()
 				}.minWidth(300f)
 			} else {
+				// "locked"
 				addStack {
-					add(Image(lockedIcon).also { it.setSize(96f) })
+					add(Image(lockedIcon).also {
+						it.setColor(Color.gray)
+					})
 					add(Label(Bundles.locked).also {
 						it.setAlignment(Align.top)
-						it.setHeight(96f)
-						it.setColor(Color.red)
+						it.setColor(Color.crimson)
 					})
-				}.minWidth(100f)
+				}.height(36f).minWidth(100f)
 			}
 		}
 
@@ -409,10 +426,10 @@ open class AchievementTreePane : WidgetGroup() {
 			Lines.stroke(2f)
 
 			val lineMargin = min(prefWidth / childNodes.size, 10f)
-			val from = Tmp.v1.set(getX(Align.center), getY(Align.top)).sub(lineMargin * (childNodes.size - 1) / 2, 0f)
+			val from = Tmp.v1.set(getX(center), getY(Align.top)).sub(lineMargin * (childNodes.size - 1) / 2, 0f)
 
 			childNodes.forEach { node ->
-				val to = Tmp.v2.set(node.getX(Align.center), node.getY(Align.bottom))
+				val to = Tmp.v2.set(node.getX(center), node.getY(bottom))
 				if (to.y <= from.y) return@forEach
 
 				val vmiddle = (to.y - from.y) / 2
@@ -436,7 +453,7 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 		private val tmpVec = Vec2()
 
-		val zoomRange = 0.5f..3f
+		val zoomRange = 0.25f..3f
 		val radiusRange = 10f..500f
 
 		const val gridHexThickness = 5f

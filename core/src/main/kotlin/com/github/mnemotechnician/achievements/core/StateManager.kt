@@ -30,8 +30,6 @@ object StateManager {
 	init {
 		Timer.schedule({
 			invalidateAll()
-			// todo remove
-			Log.info("invalidating")
 		}, updateInterval, updateInterval)
 	}
 

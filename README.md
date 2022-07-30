@@ -15,6 +15,5 @@ The functionality of this project is split into 3 separate subprojects:
 * Use `Seq` instead of `ArrayList` in places with heavy recursion
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
-* A gradle task generating a class containing accessors for these icons
 * Split achievement saves for different saves / campaign
 * StateManager should be a custom implementation of Settings, possibly one that uses kotlinx.serialization.json

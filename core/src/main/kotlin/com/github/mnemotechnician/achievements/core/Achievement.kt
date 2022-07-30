@@ -70,9 +70,11 @@ open class Achievement(
 	 */
 	open val progress: Float
 		get() = if (isCompleted || objectives.isEmpty()) 1f else run {
-			var p = 0f
-			objectives.forEach{ p =+ it.progress.coerceIn(progressRange) }
-			p / objectives.size
+			objectives.fold(0f) { t, o -> t + o.progress.coerceIn(progressRange) } / objectives.size
+
+			//var p = 0f
+			//objectives.forEach { p =+ it.progress.coerceIn(progressRange) }
+			//p / objectives.size
 		}
 
 	/** Whether this achievement has been initialised yet. */

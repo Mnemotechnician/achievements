@@ -32,7 +32,7 @@ class AchievementTreeDialog : Dialog() {
 			val achievementsTitle by Bundles.adynamic({ AchievementManager.allAchievements.size })
 
 			clearChildren()
-			addLabel({ achievementsTitle }).color(AStyles.accent).growX().row()
+			addLabel({ achievementsTitle }).color(AStyles.accent.mul(1.25f)).growX().row()
 			hsplitter(AStyles.accent, padBottom = 0f)
 		}
 
@@ -42,7 +42,7 @@ class AchievementTreeDialog : Dialog() {
 			addTable {
 				center().bottom().addTable(Styles.black5) {
 					addImage(Icon.warning).color(Color.red).marginRight(10f)
-					addLabel(Bundles.unfairGame, wrap = true).color(Color.red).scaleFont(1.2f)
+					addLabel(Bundles.unfairGame, wrap = true).color(Color.red).scaleFont(1.2f).growX()
 				}.pad(5f).visible { !isFair }
 			}
 			// search bar
