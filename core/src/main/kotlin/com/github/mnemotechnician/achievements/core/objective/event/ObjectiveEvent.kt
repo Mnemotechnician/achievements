@@ -63,4 +63,14 @@ abstract class ObjectiveEvent {
 			fireOnIf(type.java, condition, transform)
 		}
 	}
+
+	/** Same as `Listener({ fireOn(event, action) })`. */
+	open class EventListener<E : Any>(event: Class<E>, condition: E.() -> Boolean, action: E.() -> ObjectiveEvent?) : Listener() {
+		init {
+			fireOnIf<E, ObjectiveEvent>(event, condition, action)
+		}
+
+		constructor(event: KClass<E>, condition: E.() -> Boolean, action: E.() -> ObjectiveEvent?)
+			: this(event.java, condition, action)
+	}
 }

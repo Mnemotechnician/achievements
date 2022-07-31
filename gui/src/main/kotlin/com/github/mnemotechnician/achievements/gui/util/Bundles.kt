@@ -12,6 +12,8 @@ object Bundles {
 	val objectives by abundle()
 
 	val unfairGame by abundle()
+	val searchHint by abundle()
+	val tooManyResults by abundle()
 
 	fun abundle() = bundle("achievements-mod")
 	fun adynamic(vararg subs: () -> Any?) = dynamicBundle("achievements-mod", *subs)

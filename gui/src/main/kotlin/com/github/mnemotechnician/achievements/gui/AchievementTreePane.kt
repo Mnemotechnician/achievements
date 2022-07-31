@@ -32,12 +32,17 @@ open class AchievementTreePane : WidgetGroup() {
 	/** The velocity with which the [position] changes. */
 	var cameraVelocity = Vec2()
 	var zoom = 1f
-		set(value) {
-			field = value.coerceIn(zoomRange)
-//			recalculateGrid()
-		}
+		set(value) { field = value.coerceIn(zoomRange) }
 	val viewportWidth get() = width / zoom
 	val viewportHeight get() = height / zoom
+
+
+	/**
+	 * If not 0, 0, the camera will traverse to this position, ignoring any input.
+	 * After it gets close enough to the destination, this vector is reset.
+	 */
+	val traverseTarget = Vec2()
+	val isTraversing get() = !traverseTarget.isZero
 
 	val treeSize = Rect()
 
@@ -69,6 +74,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 		addCaptureListener(object : ElementGestureListener() {
 			override fun pan(event: InputEvent?, x: Float, y: Float, deltaX: Float, deltaY: Float) {
+				if (isTraversing) return
 				position.sub(deltaX / zoom, deltaY / zoom)
 			}
 
@@ -77,6 +83,7 @@ open class AchievementTreePane : WidgetGroup() {
 			}
 
 			override fun fling(event: InputEvent?, velocityX: Float, velocityY: Float, button: KeyCode?) {
+				if (isTraversing) return
 				cameraVelocity.sub(velocityX / zoom / 60f, velocityY / zoom / 60f)
 			}
 		})
@@ -87,10 +94,22 @@ open class AchievementTreePane : WidgetGroup() {
 
 	override fun act(delta: Float) {
 		super.act(delta)
-		if (enforceBounds) keepInBounds()
 
-		position.add(cameraVelocity.x * Time.delta, cameraVelocity.y * Time.delta)
-		cameraVelocity.lerpDelta(0f, 0f, 0.1f)
+		if (!isTraversing) {
+			if (enforceBounds) keepInBounds()
+
+			position.add(cameraVelocity.x * Time.delta, cameraVelocity.y * Time.delta)
+			cameraVelocity.lerpDelta(0f, 0f, 0.1f)
+		} else {
+			cameraVelocity.setZero()
+			val limit = min(Tmp.v1.set(traverseTarget).sub(position).len2().pow(0.25f), traverseSpeed)
+			val movement = Tmp.v1.set(traverseTarget).sub(position).limit(limit)
+			position.add(movement)
+
+			if (Tmp.v1.set(position).sub(traverseTarget).isZero(10f)) {
+				traverseTarget.setZero() // complete
+			}
+		}
 	}
 
 	/**
@@ -122,7 +141,7 @@ open class AchievementTreePane : WidgetGroup() {
 		val cornerAngle = 180f * (hexGridSides - 2) / hexGridSides
 		val middleCorner = 180f - cornerAngle
 		val sideSqr = 2 * radius * radius * (1 - Mathf.cosDeg(middleCorner))
-		val middleLine = Mathf.sqrt((radius * radius + gridHexThickness * 3) - sideSqr / 4) * 2
+		val middleLine = Mathf.sqrt((radius * radius) - sideSqr / 4) * 2 + gridHexThickness * 3
 
 		val oddOffsetAngle = hexVertexAngleStart - 360 / hexGridSides * 3.5f
 		val oddOffset = Tmp.v3.set(Angles.trnsx(oddOffsetAngle, middleLine), Angles.trnsy(oddOffsetAngle, middleLine))
@@ -169,7 +188,7 @@ open class AchievementTreePane : WidgetGroup() {
 		val xEnd = (cx + viewportWidth / 2).toInt() + xStep * 2
 		val yEnd = (cy + viewportHeight / 2).toInt() + yStep * 2
 
-		Draw.color(AStyles.accent)
+		Draw.color(AStyles.secondary, color.a)
 		Lines.stroke(gridHexThickness)
 
 		// todo optimise this mess, jit compilation is unreliable
@@ -287,6 +306,11 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 	}
 
+	/** Traverses the camera to show the providen node. */
+	fun traverseToNode(node: Node) {
+		traverseTarget.set(node.getX(center), node.getY(center))
+	}
+
 	/**
 	 * Represents an achievement node.
 	 * Nodes are always bound to their parent panes; when a node is created, it is added to the parent pane as a child.
@@ -360,7 +384,7 @@ open class AchievementTreePane : WidgetGroup() {
 							addStack {
 								add(Image(achievement.icon ?: Icon.none))
 								// todo add(Image(ASprites.iconBackground))
-							}.size(48f).margin(5f)
+							}.size(48f).pad(5f)
 							addLabel(achievement.displayName, align = Align.right).pad(5f).height(56f).growX()
 						})
 					}.pad(5f).growX().row()
@@ -370,7 +394,7 @@ open class AchievementTreePane : WidgetGroup() {
 					addTable {
 						addLabel({
 							if (achievement.isCompleted) Bundles.completed else "${(achievement.progress * 100f).roundToInt()}%"
-						}, align = left).color(Color.gray).growX()
+						}, align = left).color(Color.gray).pad(5f).growX()
 
 						textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
 							collapser.isCollapsed = !it
@@ -423,7 +447,7 @@ open class AchievementTreePane : WidgetGroup() {
 			super.draw()
 
 			// lines between this and child nodes
-			Lines.stroke(2f)
+			Lines.stroke(if (connectionThickness * zoom < 1f) 1 / zoom else connectionThickness)
 
 			val lineMargin = min(prefWidth / childNodes.size, 10f)
 			val from = Tmp.v1.set(getX(center), getY(Align.top)).sub(lineMargin * (childNodes.size - 1) / 2, 0f)
@@ -453,6 +477,7 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 		private val tmpVec = Vec2()
 
+		val traverseSpeed = 50f
 		val zoomRange = 0.25f..3f
 		val radiusRange = 10f..500f
 
@@ -461,5 +486,6 @@ open class AchievementTreePane : WidgetGroup() {
 		const val hexVertexAngleStart = 90f
 
 		val lockedIcon = Icon.lock!!
+		val connectionThickness = 2f
 	}
 }

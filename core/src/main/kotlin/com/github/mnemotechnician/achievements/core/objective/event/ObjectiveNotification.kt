@@ -10,10 +10,15 @@ import com.github.mnemotechnician.achievements.core.AchievementManager
  * instances of this class are (normally) never created directly
  */
 abstract class ObjectiveNotification : ObjectiveEvent() {
-	class Notifier() : Listener() {
-		/** Executes [initAction] on creation. */
+	open inner class Notifier() : Listener() {
+		/** Executes [initAction] upon creation. */
 		constructor(initAction: Notifier.() -> Unit) : this() {
 			initAction(this)
+		}
+
+		/** Begins listening for [trigger] upon creation. */
+		constructor(trigger: Enum<*>, action: () -> ObjectiveNotification?) : this() {
+			fireOn(trigger, action)
 		}
 
 		/** See [NotificationHelper.fireOn]. */

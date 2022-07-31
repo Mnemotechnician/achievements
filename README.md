@@ -3,11 +3,11 @@ An overcomplicated achievement framework and a standalone mod at the same time.
 
 The functionality of this project is split into 3 separate subprojects:
 
-|
-|  -----: | Subproject: | Module:                                                                                         |
-|         | **core**    | the achievement framework.                                                                      |
-|         | **gui**     | contains an achievement tree dialog neccessary to display the achievements the player has.      |
-|         | **mod-src** | includes some built-in achievements and creates a hud button that shows the achievement dialog. |
+| Subproject: | Module:                                                                                         |
+| :----       | ----:                                                                                           |
+| **core**    | the achievement framework.                                                                      |
+| **gui**     | contains an achievement tree dialog neccessary to display the achievements the player has.      |
+| **mod-src** | includes some built-in achievements and creates a hud button that shows the achievement dialog. |
 
 
 # TODO

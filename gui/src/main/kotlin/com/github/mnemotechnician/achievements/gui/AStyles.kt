@@ -8,12 +8,12 @@ import mindustry.gen.Tex
 import mindustry.ui.Fonts
 
 object AStyles {
-	val accent = Color.valueOf("2C2D38FF")!!
+	val accent = Color.valueOf("#566594")!!
+	val secondary = Color.valueOf("2c2d38")!!
 
 	val whiteui = Tex.whiteui as TextureRegionDrawable
 	val grayui = whiteui.tint(0.4f, 0.4f, 0.4f, 0.4f)!!
 
-	val achievementsIcon = drawable("icon-achievements")
 	val achievementBackground = drawable("achievement-background")
 
 	val achievementCornerUp = drawable("achievement-button-corner-up")
