@@ -42,11 +42,15 @@ object CoreAchievements {
 						+ KillUnitsObjective(8, UnitTypes.flare, UnitTypes.horizon)
 					}
 				}
+
+				achievement("alien-technology", Blocks.logicProcessor) {
+					+ BuildBlocksObjective(1, Blocks.microProcessor, Blocks.logicProcessor)
+				}
 			}
 
 			achievement("begin-mining", Blocks.mechanicalDrill) {
 				+ BuildBlocksObjective(4, Blocks.mechanicalDrill)
-				+ BuildBlocksObjective(10, Blocks.conveyor)
+				+ BuildBlocksObjective(10, Blocks.conveyor, Blocks.titaniumConveyor)
 
 				achievement("pressure-powered", Blocks.pneumaticDrill) {
 					+ BuildBlocksObjective(3, Blocks.pneumaticDrill)
@@ -55,6 +59,10 @@ object CoreAchievements {
 				achievement("get-hydrated", Liquids.water) {
 					+ BuildBlocksObjective(Blocks.mechanicalPump)
 					+ BuildBlocksObjective(10, Blocks.conduit)
+
+					achievement("underground-waters", Blocks.waterExtractor) {
+						+ BuildBlocksObjective(5, Blocks.waterExtractor)
+					}
 				}
 			}
 
@@ -69,6 +77,14 @@ object CoreAchievements {
 
 				achievement("upgrades-people", Icon.up.tint(Color.green)) {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
+
+					achievement("why", Blocks.router) {
+						+ BuildBlocksObjective(5, Blocks.router, Blocks.router, Blocks.router).filter {
+							(it as? BuildingEvent ?: return@filter false).building.proximity.any {
+								it?.block() == Blocks.router
+							}
+						}
+					}
 				}
 
 				achievement("let-be-light", Blocks.combustionGenerator) {
@@ -80,6 +96,11 @@ object CoreAchievements {
 					achievement("steampunk", Blocks.steamGenerator) {
 						+ BuildBlocksObjective(3, Blocks.steamGenerator)
 						+ UnlockAchievementObjective("pressure-powered")
+					}
+
+					achievement("ecological", Blocks.solarPanel) {
+						+ BuildBlocksObjective(10, Blocks.solarPanel)
+						+ BuildBlocksObjective(5, Blocks.battery, Blocks.batteryLarge)
 					}
 				}
 

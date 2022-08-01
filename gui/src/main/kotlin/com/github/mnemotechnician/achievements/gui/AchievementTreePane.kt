@@ -191,21 +191,18 @@ open class AchievementTreePane : WidgetGroup() {
 		Draw.color(AStyles.secondary, color.a)
 		Lines.stroke(gridHexThickness)
 
-		// todo optimise this mess, jit compilation is unreliable
 		for (hx in xStart..xEnd step xStep) {
 			for (hy in yStart..yEnd step yStep) {
-				hexPositions.forEachIndexed { i, hex ->
-					val pos = Tmp.v3.set(hex).add(hx.toFloat(), hy.toFloat())
-
+				hexPositions.forEach { hex ->
 					(1 until hexVertices.size).forEach {
 						val v1 = hexVertices[it - 1]
 						val v2 = hexVertices[it]
 
 						Lines.line(
-							pos.x + v1.x,
-							pos.y + v1.y,
-							pos.x + v2.x,
-							pos.y + v2.y
+							hex.x + hx + v1.x,
+							hex.y + hy + v1.y,
+							hex.x + hx + v2.x,
+							hex.y + hy + v2.y
 						)
 					}
 				}
@@ -316,7 +313,7 @@ open class AchievementTreePane : WidgetGroup() {
 	 * Nodes are always bound to their parent panes; when a node is created, it is added to the parent pane as a child.
 	 */
 	inner class Node(val achievement: Achievement) : Table(AStyles.achievementBackground) {
-		private var wasUnlocked = false
+		private var wasCompleted = false
 		val childNodes = ArrayList<Node>()
 
 		/** The width child nodes occupy. */
@@ -352,9 +349,9 @@ open class AchievementTreePane : WidgetGroup() {
 		fun rebuild(force: Boolean = false) {
 			val completed = achievement.isCompleted
 
-			if (!force && wasUnlocked == completed) return
+			if (!force && wasCompleted == completed) return
 			rebuildImpl()
-			wasUnlocked = completed
+			wasCompleted = completed
 
 			if (achievement.parent?.isCompleted != false) { // != includes true and null
 				createChildren()
@@ -455,15 +452,19 @@ open class AchievementTreePane : WidgetGroup() {
 			childNodes.forEach { node ->
 				val to = Tmp.v2.set(node.getX(center), node.getY(bottom))
 				if (to.y <= from.y) return@forEach
-
 				val vmiddle = (to.y - from.y) / 2
-				Draw.color(if (wasUnlocked) Color.white else Color.crimson)
+
+				Draw.color(when {
+					node.achievement.isCompleted -> AStyles.accent // completed
+					wasCompleted -> Color.gray // unlocked but not completed
+					else -> Pal.darkestGray // locked
+				})
 				Lines.curve(
 					from.x, from.y,
 					from.x, from.y + vmiddle,
 					to.x, to.y - vmiddle,
 					to.x, to.y,
-					from.dst(to).roundToInt()
+					from.dst2(to).pow(0.3f).roundToInt()
 				)
 
 				from.add(lineMargin, 0f)
