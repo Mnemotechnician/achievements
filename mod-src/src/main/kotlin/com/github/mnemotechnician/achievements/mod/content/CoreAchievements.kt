@@ -71,10 +71,6 @@ object CoreAchievements {
 				+ BuildBlocksObjective(2, Blocks.router)
 				+ BuildBlocksObjective(3, Blocks.junction)
 
-				achievement("over-the-hill", Blocks.itemBridge) {
-					+ BuildBlocksObjective(2, Blocks.itemBridge)
-				}
-
 				achievement("upgrades-people", Icon.up.tint(Color.green)) {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
 

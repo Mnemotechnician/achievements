@@ -457,7 +457,7 @@ open class AchievementTreePane : WidgetGroup() {
 				Draw.color(when {
 					node.achievement.isCompleted -> AStyles.accent // completed
 					wasCompleted -> Color.gray // unlocked but not completed
-					else -> Pal.darkestGray // locked
+					else -> Color.crimson // locked
 				})
 				Lines.curve(
 					from.x, from.y,
