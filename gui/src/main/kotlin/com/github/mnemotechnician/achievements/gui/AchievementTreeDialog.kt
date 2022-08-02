@@ -12,8 +12,8 @@ import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.util.isFair
 import com.github.mnemotechnician.achievements.gui.util.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
-import com.github.mnemotechnician.mkui.extensions.elements.*
-import com.github.mnemotechnician.mkui.extensions.groups.*
+import com.github.mnemotechnician.mkui.extensions.elements.hint
+import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
 import mindustry.gen.Icon
 import mindustry.gen.Tex
 import mindustry.ui.Styles
@@ -49,13 +49,6 @@ class AchievementTreeDialog : Dialog() {
 
 		cont.addStack {
 			add(treePane)
-			// unfair game mode warning
-			addTable {
-				center().bottom().addTable(Styles.black5) {
-					addImage(Icon.warning).color(Color.red).marginRight(10f)
-					addLabel(Bundles.unfairGame, wrap = true).color(Color.red).scaleFont(1.2f).growX()
-				}.pad(5f).visible { !isFair }
-			}
 			// search bar
 			addTable {
 				top().right()

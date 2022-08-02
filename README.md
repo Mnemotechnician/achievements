@@ -19,3 +19,4 @@ The functionality of this project is split into 3 separate subprojects:
 * Split achievement saves for different saves / campaign
 * StateManager should be a custom implementation of Settings, possibly one that uses kotlinx.serialization.json
 * Add "requirements" as a replacement for (or addiction to?) objective filters. Requirements modify objectives in a way that the player can easily understand.
+* fix the exploit that allows to complege buildblockobjectives by rebuilding the same block

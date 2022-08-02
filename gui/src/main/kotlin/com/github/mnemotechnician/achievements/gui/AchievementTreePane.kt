@@ -36,7 +36,6 @@ open class AchievementTreePane : WidgetGroup() {
 	val viewportWidth get() = width / zoom
 	val viewportHeight get() = height / zoom
 
-
 	/**
 	 * If not 0, 0, the camera will traverse to this position, ignoring any input.
 	 * After it gets close enough to the destination, this vector is reset.
