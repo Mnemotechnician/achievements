@@ -149,6 +149,7 @@ object StateManager {
 	 */
 	fun loadState(file: Fi?) {
 		if (file == null) {
+			lastStateFile = null
 			values.clear()
 			invalidateAll()
 			return

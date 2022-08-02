@@ -16,20 +16,20 @@ class ObjectiveEvents {
 
 	/** A building has been built. */
 	class ConstructionEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null && isFair }) {
+		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null }) {
 			ConstructionEvent(tile.build)
 		} })
 	}
 
 	/** A building has been deconstructed */
 	class DeconstructionEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { breaking && tile?.build != null && isFair }) {
+		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { breaking && tile?.build != null }) {
 			DeconstructionEvent(tile.build)
 		} })
 	}
 
 	class BuildingDestroyedEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockDestroyEvent::class, { tile.build != null && isFair }) {
+		class Init : Listener({ fireOnIf(BlockDestroyEvent::class, { tile.build != null }) {
 			BuildingDestroyedEvent(tile.build)
 		} })
 	}
@@ -39,7 +39,7 @@ class ObjectiveEvents {
 	 * @param entity either a [Building] or a [MindustryUnit].
 	 */
 	class UnitConstructionEvent(unit: MindustryUnit, val constructor: Entityc?) : UnitEvent(unit) {
-		class Init : Listener({ fireOnIf(UnitCreateEvent::class, { unit.playerTeam && isFair }) {
+		class Init : Listener({ fireOnIf(UnitCreateEvent::class, { unit.playerTeam }) {
 			UnitConstructionEvent(unit, spawner ?: spawnerUnit)
 		} })
 	}
@@ -47,7 +47,7 @@ class ObjectiveEvents {
 	/** A unit of the player's team has been destroyed. */
 	class UnitLostEvent(unit: MindustryUnit)  : UnitEvent(unit) {
 		class Init : Listener({
-			fireOnIf(UnitDestroyEvent::class, { unit.playerTeam && isFair }) {
+			fireOnIf(UnitDestroyEvent::class, { unit.playerTeam }) {
 				UnitLostEvent(unit)
 			}
 		})
@@ -56,7 +56,7 @@ class ObjectiveEvents {
 	/** An enemy unit has been destroyed. Not necessarily by the player team. */
 	class UnitDestroyedEvent(unit: MindustryUnit)  : UnitEvent(unit) {
 		class Init : Listener({
-			fireOnIf(UnitDestroyEvent::class, { !unit.playerTeam && isFair }) {
+			fireOnIf(UnitDestroyEvent::class, { !unit.playerTeam }) {
 				UnitDestroyedEvent(unit)
 			}
 		})
