@@ -78,9 +78,8 @@ inline fun Achievement.achievement(
 	AchievementManager.register(it)
 }
 
-// todo context receivers don't work in intellij
-// /** Adds an objective to this achievement. */
-// context(Objective, Achievement)
-// operator fun Objective.unaryPlus() {
-// 	objectives.add(this)
-// }
+/** Adds an objective to this achievement. */
+context(Objective, Achievement)
+operator fun Objective.unaryPlus() {
+	this@Achievement.objectives.add(this@Objective)
+}

@@ -98,7 +98,7 @@ open class Achievement(
 		isInit = true
 
 		validate()
-		update()
+		update(true)
 	}
 
 	/**
@@ -119,10 +119,13 @@ open class Achievement(
 		}
 	}
 
-	/** Updates the state of this achievement. */
-	open fun update() {
+	/** 
+	 * Updates the state of this achievement.
+	 * @param silent if true, no events should be fired.
+	 */
+	open fun update(silent: Boolean) {
 		if (objectives.all { it.isFulfilled }) {
-			complete()
+			complete(silent)
 		}
 	}
 
@@ -163,15 +166,18 @@ open class Achievement(
 			children.forEach { it.handleEvent(event) }
 		} else {
 			objectives.forEach { it.handleEvent(event) }
-			update()
+			update(false)
 		}
 	}
 
-	/** Marks this achievement as completed. */
-	fun complete() {
+	/** 
+	 * Marks this achievement as completed.
+	 * @param silent if false and the achievement hasn't been completed yet, an [AchievementUnlockEvent] is fired.
+	 */
+	fun complete(silent: Boolean = false) {
 		if (!isCompleted) {
 			isCompleted = true
-			Events.fire(AchievementUnlockEvent(this))
+			if (!silent) Events.fire(AchievementUnlockEvent(this))
 		}
 	}
 

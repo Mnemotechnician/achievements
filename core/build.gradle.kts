@@ -21,7 +21,10 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		freeCompilerArgs += "-Xuse-k2"
+		freeCompilerArgs += arrayOf(
+			"-Xuse-k2",
+			"-Xcontext-receivers"
+		)
 	}
 }
 
