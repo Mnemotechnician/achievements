@@ -187,7 +187,7 @@ open class AchievementTreePane : WidgetGroup() {
 		val xEnd = (cx + viewportWidth / 2).toInt() + xStep * 2
 		val yEnd = (cy + viewportHeight / 2).toInt() + yStep * 2
 
-		Draw.color(AStyles.secondary, color.a)
+		Draw.color(AStyles.secondary, parentAlpha)
 		Lines.stroke(gridHexThickness)
 
 		for (hx in xStart..xEnd step xStep) {

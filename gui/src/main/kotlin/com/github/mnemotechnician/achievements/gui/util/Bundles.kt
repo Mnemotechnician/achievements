@@ -15,6 +15,11 @@ object Bundles {
 	val searchHint by abundle()
 	val tooManyResults by abundle()
 
+	val campaign by abundle()
+	val multiplayer by abundle()
+	val showInfo by abundle()
+	val hideInfo by abundle()
+
 	fun abundle() = bundle("achievements-mod")
 	fun adynamic(vararg subs: () -> Any?) = dynamicBundle("achievements-mod", *subs)
 }

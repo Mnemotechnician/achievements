@@ -262,7 +262,7 @@ object StateManager {
 	fun determineSaveName() = when {
 		Vars.state.isCampaign -> "campaign"
 		Vars.net.client() -> "multiplayer"
-		!Vars.state.`is`(State.menu) -> "custom-${Vars.state.map.name()}-${Vars.state.map.author()}"
+		!Vars.state.`is`(State.menu) -> "custom-${Vars.state.map?.name()}-${Vars.state.map?.author()}"
 		else -> "campaign"
 	}
 

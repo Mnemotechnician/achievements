@@ -2,20 +2,25 @@ package com.github.mnemotechnician.achievements.gui
 
 import arc.Events
 import arc.graphics.Color
+import arc.math.Interp
 import arc.scene.Action
 import arc.scene.Scene
+import arc.scene.actions.Actions.*
+import arc.scene.event.Touchable
 import arc.scene.ui.*
 import arc.scene.ui.layout.Collapser
 import arc.scene.ui.layout.Table
+import arc.util.Align
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
-import com.github.mnemotechnician.achievements.core.util.isFair
 import com.github.mnemotechnician.achievements.gui.util.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.hint
-import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
+import mindustry.Vars
+import mindustry.core.GameState.State
 import mindustry.gen.Icon
 import mindustry.gen.Tex
+import mindustry.graphics.Pal
 import mindustry.ui.Styles
 import kotlin.math.roundToInt
 
@@ -49,11 +54,47 @@ class AchievementTreeDialog : Dialog() {
 
 		cont.addStack {
 			add(treePane)
+			// stats
+			addTable {
+				top().left()
+
+				lateinit var statTable: Table
+				// toggle button
+				lateinit var icon: Image
+				toggleButton({
+					addImage(Icon.left).with { icon = it }.padRight(5f)
+					addLabel({ if (!isChecked) Bundles.showInfo else Bundles.hideInfo }).color(Pal.lightishGray)
+				}, AStyles.clearFlatTogglet) {
+					// show or hide
+					statTable.addAction(if (it) fadeIn(0.8f, Interp.smooth) else fadeOut(0.8f, Interp.pow3In))
+					// rotate the icon by 90 degrees
+					icon.addAction(if (it) rotateTo(90f, 1f, Interp.bounceOut) else rotateTo(0f, 1f, Interp.smooth2))
+				}.size(150f, 40f).left().row()
+
+				// info
+				addTable(AStyles.flatBorder1.tint(Pal.darkOutline)) {
+					statTable = this
+					color.a = 0f
+					touchable = Touchable.disabled
+					left().defaults().left()
+
+					val treeKind by Bundles.adynamic({ when {
+						Vars.state.isCampaign -> Bundles.campaign
+						Vars.net.client() -> Bundles.multiplayer
+						Vars.state.`is`(State.menu).not() -> Vars.state.map?.name()
+						else -> Bundles.campaign
+					} })
+					val totalAchievements by Bundles.adynamic({ AchievementManager.countCompleted() }, { AchievementManager.allAchievements.size })
+
+					addLabel({ treeKind }).marginBottom(10f).row()
+					addLabel({ totalAchievements })
+				}.pad(5f)
+			}
 			// search bar
 			addTable {
 				top().right()
 
-				addTable(Tex.button) {
+				addTable(AStyles.flatBorder1.tint(Pal.darkOutline)) {
 					textField("", Styles.areaField) {
 						searchFor(it)
 					}.growX().with {
@@ -70,7 +111,7 @@ class AchievementTreeDialog : Dialog() {
 					}.with {
 						searchCollapser = it
 					}.growX().maxHeight(400f)
-				}.width(400f)
+				}.width(300f)
 			}
 		}.grow()
 
@@ -119,9 +160,9 @@ class AchievementTreeDialog : Dialog() {
 		val node get() = treePane.allNodes.find { it.achievement == achievement }
 
 		init {
-			addLabel("${(achievement.progress * 100).roundToInt()}%".padStart(4, '0')).color(Color.gray)
-			addSpace(5f)
-			addLabel(achievement.displayName).color(AStyles.accent)
+			addLabel("${(achievement.progress * 100).roundToInt()}%".padStart(4, ' ')).color(Color.gray)
+
+			addLabel(achievement.displayName, align = Align.right).color(AStyles.accent).growX()
 
 			clicked {
 				node?.let { treePane.traverseToNode(it) }

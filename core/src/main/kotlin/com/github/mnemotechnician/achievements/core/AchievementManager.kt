@@ -85,4 +85,9 @@ object AchievementManager {
 			it.update(true)
 		}
 	}
+
+	/** Counts completed achievements. */
+	fun countCompleted(): Int {
+		return allAchievements.count { it.isCompleted }
+	}
 }

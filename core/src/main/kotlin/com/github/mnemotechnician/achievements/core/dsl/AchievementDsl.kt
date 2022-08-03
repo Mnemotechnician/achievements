@@ -79,7 +79,7 @@ inline fun Achievement.achievement(
 }
 
 /** Adds an objective to this achievement. */
-context(Objective, Achievement)
+context(Achievement)
 operator fun Objective.unaryPlus() {
-	this@Achievement.objectives.add(this@Objective)
+	this@Achievement.addObjective(this@Objective)
 }

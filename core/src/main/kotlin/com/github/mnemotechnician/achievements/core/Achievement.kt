@@ -153,8 +153,10 @@ open class Achievement(
 		if (isInit) objective.init()
 	}
 
-	/** Same as `this@Achievement.addObjective(this)`. */
-	open operator fun Objective.unaryPlus() = addObjective(this)
+	/** Adds an objective to this achievement. */
+	operator fun Objective.unaryPlus() {
+		this@Achievement.addObjective(this)
+	}
 
 	/**
 	 * Notifies this achievement that an event has occurred,
