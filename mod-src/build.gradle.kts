@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	kotlin("jvm") version "1.7.0"
+	`maven-publish`
+	id("org.jetbrains.dokka") version "1.6.10"
 }
 
 val jarName = "achievements"
@@ -72,6 +74,8 @@ val mergeBundles by tasks.registering {
 
 val generateIconAccessors by tasks.registering {
 	val className = "ASprites"
+
+	inputs.dir(projectDir.resolve("assets").absolutePath)
 	outputs.file(layout.buildDirectory.file("gen/kotlin/$className.kt"))
 
 	doLast {
