@@ -35,7 +35,7 @@ abstract class Objective(
 
 	/** The name this objective should be referred to in bundles. */
 	val bundleName by lazy { "objective.$name" }
-	/** The name of this objective, displayed in-game. */
+	/** The name of this objective, displayed in-game. Currently unused. */
 	lateinit var displayName: String
 	/** The description of this objective displayed in-game. */
 	abstract val description: String
@@ -52,6 +52,10 @@ abstract class Objective(
 	/** Objective filters. If one of these returns false, the event is to be ignored. */
 	val filters = ArrayList<Filter<Objective, ObjectiveEvent>>(3)
 
+	/** Whether this objective has been initialised yet. */
+	var isInit = false
+		protected set
+
 	/**
 	 * Initialises this achievement.
 	 * Called by the parent achievement during its initialisation or immediately after being added.
@@ -62,6 +66,7 @@ abstract class Objective(
 		}
 
 		acceptedEvents.forEach { AchievementManager.addEvent(it) }
+		isInit = true
 	}
 
 	/** Resets this objective to the uncompleted state. */

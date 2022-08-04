@@ -1,5 +1,6 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
+import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNotification
@@ -12,7 +13,10 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNot
  * see the KDoc of [Objective] and [AbstractCounterObjective] to get more info.
  *
  * By default, two parameters are providen to the underlying description
- * bundle of this objective, {0} - current count and {1} - target count.
+ * bundle of this objective:
+ * * {0} - current count
+ * * {1} - target count.
+ *
  * Optionally, you can provide a list of lambdas as the [bundleArgs]
  * parameter. The values they return will be added to the list of parameters:
  * {2} - the return value of the first lambda, {3} - of the second, etc.
