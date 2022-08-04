@@ -2,7 +2,7 @@ package com.github.mnemotechnician.achievements.gui
 
 import arc.Core
 import arc.graphics.Color
-import arc.scene.style.TextureRegionDrawable
+import arc.scene.style.*
 import arc.scene.ui.TextButton.TextButtonStyle
 import mindustry.gen.Tex
 import mindustry.ui.Fonts
@@ -14,7 +14,7 @@ object AStyles {
 
 	val whiteui = Tex.whiteui as TextureRegionDrawable
 	val grayui = whiteui.tint(0.4f, 0.4f, 0.4f, 0.4f)!!
-	val flatBorder1 = drawable("flat-border-1") as TextureRegionDrawable
+	val flatBorder1 = drawable("flat-border-1") as ScaledNinePatchDrawable
 
 	val achievementBackground = drawable("achievement-background")
 
@@ -23,10 +23,13 @@ object AStyles {
 
 	val achievementb = TextButtonStyle(achievementCornerUp, achievementCornerDown, achievementCornerDown, Fonts.def)
 	val clearFlatTogglet = Styles.flatTogglet.copy().also {
-		it.up = flatBorder1.tint(0.3f, 0.3f, 0.3f, 1f)
-		it.down = flatBorder1.tint(0.1f, 0.1f, 0.1f, 1f)
-		it.over = flatBorder1.tint(0.4f, 0.4f, 0.4f, 1f)
-		it.checked = flatBorder1.tint(0.2f, 0.2f, 0.2f, 1f)
+		it.up = flatBorder1.tint("666677ff")
+		it.down = flatBorder1.tint("444464ff")
+		it.over = flatBorder1.tint("777790ff")
+		it.checked = flatBorder1.tint("404050ff")
+	}
+	val clearFlatt = clearFlatTogglet.copy().also {
+		it.checked = null
 	}
 
 	/** Finds a drawable of this mod or throws an exception. */
@@ -36,4 +39,5 @@ object AStyles {
 	}
 
 	fun TextButtonStyle.copy() = TextButtonStyle(this)
+	fun ScaledNinePatchDrawable.tint(color: String) = tint(Color.valueOf(color))
 }

@@ -6,6 +6,7 @@ import com.github.mnemotechnician.achievements.core.dsl.achievement
 import com.github.mnemotechnician.achievements.core.dsl.rootAchievement
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
 import com.github.mnemotechnician.achievements.core.objective.impl.*
+import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import mindustry.content.*
 import mindustry.gen.Icon
 import mindustry.world.blocks.production.Drill.DrillBuild
@@ -14,8 +15,8 @@ object CoreAchievements {
 	lateinit var root: Achievement
 
 	fun load() {
-		root = rootAchievement("beginning", Blocks.conveyor) {
-			achievement("enemies-coming", UnitTypes.dagger.region) { //not using uiIcon for the funnies
+		root = rootAchievement("beginning", ASprites.iconSunrise) {
+			achievement("enemies-coming", ASprites.iconInvader) {
 				+ BuildBlocksObjective(10, Blocks.copperWall, Blocks.copperWallLarge)
 				+ BuildBlocksObjective(3, Blocks.duo)
 

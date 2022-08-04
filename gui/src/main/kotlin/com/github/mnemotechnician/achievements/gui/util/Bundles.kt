@@ -4,6 +4,9 @@ import com.github.mnemotechnician.mkui.delegates.bundle
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle
 
 object Bundles {
+	val achievementDialogTitle by abundle()
+	val close by abundle()
+
 	val locked by abundle()
 	val completed by abundle()
 	val moreInfo by abundle()

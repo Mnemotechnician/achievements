@@ -44,14 +44,22 @@ class AchievementTreeDialog : Dialog() {
 		closeOnBack()
 		addCloseButton()
 
+		// title bar
 		titleTable.apply {
-			val achievementsTitle by Bundles.adynamic({ AchievementManager.allAchievements.size })
-
 			clearChildren()
-			addLabel({ achievementsTitle }).color(AStyles.accent).growX().row()
-			hsplitter(AStyles.secondary, padBottom = 0f)
+
+			// exit button
+			customButton({
+				addImage(Icon.left).pad(5f)
+				addLabel(Bundles.close).pad(5f)
+			}, AStyles.clearFlatt) { hide() }
+
+			// title
+			addLabel(Bundles.achievementDialogTitle).color(AStyles.accent).growX().row()
+			hsplitter(AStyles.secondary, padBottom = 0f).colspan(2)
 		}
 
+		// main container
 		cont.addStack {
 			add(treePane)
 			// stats
