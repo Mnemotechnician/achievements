@@ -1,9 +1,13 @@
 package com.github.mnemotechnician.achievements.core.objective
 
 import arc.Core
+import arc.scene.ui.layout.Table
+import arc.util.Align.left
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
+import com.github.mnemotechnician.mkui.extensions.dsl.addLabel
+import mindustry.graphics.Pal
 
 /**
  * Represents an objective of an [Achievement].
@@ -99,6 +103,12 @@ abstract class Objective(
 	 */
 	open fun filter(filter: Filter<Objective, ObjectiveEvent>) = this.also {
 		filters.add(filter)
+	}
+
+	/** Displays this objective on a table. */
+	open fun display(target: Table) {
+		target.addLabel({ if (isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false, align = left)
+		target.addLabel({ description }, wrap = true, align = left).color(Pal.lightishGray).growX()
 	}
 
 	override fun toString() = "${super.toString().substringBefore('@')}(name=$name, isFulfilled=$isFulfilled)"

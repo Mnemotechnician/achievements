@@ -30,7 +30,7 @@ open class DestroyBlocksObjective(
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
-		list.add(0) { if (byDeconstruction) deconstruct else destroy }
+		list.add(0) { if (byDeconstruction) 1 else 0 }
 		list.add(1) { kindsDescription }
 	}
 
@@ -58,9 +58,6 @@ open class DestroyBlocksObjective(
 	}
 
 	companion object {
-		val deconstruct by bundle("achievements-core")
-		val destroy by bundle("achievements-core")
-
 		val deconstructionEvent = setOf(DeconstructionEvent::class.java)
 		val destructionEvent = setOf(BuildingDestroyedEvent::class.java)
 	}
