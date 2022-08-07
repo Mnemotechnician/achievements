@@ -18,7 +18,7 @@ class ProximityRequirement(
 	vararg val blocks: Block
 ) : Requirement("proximity") {
 	val blockNames = blocks.joinToString(", ") { it.emojiOrName() }
-	override val description by dynamicBundle(bundlePrefix, { allOf }, { blockNames })
+	override val description by dynamicBundle(bundlePrefix, { if (allOf) 1 else 0 }, { blockNames })
 
 	/** Same as primary but [allOf] is false. */
 	constructor(vararg blocks: Block) : this(false, *blocks)
