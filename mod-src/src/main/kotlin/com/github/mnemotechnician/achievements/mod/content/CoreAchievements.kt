@@ -2,10 +2,10 @@ package com.github.mnemotechnician.achievements.mod.content
 
 import arc.graphics.Color
 import com.github.mnemotechnician.achievements.core.Achievement
-import com.github.mnemotechnician.achievements.core.dsl.achievement
-import com.github.mnemotechnician.achievements.core.dsl.rootAchievement
+import com.github.mnemotechnician.achievements.core.dsl.*
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
 import com.github.mnemotechnician.achievements.core.objective.impl.*
+import com.github.mnemotechnician.achievements.core.objective.requirement.ProximityRequirement
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import mindustry.content.*
 import mindustry.gen.Icon
@@ -76,11 +76,8 @@ object CoreAchievements {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
 
 					achievement("why", Blocks.router) {
-						+ BuildBlocksObjective(5, Blocks.router, Blocks.router, Blocks.router).filter {
-							(it as? BuildingEvent ?: return@filter false).building.proximity.any {
-								it?.block() == Blocks.router
-							}
-						}
+						+ BuildBlocksObjective(5, Blocks.router, Blocks.router, Blocks.router)
+							.with(ProximityRequirement(Blocks.router))
 					}
 				}
 

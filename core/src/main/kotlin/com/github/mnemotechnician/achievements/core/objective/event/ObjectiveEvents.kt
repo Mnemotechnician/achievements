@@ -23,7 +23,7 @@ class ObjectiveEvents {
 
 	/** A building has been deconstructed */
 	class DeconstructionEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { breaking && tile?.build != null }) {
+		class Init : Listener({ fireOnIf(BlockBuildBeginEvent::class, { breaking && tile?.build != null }) {
 			DeconstructionEvent(tile.build)
 		} })
 	}
