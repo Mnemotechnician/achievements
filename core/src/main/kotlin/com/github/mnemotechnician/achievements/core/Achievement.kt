@@ -154,7 +154,7 @@ open class Achievement(
 	}
 
 	/** Adds an objective to this achievement. */
-	operator fun Objective.unaryPlus() {
+	operator fun <T : Objective> T.unaryPlus() = also {
 		this@Achievement.addObjective(this)
 	}
 

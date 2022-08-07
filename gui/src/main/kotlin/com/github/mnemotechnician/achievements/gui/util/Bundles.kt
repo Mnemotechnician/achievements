@@ -13,6 +13,7 @@ object Bundles {
 	val lessInfo by abundle()
 	val description by abundle()
 	val objectives by abundle()
+	val noObjectives by abundle()
 
 	val unfairGame by abundle()
 	val searchHint by abundle()

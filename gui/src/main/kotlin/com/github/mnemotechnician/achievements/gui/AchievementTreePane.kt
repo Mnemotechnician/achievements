@@ -348,7 +348,14 @@ open class AchievementTreePane : WidgetGroup() {
 		fun rebuild(force: Boolean = false) {
 			val completed = achievement.isCompleted
 
-			if (!force && wasCompleted == completed) return
+			if (!force && wasCompleted == completed) run cond@ {
+				// check if something ain't right
+				if (achievement.parent?.isCompleted == false && childNodes.size != 0) return@cond
+				if (achievement.parent?.isCompleted != false && childNodes.size != achievement.children.size) return@cond
+				// if everything's ok, return from the method
+				return
+			}
+
 			rebuildImpl()
 			wasCompleted = completed
 
@@ -356,7 +363,7 @@ open class AchievementTreePane : WidgetGroup() {
 				createChildren()
 				childNodes.forEach { it.rebuild() }
 			} else {
-				destroyChildren() // can be required if some unlocked achievements havw gone locked
+				destroyChildren() // can be required if some unlocked achievements have gone locked
 			}
 		}
 
@@ -406,13 +413,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 						// objectives
 						addLabel(Bundles.objectives, align = left).color(Color.gray).row()
-						achievement.objectives.forEach { obj ->
-							addTable {
-								addLabel({ if (obj.isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false, align = left)
-
-								addLabel({ obj.description }, wrap = true, align = left).color(Pal.lightishGray).growX()
-							}.row()
-						}
+						add(ObjectivesList(achievement)).growX()
 					}.also { collapser = it.get() }.growX().row()
 				}.minWidth(300f)
 			} else {
@@ -477,7 +478,7 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 		private val tmpVec = Vec2()
 
-		val traverseSpeed = 50f
+		val traverseSpeed = 75f
 		val zoomRange = 0.25f..3f
 		val radiusRange = 10f..500f
 

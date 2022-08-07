@@ -19,7 +19,6 @@ import com.github.mnemotechnician.mkui.extensions.elements.hint
 import mindustry.Vars
 import mindustry.core.GameState.State
 import mindustry.gen.Icon
-import mindustry.gen.Tex
 import mindustry.graphics.Pal
 import mindustry.ui.Styles
 import kotlin.math.roundToInt
@@ -70,6 +69,7 @@ class AchievementTreeDialog : Dialog() {
 				// toggle button
 				lateinit var icon: Image
 				toggleButton({
+					left()
 					addImage(Icon.left).with { icon = it }.padRight(5f)
 					addLabel({ if (!isChecked) Bundles.showInfo else Bundles.hideInfo }).color(Pal.lightishGray)
 				}, AStyles.clearFlatTogglet) {
@@ -80,7 +80,7 @@ class AchievementTreeDialog : Dialog() {
 				}.size(150f, 40f).left().row()
 
 				// info
-				addTable(AStyles.flatBorder1.tint(Pal.darkOutline)) {
+				addTable(AStyles.achievementBackground) {
 					statTable = this
 					color.a = 0f
 					touchable = Touchable.disabled
@@ -102,7 +102,7 @@ class AchievementTreeDialog : Dialog() {
 			addTable {
 				top().right()
 
-				addTable(AStyles.flatBorder1.tint(Pal.darkOutline)) {
+				addTable(AStyles.achievementBackground) {
 					textField("", Styles.areaField) {
 						searchFor(it)
 					}.growX().with {
@@ -114,6 +114,7 @@ class AchievementTreeDialog : Dialog() {
 					addCollapser(false) {
 						scrollPane {
 							defaults().marginBottom(5f).pad(5f).row()
+							it.setScrollingDisabled(true, false)
 							searchPane = this
 						}.growX()
 					}.with {
@@ -170,7 +171,7 @@ class AchievementTreeDialog : Dialog() {
 		init {
 			addLabel("${(achievement.progress * 100).roundToInt()}%".padStart(4, ' ')).color(Color.gray)
 
-			addLabel(achievement.displayName, align = Align.right).color(AStyles.accent).growX()
+			addLabel(achievement.displayName, align = Align.right, ellipsis = "...").color(AStyles.accent).growX()
 
 			clicked {
 				node?.let { treePane.traverseToNode(it) }

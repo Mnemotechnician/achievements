@@ -1,4 +1,3 @@
-@file:Suppress("UNSUPPORTED_FEATURE" /* false positive */, "unused")
 package com.github.mnemotechnician.achievements.core.dsl
 
 import arc.graphics.Color
@@ -78,8 +77,3 @@ inline fun Achievement.achievement(
 	AchievementManager.register(it)
 }
 
-/** Adds an objective to this achievement. */
-context(Achievement)
-operator fun Objective.unaryPlus() {
-	this@Achievement.addObjective(this@Objective)
-}

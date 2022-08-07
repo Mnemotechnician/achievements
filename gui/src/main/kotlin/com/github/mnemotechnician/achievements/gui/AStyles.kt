@@ -2,7 +2,8 @@ package com.github.mnemotechnician.achievements.gui
 
 import arc.Core
 import arc.graphics.Color
-import arc.scene.style.*
+import arc.scene.style.ScaledNinePatchDrawable
+import arc.scene.style.TextureRegionDrawable
 import arc.scene.ui.TextButton.TextButtonStyle
 import mindustry.gen.Tex
 import mindustry.ui.Fonts
@@ -10,6 +11,7 @@ import mindustry.ui.Styles
 
 object AStyles {
 	val accent = Color.valueOf("#566594")!!
+	val primary = Color.valueOf("494d67")
 	val secondary = Color.valueOf("2c2d38")!!
 
 	val whiteui = Tex.whiteui as TextureRegionDrawable
@@ -23,10 +25,10 @@ object AStyles {
 
 	val achievementb = TextButtonStyle(achievementCornerUp, achievementCornerDown, achievementCornerDown, Fonts.def)
 	val clearFlatTogglet = Styles.flatTogglet.copy().also {
-		it.up = flatBorder1.tint("666677ff")
-		it.down = flatBorder1.tint("444464ff")
-		it.over = flatBorder1.tint("777790ff")
-		it.checked = flatBorder1.tint("404050ff")
+		it.up = flatBorder1.tint(primary)
+		it.down = flatBorder1.tint(secondary)
+		it.over = flatBorder1.tint(accent)
+		it.checked = flatBorder1.tint("292938")
 	}
 	val clearFlatt = clearFlatTogglet.copy().also {
 		it.checked = null
