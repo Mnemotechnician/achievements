@@ -14,14 +14,14 @@ import mindustry.world.Block
  * @param allOf if true, all of [blocks] must be present. Otherwise, at least one.
  */
 class ProximityRequirement(
-	val allOf: Boolean = false,
+	val allOf: Boolean = true,
 	vararg val blocks: Block
 ) : Requirement("proximity") {
 	val blockNames = blocks.joinToString(", ") { it.emojiOrName() }
 	override val description by dynamicBundle(bundlePrefix, { if (allOf) 1 else 0 }, { blockNames })
 
-	/** Same as primary but [allOf] is false. */
-	constructor(vararg blocks: Block) : this(false, *blocks)
+	/** Same as primary but [allOf] is true. */
+	constructor(vararg blocks: Block) : this(true, *blocks)
 
 	override fun isAccepted(event: ObjectiveEvent) = when (event) {
 		is BuildingEvent -> if (allOf) {

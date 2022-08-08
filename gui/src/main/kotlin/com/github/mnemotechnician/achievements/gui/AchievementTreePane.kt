@@ -376,7 +376,7 @@ open class AchievementTreePane : WidgetGroup() {
 						// progress bar
 						add(object : Element() {
 							override fun draw() {
-								Draw.color(Pal.accent, 0.5f)
+								Draw.color(Pal.accent, 0.5f * parentAlpha)
 								val w = width * Mathf.clamp(achievement.progress, 0f, 1f)
 								Fill.rect(x + w / 2f, y + height / 2f, w, height)
 							}

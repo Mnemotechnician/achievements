@@ -1,8 +1,8 @@
 package com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
-import arc.graphics.g2d.Draw
-import arc.graphics.g2d.Lines
+import arc.graphics.g2d.*
+import arc.scene.Element
 import arc.scene.ui.layout.Table
 import arc.util.Align.center
 import arc.util.Align.left
@@ -22,7 +22,6 @@ import java.lang.Float.min
 class ObjectivesList(
 	val achievement: Achievement
 ) : Table() {
-	private val padding = 5f
 	private var lastObjectiveCount = 0
 
 	init {
@@ -41,17 +40,17 @@ class ObjectivesList(
 
 	override fun drawChildren() {
 		if (lastObjectiveCount > 0) {
-			Draw.color(Color.gray, parentAlpha)
-			Lines.stroke(2f)
+			//Draw.color(Color.gray, parentAlpha)
+			//Lines.stroke(2f)
 
-			var minY = 999f
-			children.forEach {
-				val y = it.getY(center)
-				Lines.line(0f, y, it.getX(left), y)
-				minY = min(minY, y)
-			}
+			//var minY = 999f
+			//children.forEach {
+			//	val y = it.getY(center)
+			//	Lines.line(0f, y, it.getX(left), y)
+			//	minY = min(minY, y)
+			//}
 
-			Lines.line(0f, top,0f, minY)
+			//Lines.line(0f, top,0f, minY)
 		}
 
 		super.drawChildren()
@@ -62,10 +61,18 @@ class ObjectivesList(
 		if (achievement.objectives.isEmpty()) {
 			addLabel(Bundles.noObjectives, align = left).color(Pal.lightishGray).growX()
 		} else {
-			achievement.objectives.forEach {
+			achievement.objectives.forEach { objective ->
+				// completion indicator
+				add(object : Element() {
+					override fun draw() {
+						Draw.color(if (objective.isFulfilled) Color.green else Color.crimson, parentAlpha)
+						Fill.rect(x + width / 2, y + height / 2, width, height)
+					}
+				}).width(5f).padRight(2f).fillY()
+
 				addTable {
-					it.display(this)
-				}.growX().padLeft(padding).row()
+					objective.display(this)
+				}.growX().row()
 			}
 		}
 

@@ -7,6 +7,7 @@ import com.github.mnemotechnician.achievements.core.util.emojiOrName
 import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.world.Block
+import mindustry.world.blocks.ConstructBlock.ConstructBuild
 import mindustry.world.blocks.environment.Floor
 
 /**
@@ -28,8 +29,9 @@ open class BuildBlocksObjective(
 		if (event is ConstructionEvent) {
 			return event.building.team() == Vars.player.team() && event.building.block in kinds
 		} else if (event is DeconstructionEvent) {
+			val block = (event.building as? ConstructBuild)?.previous ?: event.building.block
 			// decrement if the target building was deconstructed
-			if (event.building.team() == Vars.player.team() && event.building.block in kinds && isAccepted(event)) {
+			if (event.building.team() == Vars.player.team() && block in kinds && isAccepted(event)) {
 				count--
 			}
 		}

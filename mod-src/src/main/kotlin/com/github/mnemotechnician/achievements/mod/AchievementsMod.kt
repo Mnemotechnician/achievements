@@ -5,6 +5,7 @@ import arc.scene.ui.layout.Table
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.Achievement.AchievementUnlockEvent
 import com.github.mnemotechnician.achievements.gui.AchievementTreeDialog
+import com.github.mnemotechnician.achievements.mod.content.ASettings
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import com.github.mnemotechnician.mkui.extensions.dsl.imageButton
@@ -19,6 +20,7 @@ class AchievementsMod : Mod() {
 	init {
 		Events.on(EventType.ClientLoadEvent::class.java) {
 			CoreAchievements.load()
+			ASettings.init()
 			addHudButton()
 		}
 

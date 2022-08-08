@@ -42,6 +42,14 @@ object StateManager {
 	/** The interval at which all state entries are invalidated. In seconds. */
 	var updateInterval = 10f
 
+	/** The directory in which all states are saved. Always exists. */
+	val root = Vars.dataDirectory.child("saves").child("achievements")
+		get() {
+			if (field.exists() && !field.isDirectory) field.delete()
+			if (!field.exists()) field.mkdirs()
+			return field
+		}
+
 	/** Used to save the state before loading a new one. */
 	var lastStateFile: Fi? = null
 		private set
@@ -219,11 +227,6 @@ object StateManager {
 	 * Unless an i/o error occurs, this method never throws an exception.
 	 */
 	fun autoLoadState() {
-		val root = Vars.dataDirectory.child("saves").child("achievements")
-
-		if (root.exists() && !root.isDirectory) root.delete()
-		if (!root.exists()) root.mkdirs()
-
 		var save = root.child(determineSaveName() + ".state")
 		val backup = save.sibling(save.name() + backupSuffix)
 
@@ -243,13 +246,8 @@ object StateManager {
 		}
 	}
 
-	/** Saves the current state automatically. */
-	fun autoSaveState() {	
-		val root = Vars.dataDirectory.child("saves").child("achievements")
-
-		if (root.exists() && !root.isDirectory) root.delete()
-		if (!root.exists()) root.mkdirs()
-
+	/** Saves the current state automatically. Never throws an exception. */
+	fun autoSaveState() {
 		try {
 			saveState(root.child(determineSaveName() + ".state").also {
 				it.removeIfDir()

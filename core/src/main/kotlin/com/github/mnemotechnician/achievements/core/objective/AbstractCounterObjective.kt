@@ -62,8 +62,8 @@ abstract class AbstractCounterObjective(
 	override fun display(target: Table) {
 		target.apply {
 			addTable {
-				super.display(target)
-			}.row()
+				super.display(this)
+			}.growX().row()
 
 			requirements?.forEach {
 				addTable {

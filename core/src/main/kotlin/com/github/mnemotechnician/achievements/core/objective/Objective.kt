@@ -107,7 +107,6 @@ abstract class Objective(
 
 	/** Displays this objective on a table. */
 	open fun display(target: Table) {
-		target.addLabel({ if (isFulfilled) "[green][X] " else "[gray][ ] " }, wrap = false, align = left)
 		target.addLabel({ description }, wrap = true, align = left).color(Pal.lightishGray).growX()
 	}
 
