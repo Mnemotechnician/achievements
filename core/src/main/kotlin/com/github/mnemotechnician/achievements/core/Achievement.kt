@@ -98,7 +98,7 @@ open class Achievement(
 		isInit = true
 
 		validate()
-		update(true)
+		update(false)
 	}
 
 	/**
@@ -169,6 +169,11 @@ open class Achievement(
 		} else {
 			objectives.forEach { it.handleEvent(event) }
 			update(false)
+
+			if (isCompleted) {
+				// immediately notify children
+				children.forEach { it.handleEvent(event) }
+			}
 		}
 	}
 

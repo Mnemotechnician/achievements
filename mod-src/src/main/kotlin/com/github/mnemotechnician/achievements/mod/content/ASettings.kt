@@ -9,6 +9,7 @@ import com.github.mnemotechnician.achievements.mod.util.ModBundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.content
 import mindustry.Vars
+import mindustry.gen.Icon
 import mindustry.gen.Tex
 import mindustry.ui.Styles
 import mindustry.ui.dialogs.BaseDialog
@@ -27,14 +28,14 @@ object ASettings {
 				addLabel(ModBundles.achievements).row()
 
 				// reset achievements in the current map/campaign
-				textButton(ModBundles.resetCurrent, Styles.flatt) {
+				button(ModBundles.resetCurrent, Icon.trash, Styles.flatt) {
 					Vars.ui.showConfirm(ModBundles.resetCurrentWarning) {
 						StateManager.loadState(null)
 					}
 				}.row()
 
 				// reset all achievements
-				textButton(ModBundles.resetAll, Styles.flatt) {
+				button(ModBundles.resetAll, Icon.trash, Styles.flatt) {
 					val confirmNumber = Mathf.random(1000, 9999).toString()
 					val resetAllConfirm by ModBundles.mdynamic({ confirmNumber })
 

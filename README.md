@@ -16,3 +16,10 @@ The functionality of this project is split into 3 separate subprojects:
 * Optimise the AchievementTreePane grid rendering
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
+* Add an objective that requires the player to own a kind of a block on the map
+
+TOFIX
+* Fix BuildBlocksObjective not decrementing on deconstruction
+* Fix CollectItemsObjective not updating properly
+* Fix achievement tree nodes collapsing on reconstruction
+* Fix the first achievement not being completed when the tree is reset

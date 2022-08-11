@@ -82,7 +82,7 @@ object AchievementManager {
 		}
 
 		achievements.forEach {
-			it.update(true)
+			it.update(false)
 		}
 	}
 

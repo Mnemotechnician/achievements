@@ -3,13 +3,12 @@ package com.github.mnemotechnician.achievements.mod.content
 import arc.graphics.Color
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.dsl.*
-import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
 import com.github.mnemotechnician.achievements.core.objective.impl.*
+import com.github.mnemotechnician.achievements.core.objective.requirement.MiningRequirement
 import com.github.mnemotechnician.achievements.core.objective.requirement.ProximityRequirement
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import mindustry.content.*
 import mindustry.gen.Icon
-import mindustry.world.blocks.production.Drill.DrillBuild
 
 object CoreAchievements {
 	lateinit var root: Achievement
@@ -55,6 +54,20 @@ object CoreAchievements {
 
 				achievement("pressure-powered", Blocks.pneumaticDrill) {
 					+ BuildBlocksObjective(3, Blocks.pneumaticDrill)
+
+					achievement("advanced-optics", Blocks.laserDrill) {
+						+ BuildBlocksObjective(2, Blocks.laserDrill)
+						+ either(
+							BuildBlocksObjective(Blocks.waterExtractor)
+								.with(ProximityRequirement(Blocks.laserDrill)),
+							BuildBlocksObjective(1, Blocks.conduit, Blocks.pulseConduit, Blocks.bridgeConduit)
+								.with(ProximityRequirement(Blocks.laserDrill))
+						)
+
+						achievement("shaking-ground", Blocks.blastDrill) {
+							+ BuildBlocksObjective(Blocks.blastDrill)
+						}
+					}
 				}
 
 				achievement("get-hydrated", Liquids.water) {
@@ -76,16 +89,15 @@ object CoreAchievements {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
 
 					achievement("why", Blocks.router) {
-						+ BuildBlocksObjective(5, Blocks.router, Blocks.router, Blocks.router)
+						+ BuildBlocksObjective(5, Blocks.router)
 							.with(ProximityRequirement(Blocks.router))
 					}
 				}
 
 				achievement("let-be-light", Blocks.combustionGenerator) {
 					+ BuildBlocksObjective(3, Blocks.combustionGenerator)
-					+ BuildBlocksObjective(5, Blocks.mechanicalDrill, Blocks.pneumaticDrill).filter {
-						((it as? BuildingEvent)?.building as? DrillBuild)?.dominantItem == Items.coal
-					}
+					+ BuildBlocksObjective(5, Blocks.mechanicalDrill, Blocks.pneumaticDrill)
+						.with(MiningRequirement(Items.coal))
 
 					achievement("steampunk", Blocks.steamGenerator) {
 						+ BuildBlocksObjective(3, Blocks.steamGenerator)
@@ -104,12 +116,27 @@ object CoreAchievements {
 			}
 
 			achievement("stonks", Blocks.coreFoundation) {
-				+ BuildBlocksObjective(Blocks.coreFoundation)
-				+ UnlockAchievementObjective("steampunk")
-				+ UnlockAchievementObjective("pressure-powered")
+				+ BuildBlocksObjective(1, Blocks.coreFoundation, Blocks.coreNucleus)
 				
 				achievement("maximum-efficiency", Blocks.coreNucleus) {
 					+ BuildBlocksObjective(Blocks.coreNucleus)
+
+					achievement("truly-rich", Items.copper) {
+						+ CollectItemsObjective(5000, Items.surgeAlloy)
+						+ CollectItemsObjective(2500, Items.phaseFabric)
+						+ CollectItemsObjective(Items.silicon)
+						+ UnlockAchievementObjective("quite-stock")
+					}
+				}
+
+				achievement("theres-more", Blocks.vault) {
+					+ BuildBlocksObjective(2, Blocks.container, Blocks.vault)
+						.with(ProximityRequirement(false, Blocks.coreShard, Blocks.coreFoundation, Blocks.coreNucleus))
+				}
+
+				achievement("quite-stock", Items.copper) {
+					+ CollectItemsObjective(Items.copper)
+					+ CollectItemsObjective(Items.lead)
 				}
 			}
 		}
