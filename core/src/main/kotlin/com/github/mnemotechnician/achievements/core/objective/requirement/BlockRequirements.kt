@@ -4,8 +4,7 @@ import arc.struct.Seq
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective.Requirement
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
-import com.github.mnemotechnician.achievements.core.util.emojiOrName
-import com.github.mnemotechnician.achievements.core.util.int
+import com.github.mnemotechnician.achievements.core.util.*
 import com.github.mnemotechnician.mkui.delegates.bundle
 import mindustry.type.Item
 import mindustry.world.Block
@@ -24,7 +23,7 @@ class ProximityRequirement(
 	vararg val blocks: Block
 ) : Requirement("proximity") {
 	val blockNames = blocks.joinToString(", ") { it.emojiOrName() }
-	override val description by bundle(bundlePrefix, { allOf.int }, { blockNames })
+	override val description by bundle(bundlePrefix, allOf.toInt(), blockNames)
 
 	/** Same as the primary constructor. */
 	constructor(vararg blocks: Block) : this(true, *blocks)
@@ -53,7 +52,7 @@ class FloorRequirement(
 	vararg val floors: Floor
 ) : Requirement("floor") {
 	val blockNames = floors.joinToString(", ") { it.emojiOrName() }
-	override val description by bundle(bundlePrefix, { allOf.int }, { blockNames })
+	override val description by bundle(bundlePrefix, allOf.toInt(), blockNames)
 
 	/** Same as the primary constructor. */
 	constructor(overlay: Boolean = false, vararg floors: Floor) : this(overlay, true, *floors)
@@ -87,7 +86,7 @@ class FloorRequirement(
  * Has no effect on non-drill blocks.
  */
 class MiningRequirement(val minedItem: Item) : Requirement("mining") {
-	override val description by bundle(bundlePrefix, { minedItem.emojiOrName() })
+	override val description by bundle(bundlePrefix, minedItem.emojiOrName())
 
 	override fun isAccepted(event: ObjectiveEvent) = if (event is BuildingEvent) {
 		val build = event.building

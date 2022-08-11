@@ -11,6 +11,8 @@ val MindustryUnit?.playerTeam get() = this != null && this.team() == Vars.player
 /** Returns true if the current game mode is fair. */
 val isFair get() = !Vars.state.rules.infiniteResources && !Vars.state.isEditor
 
+inline fun Boolean.toInt(): Int = if (this) 1 else 0
+
 inline fun <T> computeIf(condition: Boolean, block: () -> T): T? {
 	return if (condition) block() else null
 }

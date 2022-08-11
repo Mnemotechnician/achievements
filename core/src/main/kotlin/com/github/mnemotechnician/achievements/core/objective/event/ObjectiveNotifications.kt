@@ -26,8 +26,10 @@ class ObjectiveNotifications {
 		class Init : Notifier(Trigger.update, {
 			val size = Vars.content.items().size
 			if (size > items.size) {
-				items.ensureCapacity(size - items.size)
-				lastItems.ensureCapacity(size - lastItems.size)
+				for (i in items.size until size) {
+					items.add(0)
+					lastItems.add(0)
+				}
 			}
 
 			(0 until size).forEach { index->

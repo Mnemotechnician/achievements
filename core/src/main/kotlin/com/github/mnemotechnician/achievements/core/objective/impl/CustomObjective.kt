@@ -14,8 +14,8 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNot
  *
  * By default, two parameters are providen to the underlying description
  * bundle of this objective:
- * * {0} - current count
- * * {1} - target count.
+ * * {0} - current targetCount
+ * * {1} - target targetCount.
  *
  * Optionally, you can provide a list of lambdas as the [bundleArgs]
  * parameter. The values they return will be added to the list of parameters:
@@ -30,7 +30,7 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNot
  * so modifying it won't have any effect.
  * @param checker A lambda function checking whether the current conditions satisfy the objective.
  */
-class CustomObjective(
+open class CustomObjective(
 	internalName: String,
 	targetCount: Int = 1,
 	val bundleArgs: Iterable<() -> Any?>? = null,

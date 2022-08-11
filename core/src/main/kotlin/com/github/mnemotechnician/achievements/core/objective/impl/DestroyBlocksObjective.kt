@@ -22,12 +22,12 @@ open class DestroyBlocksObjective(
 	val byDeconstruction: Boolean,
 	vararg val kinds: Block
 ) : AbstractCounterObjective(number, "destroy-blocks", if (byDeconstruction) deconstructionEvent else destructionEvent) {
+	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
+
 	constructor(byDeconstruction: Boolean, vararg kinds: Block) : this(1, byDeconstruction, *kinds)
 
 	/** By destruction. */
 	constructor(number: Int, vararg kinds: Block) : this(number, false, *kinds)
-
-	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
 		list.add(0) { if (byDeconstruction) 1 else 0 }

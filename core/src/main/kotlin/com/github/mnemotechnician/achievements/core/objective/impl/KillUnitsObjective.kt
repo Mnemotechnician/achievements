@@ -13,7 +13,7 @@ import mindustry.type.UnitType
 /**
  * Requires the player to kill [number] enemy units of the specified [kinds].
  */
-class KillUnitsObjective(
+open class KillUnitsObjective(
 	number: Int = 1,
 	vararg val kinds: UnitType
 ) : AbstractCounterObjective(number, "kill-units", acceptedEvents) {

@@ -10,7 +10,7 @@ import com.github.mnemotechnician.mkui.extensions.dsl.addTable
  * A wrapper objectives that requires the player to complete
  * at least one of the wrapped objectives.
  */
-class EitherObjective(
+open class EitherObjective(
 	vararg val objectives: Objective
 ) : Objective("either") {
 	override val description by bundle(bundleName)
@@ -35,7 +35,7 @@ class EitherObjective(
 			objectives.forEach {
 				addTable {
 					it.display(this)
-				}.padLeft(3f)
+				}.padLeft(3f).growX().row()
 			}
 		}.colspan(2)
 	}

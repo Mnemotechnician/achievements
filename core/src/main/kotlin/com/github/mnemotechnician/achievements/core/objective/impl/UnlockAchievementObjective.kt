@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
  *
  * Must not be used before initialisation.
  */
-class UnlockAchievementObjective(
+open class UnlockAchievementObjective(
 	val achievementName: String
 ) : Objective("unlock-achievement") {
 	override val description by dynamicBundle(bundleName, { achievement.displayName }, { (achievement.progress * 100).roundToInt() })
@@ -21,19 +21,13 @@ class UnlockAchievementObjective(
 	override val progress get() = achievement.progress
 
 	val achievement: Achievement by lazy {
-		AchievementManager.getForName(achievementName, true) ?: run {
-			throw IllegalStateException("No achievement with the name '$achievementName' found! Is the objective accessed before initialising the parent achievement?")
-		}
-	}
-
-	override fun init() {
-		super.init()
-
-		var parent: Achievement? = parent
-		while (parent != null) {
-			if (parent == achievement) throw IllegalStateException("UnlockAchievementObjective can not depend on a parent achievement.")
-			parent = parent.parent
-		}
+		AchievementManager.getForName(achievementName, true)?.also { achievement ->
+			var parent: Achievement? = parent
+			while (parent != null) {
+				if (parent == achievement) throw IllegalStateException("UnlockAchievementObjective can not depend on a parent achievement.")
+				parent = parent.parent
+			}
+		} ?: throw IllegalStateException("No achievement with the name '$achievementName' found! Is the objective accessed before initialising the parent achievement?")
 	}
 
 	override fun handleEvent(event: ObjectiveEvent) { }

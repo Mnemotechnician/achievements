@@ -14,11 +14,16 @@ class ObjectiveEvents {
 
 	abstract class UnitEvent(val unit: MindustryUnit) : ObjectiveEvent()
 
-	/** A building has been built. */
+	/** A building has been built (includes core upgrades). */
 	class ConstructionEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null }) {
-			ConstructionEvent(tile.build)
-		} })
+		class Init : Listener({
+			fireOnIf(BlockBuildEndEvent::class, { !breaking && tile?.build != null }) {
+				ConstructionEvent(tile.build)
+			}
+			fireOn(CoreChangeEvent::class) {
+				ConstructionEvent(core)
+			}
+		})
 	}
 
 	/** A building has been deconstructed */

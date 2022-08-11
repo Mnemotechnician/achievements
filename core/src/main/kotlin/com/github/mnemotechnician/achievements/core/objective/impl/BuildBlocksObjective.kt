@@ -17,7 +17,7 @@ open class BuildBlocksObjective(
 	number: Int = 1,
 	vararg val kinds: Block
 ) : AbstractCounterObjective(number, "build-blocks", acceptedEvents) {
-	constructor(block: Block) : this(1, block)
+	constructor(vararg blocks: Block) : this(1, *blocks)
 
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
 
