@@ -1,8 +1,7 @@
 package com.github.mnemotechnician.achievements.core.objective.event
 
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent.*
-import com.github.mnemotechnician.achievements.core.util.isFair
-import com.github.mnemotechnician.achievements.core.util.playerTeam
+import com.github.mnemotechnician.achievements.core.misc.playerTeam
 import mindustry.game.EventType.*
 import mindustry.gen.Building
 import mindustry.gen.Entityc

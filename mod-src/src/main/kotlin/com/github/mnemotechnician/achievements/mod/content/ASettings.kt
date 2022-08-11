@@ -5,7 +5,7 @@ import arc.scene.ui.TextField
 import arc.util.Log
 import arc.util.Reflect
 import com.github.mnemotechnician.achievements.core.StateManager
-import com.github.mnemotechnician.achievements.mod.util.ModBundles
+import com.github.mnemotechnician.achievements.mod.misc.ModBundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.content
 import mindustry.Vars

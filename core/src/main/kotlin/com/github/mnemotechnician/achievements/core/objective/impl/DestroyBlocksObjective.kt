@@ -3,8 +3,8 @@ package com.github.mnemotechnician.achievements.core.objective.impl
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.*
-import com.github.mnemotechnician.achievements.core.util.emojiOrName
-import com.github.mnemotechnician.mkui.delegates.bundle
+import com.github.mnemotechnician.achievements.core.misc.emojiOrName
+import com.github.mnemotechnician.achievements.core.misc.int
 import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.game.Team
@@ -30,7 +30,7 @@ open class DestroyBlocksObjective(
 	constructor(number: Int, vararg kinds: Block) : this(number, false, *kinds)
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
-		list.add(0) { if (byDeconstruction) 1 else 0 }
+		list.add(0) { byDeconstruction.int }
 		list.add(1) { kindsDescription }
 	}
 

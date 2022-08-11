@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.mod.util
+package com.github.mnemotechnician.achievements.mod.misc
 
 import com.github.mnemotechnician.achievements.core.StateManager
 import com.github.mnemotechnician.mkui.delegates.bundle

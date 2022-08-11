@@ -16,7 +16,7 @@ import arc.util.*
 import arc.util.Align.*
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
-import com.github.mnemotechnician.achievements.gui.util.Bundles
+import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import mindustry.gen.Icon
 import mindustry.graphics.Pal

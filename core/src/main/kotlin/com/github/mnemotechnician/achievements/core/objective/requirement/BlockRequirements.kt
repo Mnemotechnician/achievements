@@ -1,10 +1,11 @@
 package com.github.mnemotechnician.achievements.core.objective.requirement
 
 import arc.struct.Seq
+import com.github.mnemotechnician.achievements.core.misc.emojiOrName
+import com.github.mnemotechnician.achievements.core.misc.int
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective.Requirement
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
-import com.github.mnemotechnician.achievements.core.util.*
 import com.github.mnemotechnician.mkui.delegates.bundle
 import mindustry.type.Item
 import mindustry.world.Block
@@ -23,7 +24,7 @@ class ProximityRequirement(
 	vararg val blocks: Block
 ) : Requirement("proximity") {
 	val blockNames = blocks.joinToString(", ") { it.emojiOrName() }
-	override val description by bundle(bundlePrefix, allOf.toInt(), blockNames)
+	override val description by bundle(bundlePrefix, allOf.int, blockNames)
 
 	/** Same as the primary constructor. */
 	constructor(vararg blocks: Block) : this(true, *blocks)
@@ -52,7 +53,7 @@ class FloorRequirement(
 	vararg val floors: Floor
 ) : Requirement("floor") {
 	val blockNames = floors.joinToString(", ") { it.emojiOrName() }
-	override val description by bundle(bundlePrefix, allOf.toInt(), blockNames)
+	override val description by bundle(bundlePrefix, allOf.int, blockNames)
 
 	/** Same as the primary constructor. */
 	constructor(overlay: Boolean = false, vararg floors: Floor) : this(overlay, true, *floors)

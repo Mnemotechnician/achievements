@@ -3,7 +3,7 @@ package com.github.mnemotechnician.achievements.core.objective.impl
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.*
-import com.github.mnemotechnician.achievements.core.util.emojiOrName
+import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.world.Block

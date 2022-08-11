@@ -13,7 +13,7 @@ import arc.scene.ui.layout.Table
 import arc.util.Align
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
-import com.github.mnemotechnician.achievements.gui.util.Bundles
+import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.hint
 import mindustry.Vars
