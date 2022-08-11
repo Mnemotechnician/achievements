@@ -12,8 +12,6 @@ The functionality of this project is split into 3 separate subprojects:
 
 # TODO
 * More objectives and more objective events / notifications
-* Use `Seq` instead of `ArrayList` in places with heavy recursion
-* Optimise the AchievementTreePane grid rendering
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
 * Add an objective that requires the player to own a kind of a block on the map

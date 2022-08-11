@@ -1,11 +1,21 @@
 name: "achievements"
+
 description: '''
-WIP mod, adding an achievement tree and also providing an API for other mods to add their own achievements.
+A mindustry mod that adds an achievement tree.
+Complete achievements by fulfilling their objectives and flex you progress to other players!
+
+Achievement trees are saved per-map. This means that all your saves on the "maze" will have the same achievement progress,
+so will the saves on the "archipelago" map, etc. Campaign and multiplayer are different - in these modes the same achievement
+tree is used regardless of the map/sector (this may be changed in the future).
+
+In addiction to all the above, this mod provides an achievement API, allowing other mods to easily create their own achievement trees
+or extend fhe existing one.
 '''
+
 displayName: "Mindustry Achievements"
 author: "Mnemotechnician"
 minGameVersion: "136"
-version: "v0.1"
+version: "v0.2"
 
 main: "com.github.mnemotechnician.achievements.mod.AchievementsMod"
 hidden: true
