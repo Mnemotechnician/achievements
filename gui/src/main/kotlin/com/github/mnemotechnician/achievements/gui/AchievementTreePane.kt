@@ -16,6 +16,8 @@ import arc.util.*
 import arc.util.Align.*
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.AchievementManager
+import com.github.mnemotechnician.achievements.core.misc.optFor
+import com.github.mnemotechnician.achievements.core.misc.optForEach
 import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import mindustry.gen.Icon
@@ -190,10 +192,10 @@ open class AchievementTreePane : WidgetGroup() {
 		Draw.color(AStyles.secondary, parentAlpha)
 		Lines.stroke(gridHexThickness)
 
-		for (hx in xStart..xEnd step xStep) {
-			for (hy in yStart..yEnd step yStep) {
-				hexPositions.forEach { hex ->
-					(1 until hexVertices.size).forEach {
+		optFor(xStart, { it <= xEnd }, { xStep }) { hx ->
+			optFor(yStart, { it <= yEnd }, { yStep }) { hy ->
+				hexPositions.optForEach { hex ->
+					optFor(1, { it < hexVertices.size }) {
 						val v1 = hexVertices[it - 1]
 						val v2 = hexVertices[it]
 
@@ -257,7 +259,7 @@ open class AchievementTreePane : WidgetGroup() {
 	/** Rebuilds this pane, reusing the old nodes. */
 	fun rebuild() {
 		var offset = 0f
-		AchievementManager.achievements.forEach {
+		AchievementManager.achievements.optForEach {
 			val node = rootNodes.find { node -> node.achievement == it } ?: Node(it).also {
 				rootNodes.add(it)
 				allNodes.add(it)
@@ -289,7 +291,7 @@ open class AchievementTreePane : WidgetGroup() {
 
 	private fun rebuildNodeChildren(node: Node) {
 		var offset = 0f
-		node.childNodes.forEach { child ->
+		node.childNodes.optForEach { child ->
 			child.rebuild()
 			child.layout()
 			child.pack()

@@ -1,6 +1,7 @@
 package com.github.mnemotechnician.achievements.core
 
 import arc.util.Log
+import com.github.mnemotechnician.achievements.core.misc.optForEach
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import mindustry.Vars
 
@@ -11,9 +12,9 @@ import mindustry.Vars
  */
 object AchievementManager {
 	/** All root achievements. Do not modify. */
-	val achievements = LinkedHashSet<Achievement>()
+	val achievements = ArrayList<Achievement>()
 	/** All registered achievements, including the children. */
-	val allAchievements = LinkedHashSet<Achievement>()
+	val allAchievements = ArrayList<Achievement>()
 	/**
 	 * All kinds of events accepted by [fireEvent].
 	 * When an objective is created, it adds an entry to this set
@@ -41,7 +42,7 @@ object AchievementManager {
 	fun fireEvent(event: ObjectiveEvent) {
 		if (Vars.headless || event::class.java !in acceptedEvents) return
 
-		achievements.forEach {
+		achievements.optForEach {
 			it.handleEvent(event)
 		}
 	}

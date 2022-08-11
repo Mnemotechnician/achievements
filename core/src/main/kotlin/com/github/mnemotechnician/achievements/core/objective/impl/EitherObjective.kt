@@ -1,6 +1,7 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
 import arc.scene.ui.layout.Table
+import com.github.mnemotechnician.achievements.core.misc.optForEach
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.bundle
@@ -21,7 +22,7 @@ open class EitherObjective(
 	}
 
 	override fun reset() {
-		objectives.forEach { it.reset() }
+		objectives.optForEach { it.reset() }
 	}
 
 	override fun handleEvent(event: ObjectiveEvent) {

@@ -4,14 +4,12 @@ import arc.graphics.Color
 import arc.graphics.g2d.*
 import arc.scene.Element
 import arc.scene.ui.layout.Table
-import arc.util.Align.center
 import arc.util.Align.left
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.addLabel
 import com.github.mnemotechnician.mkui.extensions.dsl.addTable
 import mindustry.graphics.Pal
-import java.lang.Float.min
 
 /**
  * Displays the list of objectives of an achievement.

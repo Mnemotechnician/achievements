@@ -6,6 +6,7 @@ import arc.graphics.Color
 import arc.graphics.g2d.TextureRegion
 import arc.scene.style.Drawable
 import arc.scene.style.TextureRegionDrawable
+import com.github.mnemotechnician.achievements.core.misc.optForEach
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import mindustry.ctype.UnlockableContent
@@ -56,7 +57,7 @@ open class Achievement(
 	 * Child achievements.
 	 * @see parent
 	 */
-	val children = LinkedHashSet<Achievement>()
+	val children = ArrayList<Achievement>()
 
 	/**
 	 * Whether the user has unlocked this achievement.
@@ -165,14 +166,14 @@ open class Achievement(
 	 */
 	open fun handleEvent(event: ObjectiveEvent) {
 		if (isCompleted) {
-			children.forEach { it.handleEvent(event) }
+			children.optForEach { it.handleEvent(event) }
 		} else {
-			objectives.forEach { it.handleEvent(event) }
+			objectives.optForEach { it.handleEvent(event) }
 			update(false)
 
 			if (isCompleted) {
 				// immediately notify children
-				children.forEach { it.handleEvent(event) }
+				children.optForEach { it.handleEvent(event) }
 			}
 		}
 	}
