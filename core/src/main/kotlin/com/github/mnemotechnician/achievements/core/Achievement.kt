@@ -64,6 +64,8 @@ open class Achievement(
 	 * This property delegates to a setting named "achievement.achievement-name.isCompleted".
 	 */
 	var isCompleted by StateManager.state(false) { "achievement.$name." }
+	/** Whether this achievement should be visible to the player. */
+	val isUnlocked get() = parent == null || parent!!.isCompleted
 
 	/**
 	 * If [isCompleted] has forcibly been set to true, returns 1.

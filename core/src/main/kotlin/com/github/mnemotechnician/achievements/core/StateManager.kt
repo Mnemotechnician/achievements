@@ -215,9 +215,7 @@ object StateManager {
 			lastStateFile = file
 		}
 
-		AchievementManager.allAchievements.forEach {
-			it.update(true)
-		}
+		AchievementManager.updateAll(true)
 	}
 
 	/**

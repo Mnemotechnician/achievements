@@ -51,7 +51,7 @@ object ASettings {
 							textField = textField().with {
 								it.filter = TextField.TextFieldFilter.digitsOnly
 							}.padBottom(10f).growX().get()
-						}.fillX().minWidth(300f).row()
+						}.fillX().minWidth(400f).row()
 
 						// button row
 						cont.addTable(Tex.button) {

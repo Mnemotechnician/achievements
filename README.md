@@ -18,6 +18,4 @@ The functionality of this project is split into 3 separate subprojects:
 
 TOFIX
 * Fix BuildBlocksObjective not decrementing on deconstruction
-* Fix CollectItemsObjective not updating properly
-* Fix achievement tree nodes collapsing on reconstruction
 * Fix the first achievement not being completed when the tree is reset

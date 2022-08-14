@@ -87,6 +87,11 @@ object AchievementManager {
 		}
 	}
 
+	/** Updates the completion state of all achievements. */
+	fun updateAll(silent: Boolean) = allAchievements.forEach {
+		it.update(silent)
+	}
+
 	/** Counts completed achievements. */
 	fun countCompleted(): Int {
 		return allAchievements.count { it.isCompleted }

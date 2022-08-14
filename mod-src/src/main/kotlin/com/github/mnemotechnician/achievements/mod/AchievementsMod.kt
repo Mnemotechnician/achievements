@@ -4,6 +4,7 @@ import arc.Events
 import arc.scene.ui.layout.Table
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.Achievement.AchievementUnlockEvent
+import com.github.mnemotechnician.achievements.gui.AchievementNotificationPane
 import com.github.mnemotechnician.achievements.gui.AchievementTreeDialog
 import com.github.mnemotechnician.achievements.mod.content.ASettings
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
@@ -16,21 +17,22 @@ import mindustry.mod.Mod
 
 class AchievementsMod : Mod() {
 	val achievementTree by lazy { AchievementTreeDialog() }
+	val notificationPane by lazy { AchievementNotificationPane(achievementTree) }
 
 	init {
 		Events.on(EventType.ClientLoadEvent::class.java) {
 			CoreAchievements.load()
 			ASettings.init()
-			addHudButton()
+			buildHud()
 		}
 
 		// todo temporary solution
 		Events.on(AchievementUnlockEvent::class.java) {
-			Vars.ui.hudfrag.showToast("Achievement unlocked: ${it.achievement.displayName}!")
+			notificationPane.showUnlock(it.achievement)
 		}
 	}
 
-	fun addHudButton() {
+	fun buildHud() {
 		val target = Vars.ui.hudGroup.findOrNull<Table>("overlaymarker").let {
 			it?.findOrNull<Table>("mobile buttons") ?: it
 		} ?: run {
@@ -50,5 +52,9 @@ class AchievementsMod : Mod() {
 				}
 			}
 		}
+
+		Vars.ui.hudGroup.addChild(notificationPane.also {
+			it.setFillParent(true)
+		})
 	}
 }

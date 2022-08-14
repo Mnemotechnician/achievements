@@ -20,6 +20,7 @@ import com.github.mnemotechnician.achievements.core.misc.optFor
 import com.github.mnemotechnician.achievements.core.misc.optForEach
 import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
+import com.github.mnemotechnician.mkui.ui.element.toggle
 import mindustry.gen.Icon
 import mindustry.graphics.Pal
 import kotlin.math.*
@@ -322,6 +323,8 @@ open class AchievementTreePane : WidgetGroup() {
 		/** The width this branch occupies. */
 		val branchSize get() = max(prefWidth, childrenBranchSize)
 
+		private var lastCollapser: Collapser? = null
+
 		init {
 			rebuild(true)
 			this@AchievementTreePane.addChild(this)
@@ -394,19 +397,19 @@ open class AchievementTreePane : WidgetGroup() {
 						})
 					}.pad(5f).growX().row()
 
-					lateinit var collapser: Collapser
 					// progress percentage + more info
+					val shown = lastCollapser?.isCollapsed?.not() ?: false
 					addTable {
 						addLabel({
 							if (achievement.isCompleted) Bundles.completed else "${(achievement.progress * 100f).roundToInt()}%"
 						}, align = left).color(Color.gray).pad(5f).growX()
 
 						textToggle(Bundles.lessInfo, Bundles.moreInfo, AStyles.achievementb) {
-							collapser.isCollapsed = !it
-						}.expandX().pad(5f).right()
+							lastCollapser?.isCollapsed = !it
+						}.toggle(shown).expandX().pad(5f).right()
 					}.growX().row()
 
-					addCollapser(false) {
+					addCollapser(shown) {
 						left().defaults().growX()
 
 						// description
@@ -416,7 +419,7 @@ open class AchievementTreePane : WidgetGroup() {
 						// objectives
 						addLabel(Bundles.objectives, align = left).color(Color.gray).row()
 						add(ObjectivesList(achievement)).growX()
-					}.also { collapser = it.get() }.growX().row()
+					}.also { lastCollapser = it.get() }.growX().row()
 				}.minWidth(300f)
 			} else {
 				// "locked"
@@ -451,16 +454,16 @@ open class AchievementTreePane : WidgetGroup() {
 			val lineMargin = min(prefWidth / childNodes.size, 10f)
 			val from = Tmp.v1.set(getX(center), getY(Align.top)).sub(lineMargin * (childNodes.size - 1) / 2, 0f)
 
-			childNodes.forEach { node ->
+			childNodes.optForEach { node ->
 				val to = Tmp.v2.set(node.getX(center), node.getY(bottom))
-				if (to.y <= from.y) return@forEach
+				if (to.y <= from.y) return@optForEach
 				val vmiddle = (to.y - from.y) / 2
 
 				Draw.color(when {
 					node.achievement.isCompleted -> AStyles.accent // completed
 					wasCompleted -> Color.gray // unlocked but not completed
 					else -> Color.crimson // locked
-				})
+				}, parentAlpha)
 				Lines.curve(
 					from.x, from.y,
 					from.x, from.y + vmiddle,
@@ -480,7 +483,7 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 		private val tmpVec = Vec2()
 
-		val traverseSpeed = 75f
+		const val traverseSpeed = 75f
 		val zoomRange = 0.25f..3f
 		val radiusRange = 10f..500f
 
@@ -489,6 +492,6 @@ open class AchievementTreePane : WidgetGroup() {
 		const val hexVertexAngleStart = 90f
 
 		val lockedIcon = Icon.lock!!
-		val connectionThickness = 2f
+		const val connectionThickness = 2f
 	}
 }

@@ -24,6 +24,8 @@ object Bundles {
 	val showInfo by abundle()
 	val hideInfo by abundle()
 
+	val achievementCompleted by abundle()
+
 	fun abundle() = bundle("achievements-mod")
 	fun adynamic(vararg subs: () -> Any?) = dynamicBundle("achievements-mod", *subs)
 }
