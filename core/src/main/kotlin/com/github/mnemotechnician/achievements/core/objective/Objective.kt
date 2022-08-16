@@ -1,6 +1,5 @@
 package com.github.mnemotechnician.achievements.core.objective
 
-import arc.Core
 import arc.scene.ui.layout.Table
 import arc.util.Align.left
 import com.github.mnemotechnician.achievements.core.Achievement
@@ -11,10 +10,7 @@ import mindustry.graphics.Pal
 
 /**
  * Represents an objective of an [Achievement].
- * Like achievements, has an [internal name][name], a [displayed name][displayName] and a [description].
- *
- * The display name of this objective is taken from a bundle entry
- * whose name is `objective.<[name]>.name.
+ * Like achievements, has an [internal name][name] and a [description].
  *
  * @param name the name of this objective. Must be shared between all instances of the same subclass.
  * @param acceptedEvents the event types this objective accepts.
@@ -38,6 +34,7 @@ abstract class Objective(
 		private set
 
 	/** The name this objective should be referred to in bundles. */
+	@Deprecated("is this even needed")
 	val bundleName by lazy { "objective.$name" }
 	/** The name of this objective, displayed in-game. Currently unused. */
 	lateinit var displayName: String
@@ -65,9 +62,9 @@ abstract class Objective(
 	 * Called by the parent achievement during its initialisation or immediately after being added.
 	 */
 	open fun init() {
-		if (!::displayName.isInitialized) {
-			displayName = Core.bundle.get("objective.$name.name")
-		}
+		//if (!::displayName.isInitialized) {
+		//	displayName = Core.bundle.get("objective.$name.name")
+		//}
 
 		acceptedEvents.forEach { AchievementManager.addEvent(it) }
 		isInit = true

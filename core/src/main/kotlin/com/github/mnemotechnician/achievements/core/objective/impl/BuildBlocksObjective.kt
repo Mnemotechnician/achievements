@@ -1,9 +1,9 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
+import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.*
-import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.world.Block
@@ -29,9 +29,13 @@ open class BuildBlocksObjective(
 		if (event is ConstructionEvent) {
 			return event.building.team() == Vars.player.team() && event.building.block in kinds
 		} else if (event is DeconstructionEvent) {
-			val block = (event.building as? ConstructBuild)?.previous ?: event.building.block
-			// decrement if the target building was deconstructed
-			if (event.building.team() == Vars.player.team() && block in kinds && isAccepted(event)) {
+			val block: Block = (event.building as? ConstructBuild)?.let {
+				it.previous ?: it.prevBuild.takeIf { !it.isEmpty }?.first()?.block
+			} ?: event.building.block
+
+			// decrement if the target building was deconstructed...
+			// since we can't acquire a Building, which filters and requirements rely on, isAccepted() is not called.
+			if (event.building.team() == Vars.player.team() && block in kinds) {
 				count--
 			}
 		}

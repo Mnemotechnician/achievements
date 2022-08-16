@@ -3,6 +3,7 @@ package com.github.mnemotechnician.achievements.core.objective.impl
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
+import com.github.mnemotechnician.achievements.core.objective.impl.EventCounterObjective.Companion
 
 /**
  * Requires the player to trigger an objective event [targetCount] times.
@@ -10,9 +11,8 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEve
  * Instances of this class are to be created using the [Companion.invoke] inline function.
  *
  * In addiction to creating an instance of this class,
- * you must also create the following bundle entries:
- * * objective.<[name]>.name - the name of this objective.
- * * objective.<[name]>.description - the description. This one should accept two parameters:
+ * you must also create the following bundle entry:
+ * * objective.<[name]>.description - the description. It should accept two parameters:
  *     * `{0}` - The amount of times it's been scored.
  *     * `{1}` - [targetCount], aka how many times it has to be scored.
  */

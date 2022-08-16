@@ -19,6 +19,7 @@ object AStyles {
 	val flatBorder1 = drawable("flat-border-1") as ScaledNinePatchDrawable
 
 	val achievementBackground = drawable("achievement-background")
+	val iconBackground = drawable("icon-background")
 
 	val achievementCornerUp = drawable("achievement-button-corner-up")
 	val achievementCornerDown = drawable("achievement-button-corner-down")
@@ -41,5 +42,5 @@ object AStyles {
 	}
 
 	fun TextButtonStyle.copy() = TextButtonStyle(this)
-	fun ScaledNinePatchDrawable.tint(color: String) = tint(Color.valueOf(color))
+	fun ScaledNinePatchDrawable.tint(color: String) = tint(Color.valueOf(color))!!
 }

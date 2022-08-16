@@ -390,8 +390,8 @@ open class AchievementTreePane : WidgetGroup() {
 						add(createTable {
 							// icon + background
 							addStack {
+								add(Image(AStyles.iconBackground))
 								add(Image(achievement.icon ?: Icon.none))
-								// todo add(Image(ASprites.iconBackground))
 							}.size(48f).pad(5f)
 							addLabel(achievement.displayName, align = Align.right).pad(5f).height(56f).growX()
 						})
