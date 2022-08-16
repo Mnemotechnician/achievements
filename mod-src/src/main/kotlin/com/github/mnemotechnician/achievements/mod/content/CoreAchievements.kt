@@ -17,7 +17,7 @@ object CoreAchievements {
 		root = rootAchievement("beginning", ASprites.iconSunrise) {
 			achievement("enemies-coming", ASprites.iconInvader) {
 				+ BuildBlocksObjective(10, Blocks.copperWall, Blocks.copperWallLarge)
-				+ BuildBlocksObjective(3, Blocks.duo)
+				+ BuildBlocksObjective(3, Blocks.duo, Blocks.arc)
 
 				achievement("kill-enemy", Icon.defense.tint(0.95f, 0.8f, 0.8f, 1f)) {
 					+ KillUnitsObjective(3, UnitTypes.dagger, UnitTypes.flare)
@@ -35,11 +35,22 @@ object CoreAchievements {
 						+ KillUnitsObjective(12, UnitTypes.dagger, UnitTypes.crawler)
 						+ KillUnitsObjective(6, UnitTypes.flare, UnitTypes.horizon)
 						+ KillUnitsObjective(2, UnitTypes.mace)
+
+						achievement("massive-grind") {
+							// kill 1000 units
+							+ EventCounterObjective<UnitDestroyedEvent>(1000, "kill-enemies-total", { true })
+						}
 					}
 
 					achievement("air-threat") {
 						+ BuildBlocksObjective(4, Blocks.scatter)
-						+ KillUnitsObjective(8, UnitTypes.flare, UnitTypes.horizon)
+						+ EventCounterObjective<UnitDestroyedEvent>(20, "kill-air-enemies") {
+							it.unit.type.flying
+						}
+
+						achievement("retired-villian") {
+							+ KillUnitsObjective(1, UnitTypes.antumbra, UnitTypes.eclipse)
+						}
 					}
 				}
 

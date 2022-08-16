@@ -58,7 +58,7 @@ class ObjectiveEvents {
 	}
 
 	/** An enemy unit has been destroyed. Not necessarily by the player team. */
-	class UnitDestroyedEvent(unit: MindustryUnit)  : UnitEvent(unit) {
+	class UnitDestroyedEvent(unit: MindustryUnit) : UnitEvent(unit) {
 		class Init : Listener({
 			fireOnIf(UnitDestroyEvent::class, { !unit.playerTeam }) {
 				UnitDestroyedEvent(unit)

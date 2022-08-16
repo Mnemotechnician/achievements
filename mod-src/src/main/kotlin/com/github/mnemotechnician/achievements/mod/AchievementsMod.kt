@@ -26,7 +26,6 @@ class AchievementsMod : Mod() {
 			buildHud()
 		}
 
-		// todo temporary solution
 		Events.on(AchievementUnlockEvent::class.java) {
 			notificationPane.showUnlock(it.achievement)
 		}

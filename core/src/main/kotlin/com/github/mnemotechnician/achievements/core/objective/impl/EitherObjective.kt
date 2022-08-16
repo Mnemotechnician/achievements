@@ -21,6 +21,15 @@ open class EitherObjective(
 		require(objectives.isNotEmpty()) { "The array of objectives of EitherObjective must not be empty." }
 	}
 
+	override fun init() {
+		super.init()
+
+		objectives.forEach { 
+			it.parent = parent // the parent isn't aware
+			it.init()
+		}
+	}
+
 	override fun reset() {
 		objectives.optForEach { it.reset() }
 	}
@@ -33,11 +42,13 @@ open class EitherObjective(
 		super.display(target)
 		// display variants
 		target.row().addTable {
+			left()
 			objectives.forEach {
 				addTable {
+					left()
 					it.display(this)
 				}.padLeft(3f).growX().row()
 			}
-		}.colspan(2)
+		}.growX()
 	}
 }

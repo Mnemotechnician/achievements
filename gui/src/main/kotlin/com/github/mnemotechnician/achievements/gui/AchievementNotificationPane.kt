@@ -1,4 +1,4 @@
-package com.github.mnemotechnician.achievements.gui
+p // the parent isn't awareackage com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
 import arc.math.Interp
@@ -108,7 +108,9 @@ open class AchievementNotificationPane(
 		val description: String?
 	) : Table(Tex.button) {
 		init {
-			addImage(icon, scaling = Scaling.fill).size(96f).top()
+			top()
+
+			addImage(icon, scaling = Scaling.fill).size(64f).top()
 			vsplitter(Color.gray).width(2f)
 			addTable {
 				top()
@@ -125,7 +127,7 @@ open class AchievementNotificationPane(
 						buildContent(this)
 					}.with { collapser = it }.colspan(2).growX()
 				}
-			}.growX()
+			}.grow()
 		}
 
 		/** Builds the content table of this notification. By default, a description label. */
@@ -148,7 +150,7 @@ open class AchievementNotificationPane(
 					achievementTree.treePane.let { pane ->
 						pane.allNodes.find { it.achievement == achievement }?.let { pane.traverseToNode(it) }
 					}
-				}.growY()
+				}.growY().bottom()
 			}
 		}
 	}
