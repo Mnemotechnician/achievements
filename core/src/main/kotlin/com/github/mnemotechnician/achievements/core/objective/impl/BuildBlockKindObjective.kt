@@ -15,7 +15,7 @@ import mindustry.world.blocks.liquid.*
 import mindustry.world.blocks.logic.LogicBlock
 import mindustry.world.blocks.power.*
 import mindustry.world.blocks.production.*
-import mindustry.world.blocks.storage.Unloader
+import mindustry.world.blocks.storage.*
 
 /**
  * Similar to [BuildBlocksObjective], but requires the player to build blocks of a specific kind
@@ -99,10 +99,12 @@ class BuildBlockKindObjective(
 
 		DRILL({ it is BeamDrill || it is Drill }),
 		PUMP({ it is Pump }),
-		FACTORY({ it is GenericCrafter });
+		FACTORY({ it is GenericCrafter }),
+
+		CORE({ it is CoreBlock });
 
 		val displayName by lazy { Core.bundle.get("block-kind.${
-			name.lowercase().replace('_', ' ')
+			name.lowercase().replace('_', '-')
 		}.name") }
 	}
 }

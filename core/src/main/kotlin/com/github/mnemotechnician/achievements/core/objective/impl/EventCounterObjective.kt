@@ -28,7 +28,7 @@ open class EventCounterObjective<T : ObjectiveEvent>(
 	}
 
 	companion object {
-		inline fun <reified T : ObjectiveEvent> invoke(
+		inline operator fun <reified T : ObjectiveEvent> invoke(
 			targetCount: Int,
 			name: String,
 			filter: Filter<EventCounterObjective<T>, T>

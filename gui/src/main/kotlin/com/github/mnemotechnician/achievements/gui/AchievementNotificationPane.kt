@@ -1,4 +1,4 @@
-p // the parent isn't awareackage com.github.mnemotechnician.achievements.gui
+package com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
 import arc.math.Interp

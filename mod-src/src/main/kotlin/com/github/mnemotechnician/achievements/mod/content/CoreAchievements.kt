@@ -3,7 +3,9 @@ package com.github.mnemotechnician.achievements.mod.content
 import arc.graphics.Color
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.core.dsl.*
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents
 import com.github.mnemotechnician.achievements.core.objective.impl.*
+import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlockKindObjective.BlockKind
 import com.github.mnemotechnician.achievements.core.objective.requirement.MiningRequirement
 import com.github.mnemotechnician.achievements.core.objective.requirement.ProximityRequirement
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
@@ -16,8 +18,8 @@ object CoreAchievements {
 	fun load() {
 		root = rootAchievement("beginning", ASprites.iconSunrise) {
 			achievement("enemies-coming", ASprites.iconInvader) {
-				+ BuildBlocksObjective(10, Blocks.copperWall, Blocks.copperWallLarge)
-				+ BuildBlocksObjective(3, Blocks.duo, Blocks.arc)
+				+ BuildBlockKindObjective(10, BlockKind.WALL)
+				+ BuildBlockKindObjective(3, BlockKind.TURRET)
 
 				achievement("kill-enemy", Icon.defense.tint(0.95f, 0.8f, 0.8f, 1f)) {
 					+ KillUnitsObjective(3, UnitTypes.dagger, UnitTypes.flare)
@@ -38,13 +40,13 @@ object CoreAchievements {
 
 						achievement("massive-grind") {
 							// kill 1000 units
-							+ EventCounterObjective<UnitDestroyedEvent>(1000, "kill-enemies-total", { true })
+							+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(1000, "kill-enemies-total", { true })
 						}
 					}
 
 					achievement("air-threat") {
 						+ BuildBlocksObjective(4, Blocks.scatter)
-						+ EventCounterObjective<UnitDestroyedEvent>(20, "kill-air-enemies") {
+						+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(20, "kill-air-enemies") {
 							it.unit.type.flying
 						}
 
@@ -61,13 +63,14 @@ object CoreAchievements {
 
 			achievement("begin-mining", Blocks.mechanicalDrill) {
 				+ BuildBlocksObjective(4, Blocks.mechanicalDrill)
-				+ BuildBlocksObjective(10, Blocks.conveyor, Blocks.titaniumConveyor)
+				+ BuildBlockKindObjective(10, BlockKind.CONVEYOR)
 
 				achievement("pressure-powered", Blocks.pneumaticDrill) {
 					+ BuildBlocksObjective(3, Blocks.pneumaticDrill)
 
 					achievement("advanced-optics", Blocks.laserDrill) {
 						+ BuildBlocksObjective(2, Blocks.laserDrill)
+						// todo this is dumb, must be changed when i implement the OwnBlockObjevtive
 						+ either(
 							BuildBlocksObjective(Blocks.waterExtractor)
 								.with(ProximityRequirement(Blocks.laserDrill)),
@@ -82,8 +85,8 @@ object CoreAchievements {
 				}
 
 				achievement("get-hydrated", Liquids.water) {
-					+ BuildBlocksObjective(Blocks.mechanicalPump)
-					+ BuildBlocksObjective(10, Blocks.conduit)
+					+ BuildBlockKindObjective(BlockKind.PUMP)
+					+ BuildBlockKindObjective(10, BlockKind.CONDUIT)
 
 					achievement("underground-waters", Blocks.waterExtractor) {
 						+ BuildBlocksObjective(5, Blocks.waterExtractor)
@@ -92,9 +95,8 @@ object CoreAchievements {
 			}
 
 			achievement("logistics", Blocks.conveyor) {
-				+ BuildBlocksObjective(35, Blocks.conveyor)
-				+ BuildBlocksObjective(2, Blocks.router)
-				+ BuildBlocksObjective(3, Blocks.junction)
+				+ BuildBlockKindObjective(35, BlockKind.CONVEYOR)
+				+ BuildBlockKindObjective(5, BlockKind.DISTRIBUTION)
 
 				achievement("upgrades-people", Icon.up.tint(Color.green)) {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
@@ -107,8 +109,9 @@ object CoreAchievements {
 
 				achievement("let-be-light", Blocks.combustionGenerator) {
 					+ BuildBlocksObjective(3, Blocks.combustionGenerator)
-					+ BuildBlocksObjective(5, Blocks.mechanicalDrill, Blocks.pneumaticDrill)
+					+ BuildBlockKindObjective(5, BlockKind.DRILL)
 						.with(MiningRequirement(Items.coal))
+					+ BuildBlockKindObjective(BlockKind.POWER_NODE)
 
 					achievement("steampunk", Blocks.steamGenerator) {
 						+ BuildBlocksObjective(3, Blocks.steamGenerator)
@@ -116,8 +119,8 @@ object CoreAchievements {
 					}
 
 					achievement("ecological", Blocks.solarPanel) {
-						+ BuildBlocksObjective(10, Blocks.solarPanel)
-						+ BuildBlocksObjective(5, Blocks.battery, Blocks.batteryLarge)
+						+ BuildBlocksObjective(10, Blocks.solarPanel, Blocks.largeSolarPanel)
+						+ BuildBlockKindObjective(5, BlockKind.BATTERY)
 					}
 				}
 
