@@ -34,8 +34,8 @@ abstract class Objective(
 		private set
 
 	/** The name this objective should be referred to in bundles. */
-	@Deprecated("is this even needed")
 	val bundleName by lazy { "objective.$name" }
+	@Deprecated("is this even needed")
 	/** The name of this objective, displayed in-game. Currently unused. */
 	lateinit var displayName: String
 	/** The description of this objective displayed in-game. */

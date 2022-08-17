@@ -2,10 +2,10 @@ package com.github.mnemotechnician.achievements.core.objective.impl
 
 import arc.scene.ui.layout.Table
 import com.github.mnemotechnician.achievements.core.StateManager.state
+import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNotifications.ItemsChangeNotification
-import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle
 import mindustry.Vars
 import mindustry.type.Item
@@ -22,6 +22,7 @@ open class CollectItemsObjective : Objective {
 	/** The amount of items the player has to collect. */
 	var targetCount = 0
 		protected set
+	/** The amount of the specified item the user has had the last time it was checked. */
 	protected var lastCount = 0
 	lateinit var item: Item
 		private set
@@ -31,6 +32,12 @@ open class CollectItemsObjective : Objective {
 	override val description by dynamicBundle({ bundleName }, { item.emojiOrName() }, { lastCount }, { targetCount })
 
 	override var isFulfilled by state(false) { uniqueName }
+	/**
+	 * If is [isFulfilled] and [maxCapacity] are true,
+	 * stores the last amount of items the user was required to collect to complete the objective.
+	 * Otherwise, it's meaningless.
+	 */
+	var fulfilledCount by state(0) { uniqueName }
 
 	/** Collect [count] of [item]. */
 	constructor(count: Int, item: Item) : super("collect-items", Companion.acceptedEvents) {
@@ -57,21 +64,31 @@ open class CollectItemsObjective : Objective {
 
 	/** Updates [lastCount] and, if [maxCapacity] is true, [targetCount]. */
 	protected open fun updateCount() {
-		lastCount = Vars.player.team().items().get(item)
+		if (!isFulfilled) {
+			lastCount = Vars.player.team().items().get(item)
 
-		if (maxCapacity) {
-			var newCount = 0
-			Vars.player?.team()?.cores()?.each {
-				newCount += it.storageCapacity
+			if (maxCapacity) {
+				var newCount = 0
+				Vars.player?.team()?.cores()?.each {
+					newCount += it.storageCapacity
+				}
+				targetCount = max(targetCount, newCount)
 			}
-			targetCount = max(targetCount, newCount)
+		} else {
+			// it doesn't matter how many the player has now, it's already completed, so we just mimic it.
+			if (maxCapacity) targetCount = fulfilledCount
+			lastCount = targetCount
 		}
 	}
 
 	override fun handleEvent(event: ObjectiveEvent) {
 		if (event is ItemsChangeNotification) {
 			updateCount()
-			if (event[item] >= targetCount) isFulfilled = true
+			if (event[item] >= targetCount) {
+				isFulfilled = true
+				// with maxCapacity == true, targetCount is dynamic, so we need to remember it.
+				if (maxCapacity) fulfilledCount = targetCount
+			}
 		}
 	}
 

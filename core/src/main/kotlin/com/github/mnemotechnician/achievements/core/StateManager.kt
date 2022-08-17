@@ -12,8 +12,8 @@ import com.github.mnemotechnician.achievements.core.StateManager.StateEntry
 import com.github.mnemotechnician.mkui.delegates.SettingDelegate
 import mindustry.Vars
 import mindustry.core.GameState.*
-import mindustry.game.EventType.SaveLoadEvent
-import mindustry.game.EventType.StateChangeEvent
+import mindustry.game.EventType
+import mindustry.game.EventType.*
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
@@ -71,7 +71,7 @@ object StateManager {
 		Events.on(AchievementUnlockEvent::class.java) {
 			autoSaveState()
 		}
-		Events.on(SaveLoadEvent::class.java) {
+		Events.on(WorldLoadEvent::class.java) {
 			lastStateFile?.let { saveState(it) }
 			Core.app.post { autoLoadState() }
 		}
@@ -84,11 +84,12 @@ object StateManager {
 		addType({ b() }, { b(it.toInt()) })
 		addType({ s() }, { s(it.toInt()) })
 		addType({ i() }, { i(it) })
+		addType({ l() }, { l(it) })
 		// decimals
 		addType({ f() }, { f(it) })
 		addType({ d() }, { d(it) })
 		// other
-		addType<Unit>({}, {}) // i don't know why this happens to be there and at this point i'm too afraid to ask
+		addType<Unit>({}, {}) // I don't know why this happens to be there and at this point I'm too afraid to ask
 		addType({ bool() }, { bool(it) })
 		addType({ str() }, { str(it) })
 	}
@@ -160,6 +161,7 @@ object StateManager {
 			lastStateFile = null
 			values.clear()
 			invalidateAll()
+			AchievementManager.updateAll(true)
 			return
 		}
 
@@ -313,7 +315,7 @@ object StateManager {
 	 */
 	class StateEntry<T>(val lazyPrefix: () -> String?, default: T) : SettingDelegate<T>("", default) {
 		/** Holds either the cached value or [NO_VALUE] if there's no value. */
-		var cachedValue: Any? = NO_VALUE
+		private var cachedValue: Any? = NO_VALUE
 		/** If false, there's no cached value right now. */
 		val hasCache get() = cachedValue != NO_VALUE
 
