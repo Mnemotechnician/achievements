@@ -130,10 +130,10 @@ object CoreAchievements {
 			}
 
 			achievement("stonks", Blocks.coreFoundation) {
-				+ BuildBlocksObjective(1, Blocks.coreFoundation, Blocks.coreNucleus)
+				+ OwnBlocksObjective(1, Blocks.coreFoundation, Blocks.coreNucleus)
 				
 				achievement("maximum-efficiency", Blocks.coreNucleus) {
-					+ BuildBlocksObjective(Blocks.coreNucleus)
+					+ OwnBlocksObjective(1, Blocks.coreNucleus)
 
 					achievement("truly-rich", Items.copper) {
 						+ CollectItemsObjective(5000, Items.surgeAlloy)

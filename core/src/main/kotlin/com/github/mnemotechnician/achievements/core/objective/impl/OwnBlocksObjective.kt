@@ -55,6 +55,8 @@ open class OwnBlocksObjective(
 				TileIndexer.eachBuild(Vars.player.team(), null) {
 					if (it.block in kinds && isAccepted(it)) count++
 				}
+
+				parent.update(false) // update the parent without waiting for the next event
 			}
 		} else {
 			// the achievement is already completed, so we just pretend this objective is too.
@@ -69,7 +71,7 @@ open class OwnBlocksObjective(
 	protected open fun isAccepted(building: Building): Boolean {
 		if (tempBuildEvent == null) {
 			tempBuildEvent = ReusableBuildEvent(building)
-		} else {
+		} else 
 			tempBuildEvent!!.building = building
 		}
 		return isAccepted(tempBuildEvent!!)
