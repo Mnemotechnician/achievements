@@ -1,7 +1,7 @@
 package com.github.mnemotechnician.achievements.core.objective.event
 
-import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent.*
 import com.github.mnemotechnician.achievements.core.misc.playerTeam
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent.*
 import mindustry.game.EventType.*
 import mindustry.gen.Building
 import mindustry.gen.Entityc
@@ -9,9 +9,9 @@ import mindustry.gen.Unit as MindustryUnit
 
 @Suppress("unused")
 class ObjectiveEvents {
-	abstract class BuildingEvent(val building: Building) : ObjectiveEvent()
+	abstract class BuildingEvent(open val building: Building) : ObjectiveEvent()
 
-	abstract class UnitEvent(val unit: MindustryUnit) : ObjectiveEvent()
+	abstract class UnitEvent(open val unit: MindustryUnit) : ObjectiveEvent()
 
 	/** A building has been built (includes core upgrades). */
 	class ConstructionEvent(building: Building) : BuildingEvent(building) {

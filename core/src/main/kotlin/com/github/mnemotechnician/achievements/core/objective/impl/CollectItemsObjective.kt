@@ -1,6 +1,5 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
-import arc.scene.ui.layout.Table
 import com.github.mnemotechnician.achievements.core.StateManager.state
 import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.achievements.core.objective.Objective
@@ -13,10 +12,15 @@ import kotlin.math.max
 
 /**
  * Requires the player to get the specified amount of the specified item in the core storage
- * or to fill it with the specified item.
+ * or to fill it with the specified item (if [maxCapacity] is true).
  *
  * In the latter case, even if the storage space of player decreases,
  * the required amount of items remains the same to prevent abusing.
+ *
+ * Additionally, once [targetCount] is reached, the objective remains completed,
+ * because item count is a very volatile thing. If [maxCapacity] is true,
+ * the core capacity the player had before the completion of the achievement
+ * is saved and persisted regardless of the current capacity.
  */
 open class CollectItemsObjective : Objective {
 	/** The amount of items the player has to collect. */
@@ -38,6 +42,10 @@ open class CollectItemsObjective : Objective {
 	 * Otherwise, it's meaningless.
 	 */
 	var fulfilledCount by state(0) { uniqueName }
+
+	init {
+		updates = true
+	}
 
 	/** Collect [count] of [item]. */
 	constructor(count: Int, item: Item) : super("collect-items", Companion.acceptedEvents) {
@@ -92,10 +100,8 @@ open class CollectItemsObjective : Objective {
 		}
 	}
 
-	override fun display(target: Table) {
-		super.display(target)
-		// this is dumb, update() method should be a thing.
-		target.update { updateCount() }
+	override fun update() {
+		updateCount()
 	}
 
 	companion object {

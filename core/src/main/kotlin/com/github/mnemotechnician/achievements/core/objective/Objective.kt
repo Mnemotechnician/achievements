@@ -56,15 +56,21 @@ abstract class Objective(
 	/** Whether this objective has been initialised yet. */
 	var isInit = false
 		protected set
+	/** Whether this achievement updates independently. Must be set by implementing classes **before** initialisation. */
+	var updates = false
+		protected set(value) {
+			if (isInit) throw IllegalStateException("Objective $this is already initialised, changing Objective#updates will do nothing.")
+			field = value
+		}
 
 	/**
 	 * Initialises this achievement.
 	 * Called by the parent achievement during its initialisation or immediately after being added.
+	 *
+	 * Overriding classes must invoke the superimplementation of this method.
 	 */
 	open fun init() {
-		//if (!::displayName.isInitialized) {
-		//	displayName = Core.bundle.get("objective.$name.name")
-		//}
+		if (updates) AchievementManager.addUpdatingObjective(this)
 
 		acceptedEvents.forEach { AchievementManager.addEvent(it) }
 		isInit = true
@@ -106,6 +112,12 @@ abstract class Objective(
 	open fun display(target: Table) {
 		target.addLabel({ description }, wrap = true, align = left).color(Pal.lightishGray).growX()
 	}
+
+	/**
+	 * Updates this objective. By default, does nothing.
+	 * Called from [AchievementManager] if [updates] is true.
+	 */
+	open fun update() {}
 
 	override fun toString() = "${super.toString().substringBefore('@')}(name=$name, isFulfilled=$isFulfilled)"
 

@@ -1,9 +1,12 @@
 package com.github.mnemotechnician.achievements.core
 
+import arc.Events
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.misc.optForEach
+import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import mindustry.Vars
+import mindustry.game.EventType
 
 /**
  * Manages all registered achievements.
@@ -12,15 +15,23 @@ import mindustry.Vars
  */
 object AchievementManager {
 	/** All root achievements. Do not modify. */
-	val achievements = ArrayList<Achievement>()
+	val achievements = ArrayList<Achievement>(10)
 	/** All registered achievements, including the children. */
-	val allAchievements = ArrayList<Achievement>()
+	val allAchievements = ArrayList<Achievement>(50)
+	/** Objectives with updates = true, updated on every frame. */
+	val updatingObjectives = ArrayList<Objective>(100)
 	/**
 	 * All kinds of events accepted by [fireEvent].
 	 * When an objective is created, it adds an entry to this set
 	 * by calling [addEvent].
 	 */
 	val acceptedEvents = HashSet<Class<out ObjectiveEvent>>()
+
+	init {
+		Events.run(EventType.Trigger.update) {
+			updatingObjectives.forEach { it.update() }
+		}
+	}
 
 	/**
 	 * Registers and initialises an achievement.
@@ -33,6 +44,11 @@ object AchievementManager {
 		if (achievement.parent == null) {
 			achievements.add(achievement)
 		}
+	}
+
+	/** Adds this objective to [updatingObjectives]. */
+	fun addUpdatingObjective(objective: Objective) {
+		updatingObjectives.add(objective)
 	}
 
 	/**

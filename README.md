@@ -14,7 +14,6 @@ The functionality of this project is split into 3 separate subprojects:
 * More objectives and more objective events / notifications
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
-* Add an objective that requires the player to own a kind of a block on the map
 * Add an objective that requires the player to play in a specific environment
 
 TOFIX

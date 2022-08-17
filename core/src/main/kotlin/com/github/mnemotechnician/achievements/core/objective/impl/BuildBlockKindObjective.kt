@@ -4,33 +4,41 @@ import arc.Core
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents
+import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlockKindObjective.BlockKind
 import mindustry.Vars
 import mindustry.world.Block
 import mindustry.world.blocks.ConstructBlock
 import mindustry.world.blocks.defense.Wall
 import mindustry.world.blocks.defense.turrets.BaseTurret
 import mindustry.world.blocks.distribution.*
-import mindustry.world.blocks.environment.Floor
 import mindustry.world.blocks.liquid.*
 import mindustry.world.blocks.logic.LogicBlock
 import mindustry.world.blocks.power.*
 import mindustry.world.blocks.production.*
-import mindustry.world.blocks.storage.*
+import mindustry.world.blocks.storage.CoreBlock
+import mindustry.world.blocks.storage.Unloader
+import kotlin.math.max
 
 /**
  * Similar to [BuildBlocksObjective], but requires the player to build blocks of a specific kind
  * (e.g. turret, wall) rather than a one of specific blocks.
+ *
+ * Like [BuildBlocksObjective], this class decrements [count] when the user deconstructs a block
+ * specified in [kinds]. However, due to how [BlockKind] and [TileIndexer] work, it's rather
+ * impossible to acquire the [Building] that was deconstructed. Therefore, when the player
+ * deconstructs a block specified in [kinds], the counter is decremented without checking
+ * the filters and requirements of this objective.
  */
 class BuildBlockKindObjective(
 	targetCount: Int,
 	vararg val kinds: BlockKind
 ) : AbstractCounterObjective(targetCount, "build-blocks", BuildBlocksObjective.acceptedEvents) {
-	constructor(vararg kinds: BlockKind) : this(1, *kinds)
-
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.displayName } }
 
+	constructor(vararg kinds: BlockKind) : this(1, *kinds)
+
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
-		list.add(0, { kindsDescription })
+		list.add(0) { kindsDescription }
 	}
 
 	// mostly copied from BuildBlocksObjective
@@ -45,24 +53,14 @@ class BuildBlockKindObjective(
 			// decrement if the target building was deconstructed...
 			// since we can't acquire a Building, which filters and requirements rely on, isAccepted() is not called.
 			if (event.building.team() == Vars.player.team() && kinds.any { it.check(block) }) {
-				count--
+				count = max(0, count - 1)
 			}
 		}
 		return false
 	}
 
-	/** Adds a placement floor requirement. */
-	fun onFloor(floor: Floor) = this.also {
-		filter { (it as? ObjectiveEvents.BuildingEvent)?.building?.floor() == floor }
-	}
-
-	/** Adds a placement overlay requirement. */
-	fun onOverlay(overlay: Floor) = this.also {
-		filter { (it as? ObjectiveEvents.BuildingEvent)?.building?.tile?.overlay() == overlay }
-	}
-
 	enum class BlockKind(val check: (Block) -> Boolean) {
-		/** Ay block. */
+		/** Any block. */
 		ANY({ true }),
 		/** Nothing, just you and your imagination. */
 		NOTHING({ false }),
