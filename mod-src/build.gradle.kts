@@ -1,24 +1,14 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
-	kotlin("jvm") version "1.7.20-Beta"
+	kotlin("jvm")
 	`maven-publish`
 	id("org.jetbrains.dokka") version "1.6.10"
 }
 
 val jarName = "achievements"
 
-repositories {
-	mavenCentral()
-	maven("https://jitpack.io")
-}
-
 dependencies {
-	implementation(kotlin("stdlib-jdk8"))
-	
-	compileOnly("com.github.Anuken.Arc:arc-core:v136")
-	compileOnly("com.github.Anuken:MindustryJitpack:v136")
-
 	implementation("com.github.mnemotechnician:mkui:-SNAPSHOT")
 	implementation(project(":core"))
 	implementation(project(":gui"))
@@ -125,13 +115,6 @@ val generateIconAccessors by tasks.registering {
 
 tasks.withType<KotlinCompile> {
 	dependsOn(generateIconAccessors)
-
-	kotlinOptions {
-		freeCompilerArgs += arrayOf(
-			"-Xuse-k2",
-			"-Xcontext-receivers"
-		)
-	}
 }
 
 tasks.jar {
