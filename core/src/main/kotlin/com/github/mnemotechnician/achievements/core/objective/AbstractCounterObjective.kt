@@ -15,7 +15,7 @@ import kotlin.math.min
  * Represents a simple objective that requires the player to do the same thing [targetCount] times.
  *
  * It's assumed that the bundle entry associated with this objective
- * accepts at least 2 parameters (total targetAmount, target targetAmount),
+ * accepts at least 2 parameters (total count, target count),
  * more can be added by implementing [modifyBundleParams].
  */
 abstract class AbstractCounterObjective(
@@ -38,7 +38,7 @@ abstract class AbstractCounterObjective(
 	var requirements: ArrayList<Requirement>? = null
 
 	init {
-		require(targetCount >= 0) { "targetAmount must be >= 0: $targetCount < 0"}
+		require(targetCount >= 0) { "targetCount must be >= 0: $targetCount < 0"}
 	}
 
 	@Suppress("UNCHECKED_CAST")

@@ -15,7 +15,7 @@ import kotlin.math.max
  * or to fill it with the specified item (if [maxCapacity] is true).
  *
  * In the latter case, even if the storage space of player decreases,
- * the required amount of liquids remains the same to prevent abusing.
+ * the required amount of items remains the same to prevent abusing.
  *
  * Additionally, once [targetCount] is reached, the objective remains completed,
  * because item count is a very volatile thing. If [maxCapacity] is true,
@@ -23,7 +23,7 @@ import kotlin.math.max
  * is saved and persisted regardless of the current capacity.
  */
 open class CollectItemsObjective : Objective {
-	/** The amount of liquids the player has to collect. */
+	/** The amount of items the player has to collect. */
 	var targetCount = 0
 		protected set
 	/** The amount of the specified item the user has had the last time it was checked. */
@@ -38,7 +38,7 @@ open class CollectItemsObjective : Objective {
 	override var isFulfilled by state(false) { uniqueName }
 	/**
 	 * If is [isFulfilled] and [maxCapacity] are true,
-	 * stores the last amount of liquids the user was required to collect to complete the objective.
+	 * stores the last amount of items the user was required to collect to complete the objective.
 	 * Otherwise, it's meaningless.
 	 */
 	var fulfilledCount by state(0) { uniqueName }
@@ -48,14 +48,14 @@ open class CollectItemsObjective : Objective {
 	}
 
 	/** Collect [count] of [item]. */
-	constructor(count: Int, item: Item) : super("collect-liquids", Companion.acceptedEvents) {
+	constructor(count: Int, item: Item) : super("collect-items", Companion.acceptedEvents) {
 		maxCapacity = false
 		this.targetCount = count
 		this.item = item
 	}
 
 	/** Fill the core with [item]. */
-	constructor(item: Item) : super("collect-liquids", Companion.acceptedEvents) {
+	constructor(item: Item) : super("collect-items", Companion.acceptedEvents) {
 		maxCapacity = true
 		this.item = item
 		updateCount()
