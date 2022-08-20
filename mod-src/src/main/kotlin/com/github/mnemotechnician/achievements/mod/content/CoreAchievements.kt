@@ -6,8 +6,7 @@ import com.github.mnemotechnician.achievements.core.dsl.*
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents
 import com.github.mnemotechnician.achievements.core.objective.impl.*
 import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlockKindObjective.BlockKind
-import com.github.mnemotechnician.achievements.core.objective.requirement.MiningRequirement
-import com.github.mnemotechnician.achievements.core.objective.requirement.ProximityRequirement
+import com.github.mnemotechnician.achievements.core.objective.requirement.*
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import mindustry.content.*
 import mindustry.gen.Icon
@@ -24,21 +23,21 @@ object CoreAchievements {
 				achievement("kill-enemy", Icon.defense.tint(0.95f, 0.8f, 0.8f, 1f)) {
 					+ KillUnitsObjective(3, UnitTypes.dagger, UnitTypes.flare)
 
-					achievement("siege", Icon.commandAttack.tint(Color.crimson)) {
+					achievement("siege", ASprites.iconBullets) {
 						+ DestroyBlocksObjective(10, Blocks.copperWall, Blocks.duo, Blocks.scatter)
 						+ DestroyBlocksObjective(40, Blocks.conveyor, Blocks.titaniumConveyor, Blocks.router)
 
-						achievement("boss", Icon.commandAttack.tint(0.84f, 0.6f, 0.6f, 1f)) {
+						achievement("boss", ASprites.iconBullets.tint(0.95f, 0.6f, 0.6f, 1f)) {
 							+ DestroyBlocksObjective(1, Blocks.coreShard, Blocks.coreFoundation, Blocks.coreNucleus)
 						}
 					}
 
-					achievement("tower-defense") {
+					achievement("tower-defense", ASprites.iconTower) {
 						+ KillUnitsObjective(12, UnitTypes.dagger, UnitTypes.crawler)
 						+ KillUnitsObjective(6, UnitTypes.flare, UnitTypes.horizon)
 						+ KillUnitsObjective(2, UnitTypes.mace)
 
-						achievement("massive-grind") {
+						achievement("massive-grind", ASprites.iconTower.tint(1f, 0.7f, 0.7f, 1f)) {
 							// kill 1000 units
 							+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(1000, "kill-enemies-total", { true })
 						}
@@ -69,14 +68,8 @@ object CoreAchievements {
 					+ BuildBlocksObjective(3, Blocks.pneumaticDrill)
 
 					achievement("advanced-optics", Blocks.laserDrill) {
-						+ BuildBlocksObjective(2, Blocks.laserDrill)
-						// todo this is dumb, must be changed when i implement the OwnBlockObjevtive
-						+ either(
-							BuildBlocksObjective(Blocks.waterExtractor)
-								.with(ProximityRequirement(Blocks.laserDrill)),
-							BuildBlocksObjective(1, Blocks.conduit, Blocks.pulseConduit, Blocks.bridgeConduit)
-								.with(ProximityRequirement(Blocks.laserDrill))
-						)
+						+ OwnBlocksObjective(2, Blocks.laserDrill)
+							.with(LiquidRequirement(Blocks.laserDrill.liquidCapacity, Liquids.water))
 
 						achievement("shaking-ground", Blocks.blastDrill) {
 							+ BuildBlocksObjective(Blocks.blastDrill)

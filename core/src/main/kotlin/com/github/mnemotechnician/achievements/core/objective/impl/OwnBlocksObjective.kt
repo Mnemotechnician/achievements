@@ -71,16 +71,14 @@ open class OwnBlocksObjective(
 	protected open fun isAccepted(building: Building): Boolean {
 		if (tempBuildEvent == null) {
 			tempBuildEvent = ReusableBuildEvent(building)
-		} else 
+		} else {
 			tempBuildEvent!!.building = building
 		}
 		return isAccepted(tempBuildEvent!!)
 	}
 
 	/** Reusable BuildingEvent. Used internally, see [isAccepted]. */
-	class ReusableBuildEvent(build: Building) : ObjectiveEvents.BuildingEvent(build) {
-		override lateinit var building: Building
-	}
+	class ReusableBuildEvent(override var building: Building) : ObjectiveEvents.BuildingEvent(building)
 
 	companion object {
 		/** See [isAccepted]. */

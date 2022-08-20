@@ -14,8 +14,8 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNot
  *
  * By default, two parameters are providen to the underlying description
  * bundle of this objective:
- * * {0} - current targetCount
- * * {1} - target targetCount.
+ * * {0} - current targetAmount
+ * * {1} - target targetAmount.
  *
  * Optionally, you can provide a list of lambdas as the [bundleArgs]
  * parameter. The values they return will be added to the list of parameters:

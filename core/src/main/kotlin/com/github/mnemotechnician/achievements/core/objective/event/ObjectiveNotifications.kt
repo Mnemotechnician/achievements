@@ -13,7 +13,7 @@ class ObjectiveNotifications {
 		})
 	}
 
-	/** Fired when the amount of items in the core changes. */
+	/** Fired when the amount of liquids in the core changes. */
 	object ItemsChangeNotification : ObjectiveNotification() {
 		private val lastItems = IntSeq(Vars.content.items().size)
 		private val items = IntSeq(Vars.content.items().size)

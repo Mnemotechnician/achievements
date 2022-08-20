@@ -91,8 +91,7 @@ val generateIconAccessors by tasks.registering {
 					
 					/** Generated class containing compile-time accessors for icon assets. */
 					object $className {
-					    fun drawable(name: String) = Core.atlas.drawable("achievements-" + name)!!.also {
-					        if (it !is TextureRegionDrawable) return@also
+					    fun drawable(name: String) = (Core.atlas.drawable("achievements-" + name) as TextureRegionDrawable).also {
 					        if (!Core.atlas.isFound(it.region)) throw RuntimeException("Region " + name + " is not found! (Are you accessing AIcon before the end of texture packing?)")
 					    }
 				""".trimIndent())

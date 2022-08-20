@@ -8,10 +8,12 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEve
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvents.BuildingEvent
 import com.github.mnemotechnician.mkui.delegates.bundle
 import mindustry.type.Item
+import mindustry.type.Liquid
 import mindustry.world.Block
 import mindustry.world.Tile
 import mindustry.world.blocks.environment.Floor
 import mindustry.world.blocks.production.Drill
+import kotlin.math.max
 
 /**
  * Requires a block in proximity of the block that's being placed or removed.
@@ -32,7 +34,7 @@ class ProximityRequirement(
 	override fun isAccepted(event: ObjectiveEvent) = when (event) {
 		is BuildingEvent -> if (allOf) {
 			blocks.all { block ->
-				event.building.proximity.items.any { it.block == block }
+				event.building.proximity.items.any { it?.block == block } // how are there nulls???????
 			}
 		} else {
 			event.building.proximity.items.any { it.block in blocks }
@@ -93,6 +95,69 @@ class MiningRequirement(val minedItem: Item) : Requirement("mining") {
 		val build = event.building
 		if (build is Drill.DrillBuild) {
 			build.dominantItem == minedItem
+		} else true
+	} else true
+}
+
+/**
+ * Requires the player to put any of the specified liquids in the block.
+ * @param inTotal if true, the requirement is fulfilled when the sum of all specified liquids in the block is over [targetCount].
+ *      Otherwise, it's fulfilled when the amount of one of these liquids exceeds the specified number.
+ */
+class ItemRequirement(
+	val inTotal: Boolean = false,
+	val targetCount: Int,
+	vararg val items: Item
+) : Requirement("items") {
+	val itemNames = items.joinToString(", ") { it.emojiOrName() }
+	override val description by bundle(bundlePrefix, targetCount, inTotal.int, itemNames)
+
+	/** Same as the primary constructor. */
+	constructor(targetCount: Int, vararg items: Item) : this(false, targetCount, *items)
+
+	override fun isAccepted(event: ObjectiveEvent) = if (event is BuildingEvent) {
+		val buildItems = event.building.items
+
+		if (buildItems != null) {
+			var count = 0
+			if (inTotal) {
+				items.forEach { count += buildItems[it] }
+			} else {
+				items.forEach { count = max(count, buildItems[it] )}
+			}
+			count >= targetCount
+		} else true
+	} else true
+}
+
+
+/**
+ * Requires the player to put any of the specified liquids in the block.
+ * @param inTotal if true, the requirement is fulfilled when the sum of all specified liquids in the block is over [targetAmount].
+ *      Otherwise, it's fulfilled when the amount of one of these liquids exceeds the specified number.
+ */
+class LiquidRequirement(
+	val inTotal: Boolean = false,
+	val targetAmount: Float,
+	vararg val liquids: Liquid
+) : Requirement("items") {
+	val liquidNames = liquids.joinToString(", ") { it.emojiOrName() }
+	override val description by bundle(bundlePrefix, targetAmount, inTotal.int, liquidNames)
+
+	/** Same as the primary constructor. */
+	constructor(targetAmount: Float, vararg liquids: Liquid) : this(false, targetAmount, *liquids)
+
+	override fun isAccepted(event: ObjectiveEvent) = if (event is BuildingEvent) {
+		val buildLiquids = event.building.liquids
+
+		if (buildLiquids != null) {
+			var count = 0f
+			if (inTotal) {
+				liquids.forEach { count += buildLiquids[it] }
+			} else {
+				liquids.forEach { count = max(count, buildLiquids[it] )}
+			}
+			count >= targetAmount
 		} else true
 	} else true
 }
