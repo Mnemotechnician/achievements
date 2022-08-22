@@ -10,6 +10,7 @@ import mindustry.Vars
 import mindustry.core.Version.number
 import mindustry.world.Block
 import mindustry.world.blocks.ConstructBlock.ConstructBuild
+import kotlin.math.*
 
 /**
  * Requires the player to building [number] blocks of the specified [kinds].
@@ -37,7 +38,8 @@ open class BuildBlocksObjective(
 			return event.building.team() == Vars.player.team() && event.building.block in kinds
 		} else if (event is DeconstructionEvent) {
 			val build = (event.building as? ConstructBuild)?.let { TileIndexer.getDeconstructedBuild(it) } ?: event.building
-			build.block in kinds
+
+			if (build.block in kinds) count = max(0, count - 2)
 		}
 		return false
 	}

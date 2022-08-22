@@ -1,13 +1,13 @@
 # Mindustry Achievements
 An overcomplicated achievement framework and a standalone mod at the same time.
 
-The functionality of this project is split into 3 separate subprojects:
+The functionality of this project is split into 3 different modules:
 
-| Subproject: |                                                                                         Module: |
-|:------------|------------------------------------------------------------------------------------------------:|
-| **core**    |                                                                      the achievement framework. |
-| **gui**     |       contains an achievement tree dialog necessary to display the achievements the player has. |
-| **mod-src** | includes some built-in achievements and creates a hud button that shows the achievement dialog. |
+| Subproject: |                                                                                                             Module: |
+|:------------|--------------------------------------------------------------------------------------------------------------------:|
+| **core**    |                The achievement framework. Must never be used as an `implementation` dependency, on;y `compileOnly`! |
+| **gui**     | Contains an achievement tree dialog and various related stuff necessary to display the achievements the player has. |
+| **mod-src** |                                      Includes some built-in achievements and creates the hud button/settings stuff. |
 
 
 # TODO
@@ -18,4 +18,4 @@ The functionality of this project is split into 3 separate subprojects:
 
 TOFIX
 * Fix BuildBlocksObjective not decrementing on deconstruction
-* Fix the first achievement not being completed when the tree is reset
+* TileIndexer fails to keep the deconstructed buildings in heap, it needs to use soft references and remove them after a delay, not relying on the garbage collector.

@@ -8,10 +8,13 @@ object ModBundles {
 	val achievements by mbundle()
 	val resetCurrent by mbundle()
 	val resetAll by mbundle()
+	val enterPassword by mbundle()
 
 	val resetCurrentWarning by mdynamic({ StateManager.determineSaveName() })
 	val resetAllWarning by mbundle()
 
-	fun mbundle() = bundle("achievements-mod")
-	fun mdynamic(vararg funcs: () -> Any?) = dynamicBundle("achievements-mod", *funcs)
+	const val prefix = "achievements-mod"
+
+	fun mbundle() = bundle(prefix)
+	fun mdynamic(vararg funcs: () -> Any?) = dynamicBundle(prefix, *funcs)
 }
