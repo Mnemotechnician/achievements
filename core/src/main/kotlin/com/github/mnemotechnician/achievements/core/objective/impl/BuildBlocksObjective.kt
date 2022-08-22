@@ -39,7 +39,7 @@ open class BuildBlocksObjective(
 		} else if (event is DeconstructionEvent) {
 			val build = (event.building as? ConstructBuild)?.let { TileIndexer.getDeconstructedBuild(it) } ?: event.building
 
-			if (build.block in kinds) count = max(0, count - 2)
+			if (build.block in kinds) count = max(0, count - 1)
 		}
 		return false
 	}

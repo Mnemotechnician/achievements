@@ -2,8 +2,6 @@ package com.github.mnemotechnician.achievements.core.world
 
 import arc.Events
 import arc.struct.Queue
-import arc.util.Log
-import arc.util.Time
 import com.github.mnemotechnician.achievements.core.world.TileIndexer.indexBlock
 import mindustry.Vars
 import mindustry.game.EventType
@@ -14,7 +12,7 @@ import mindustry.gen.Building
 import mindustry.world.Block
 import mindustry.world.Tile
 import mindustry.world.blocks.ConstructBlock.ConstructBuild
-import java.lang.ref.WeakReference
+import java.lang.ref.SoftReference
 
 /**
  * Keeps track of buildings of specific types.
@@ -27,12 +25,11 @@ object TileIndexer {
 
 	/** All indexed buildings. May contain block that are already being deconstructed (i.e. replaced with ConstructBuild). */
 	val indices = Queue<Building>()
-	// todo mag not be a great idea to use weak refs, since it's unknown when a building is garbage-collected
 	/**
-	 * Weak references to all blocks under deconstruction.
-	 * May contain garbage-collected references.
+	 * Cotains pairs of (deconstrcted building, time in ms when it will be removed).
+	 * Normally, buildings are stored here for 5 seconds after their removal.
 	 */
-	val deconstructionIndices = Queue<WeakReference<Building>>()
+	val deconstructionIndices = Queue<DeconstructedBuilding>()
 
 	/** Buildings to be de-indexed on the next frame. */
 	private val removalSubjects = Queue<Building>()
@@ -43,7 +40,7 @@ object TileIndexer {
 				indices.remove(removalSubjects.removeFirst())
 			}
 			// remove garbage-collected buildings that were under deconstruction before
-			deconstructionIndices.remove { it.get() == null }
+			deconstructionIndices.remove { it.isInvalid() }
 			// schedule the removal of invalid indices
 			indices.forEach {
 				if (!it.isValid) removalSubjects.add(it)
@@ -59,7 +56,7 @@ object TileIndexer {
 				// a building is undergoing a deconstruction
 				indices.find { it.tile == event.tile }?.let { build ->
 					removalSubjects.add(build)
-					deconstructionIndices.add(WeakReference(build))
+					deconstructionIndices.add(DeconstructedBuilding(build, System.currentTimeMillis() + 5000L))
 				}
 			}
 		}
@@ -128,7 +125,7 @@ object TileIndexer {
 
 	/** Performs a full re-indexing, clearing [indices] and iterating over every building on the map to populate it. */
 	fun rebuildIndices() {
-		Time.mark()
+		//Time.mark()
 
 		indices.clear()
 		removalSubjects.clear()
@@ -138,7 +135,7 @@ object TileIndexer {
 			}
 		}
 
-		Log.info("TileIndexer: indices rebuilt: took ${Time.elapsed()} ms.")
+		//Log.info("TileIndexer: indices rebuilt: took ${Time.elapsed()} ms.")
 	}
 
 	/**
@@ -150,5 +147,16 @@ object TileIndexer {
 	 */
 	fun indexBlock(block: Block) {
 		indexedTypes.add(block)
+	}
+
+	/**
+	 * A building that was deconstructed but is still being in the index for some time.
+	 * Should be garbage-collected when currentTimeMillis >= aliveUntil.
+	 */
+	class DeconstructedBuilding(building: Building, val aliveUntil: Long) {
+		val building = SoftReference(building)
+
+		fun get() = building.get()
+		fun isInvalid() = building.get() == null || System.currentTimeMillis() >= aliveUntil
 	}
 }

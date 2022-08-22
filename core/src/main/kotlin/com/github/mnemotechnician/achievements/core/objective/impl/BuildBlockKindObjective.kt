@@ -53,7 +53,7 @@ class BuildBlockKindObjective(
 			// decrement if the target building was deconstructed...
 			// since we can't acquire a Building, which filters and requirements rely on, isAccepted() is not called.
 			if (event.building.team() == Vars.player.team() && kinds.any { it.check(block) }) {
-				count = max(0, count - 2)
+				count = max(0, count - 1)
 			}
 		}
 		return false
