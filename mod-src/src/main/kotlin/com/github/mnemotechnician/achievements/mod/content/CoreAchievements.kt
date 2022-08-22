@@ -49,7 +49,7 @@ object CoreAchievements {
 							it.unit.type.flying
 						}
 
-						achievement("retired-villian") {
+						achievement("retired-villain") {
 							+ KillUnitsObjective(1, UnitTypes.antumbra, UnitTypes.eclipse)
 						}
 					}
