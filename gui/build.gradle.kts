@@ -7,7 +7,6 @@ plugins {
 }
 
 dependencies {
-	implementation("com.github.mnemotechnician:mkui:-SNAPSHOT")
 	implementation(project(":core"))
 }
 

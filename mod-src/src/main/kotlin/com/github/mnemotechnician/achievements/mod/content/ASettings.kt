@@ -52,9 +52,9 @@ object ASettings {
 					val confirmNumber = Mathf.random(1000, 9999).toString()
 					val resetAllConfirm by ModBundles.mdynamic({ confirmNumber })
 
-					createDialog {
+					createDialog { dialog ->
 						lateinit var textField: TextField
-						cont.addTable(Tex.button) {
+						addTable(Tex.button) {
 							// warning
 							addLabel(ModBundles.resetAllWarning, wrap = true).fillX().row()
 							hsplitter(padTop = 30f, padBottom = 4f)
@@ -67,8 +67,8 @@ object ASettings {
 						}.fillX().minWidth(400f).row()
 
 						// button row
-						cont.addTable(Tex.button) {
-							textButton("@cancel") { this@createDialog.hide() }.growX()
+						addTable(Tex.button) {
+							textButton("@cancel") { dialog.hide() }.growX()
 							textButton("@confirm") {
 								StateManager.root.deleteDirectory()
 								StateManager.loadState(null)
@@ -102,7 +102,7 @@ object ASettings {
 				}
 				textButton("choose") {
 					createBaseDialog("choose achievements to lock/unlock", addCloseButton = true) {
-						cont.scrollPane {
+						scrollPane {
 							defaults().fill()
 							AchievementManager.allAchievements.sortedBy { it.name }.forEach { achievement ->
 								textToggle(achievement.name) {
@@ -137,13 +137,13 @@ object ASettings {
 						defaults().fill()
 
 						// i don't care about this allocation, this is a debug menu, and it will be optimised by jit anyways
-						cont.addImage({ TextureRegionDrawable(achievementIcon).tint(iconTint) }).size(48f).get().clicked {
+						addImage({ TextureRegionDrawable(achievementIcon).tint(iconTint) }).size(48f).get().clicked {
 							// show a dialog for the user to choose an icon
 							createDialog("choose an icon", addCloseButton = true) {
 								lateinit var buttons: Table
 
 								// icon groups
-								cont.addTable(Tex.button) {
+								addTable(Tex.button) {
 									iconVariants.entries.forEach { (name, images) ->
 										// icon group switch
 										textButton(name) {
@@ -159,37 +159,37 @@ object ASettings {
 									}
 								}.row()
 								// icon list - populated by the buttons above
-								cont.scrollPane {
+								scrollPane {
 									background = Tex.button
 									buttons = this
 								}.minHeight(400f).grow()
 							}.show()
 						}
-						cont.button("tint") {
+						button("tint") {
 							Vars.ui.picker.show(iconTint) { iconTint = it }
 						}
 						// internal name
-						cont.textField("new-achievement").with {
+						textField("new-achievement").with {
 							name = it
 							it.hint = "internal name"
 						}.width(200f)
 						// display name
-						cont.textField("New Achievement").with {
+						textField("New Achievement").with {
 							displayName = it
 							it.hint = "display name"
 						}.width(300f).row()
 						// description
-						cont.textArea("This is a new achievement").with {
+						textArea("This is a new achievement").with {
 							description = it
 							it.hint = "description"
 						}.colspan(4).fillX().row()
 						// parent name
-						cont.textField().with {
+						textField().with {
 							parentAchievement = it
 							it.hint = "parent name or empty"
 						}.fillX().colspan(3)
 						// define button
-						cont.textButton("define") {
+						textButton("define") {
 							try {
 								require(name.content.isNotEmpty()) { "Internal name can not be empty!" }
 								require(AchievementManager.allAchievements.none { it.name == name.content }) { "Achievement ${name.content} already exists!"}

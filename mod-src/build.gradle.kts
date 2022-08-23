@@ -9,7 +9,6 @@ plugins {
 val jarName = "achievements"
 
 dependencies {
-	implementation("com.github.mnemotechnician:mkui:-SNAPSHOT")
 	implementation(project(":core"))
 	implementation(project(":gui"))
 }

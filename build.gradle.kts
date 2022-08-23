@@ -9,6 +9,7 @@ allprojects {
 
 	repositories {
 		mavenCentral()
+		mavenLocal()
 		maven("https://jitpack.io")
 	}
 
@@ -16,6 +17,7 @@ allprojects {
 		implementation(kotlin("stdlib-jdk8"))
 		compileOnly("com.github.Anuken.Arc:arc-core:v137")
 		compileOnly("com.github.Anuken:MindustryJitpack:74a0321db8")
+		implementation("com.github.mnemotechnician:mkui:v1.2")
 	}
 
 	tasks.withType<KotlinCompile> {
