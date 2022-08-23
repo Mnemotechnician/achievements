@@ -34,8 +34,6 @@ open class BuildBlocksObjective(
 		if (event is ConstructionEvent) {
 			return event.building.team() == Vars.player.team() && event.building.block in kinds
 		} else if (event is DeconstructionEvent) {
-			Log.info("received $event, build ${event.building}")
-			Log.info("team: ${event.building.team == Vars.player.team()}, kind: ${event.building.block in kinds} accepted: ${isAccepted(event)}")
 			if (event.building.team() == Vars.player.team() && event.building.block in kinds && isAccepted(event)) {
 				count = max(0, count - 1)
 			}
