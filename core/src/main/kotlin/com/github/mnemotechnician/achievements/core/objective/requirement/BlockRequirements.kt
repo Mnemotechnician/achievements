@@ -34,10 +34,10 @@ class ProximityRequirement(
 	override fun isAccepted(event: ObjectiveEvent) = when (event) {
 		is BuildingEvent -> if (allOf) {
 			blocks.all { block ->
-				event.building.proximity.items.any { it?.block == block } // how are there nulls???????
+				event.building.proximity.any { it?.block == block }
 			}
 		} else {
-			event.building.proximity.items.any { it.block in blocks }
+			event.building.proximity.any { it.block in blocks }
 		}
 		else -> true
 	}

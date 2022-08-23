@@ -11,11 +11,8 @@ The functionality of this project is split into 3 different modules:
 
 
 # TODO
+* Much more achievements (at least 50 serpulo ones are needed before creating a release)
 * More objectives and more objective events / notifications
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
 * Add an objective that requires the player to play in a specific environment
-
-TOFIX
-* Fix BuildBlocksObjective not decrementing on deconstruction
-* TileIndexer fails to keep the deconstructed buildings in heap, it needs to use soft references and remove them after a delay, not relying on the garbage collector.

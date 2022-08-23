@@ -35,7 +35,6 @@ open class OwnBlocksObjective(
 		require(kinds.isNotEmpty()) { "OwnBlocksObjective.kinds must not be empty." }
 
 		updates = true
-		kinds.forEach { TileIndexer.indexBlock(it) }
 	}
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {

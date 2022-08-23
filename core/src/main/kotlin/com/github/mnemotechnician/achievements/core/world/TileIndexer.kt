@@ -2,7 +2,8 @@ package com.github.mnemotechnician.achievements.core.world
 
 import arc.Events
 import arc.struct.Queue
-import com.github.mnemotechnician.achievements.core.world.TileIndexer.indexBlock
+import com.github.mnemotechnician.achievements.core.objective.event.*
+import com.github.mnemotechnician.achievements.core.AchievementManager
 import mindustry.Vars
 import mindustry.game.EventType
 import mindustry.game.EventType.BlockBuildBeginEvent
@@ -15,14 +16,11 @@ import mindustry.world.blocks.ConstructBlock.ConstructBuild
 import java.lang.ref.SoftReference
 
 /**
- * Keeps track of buildings of specific types.
- * In order for this indexer to begin automatically indexing a block type, [indexBlock] must be called.
+ * Keeps track of buildings, both existing and removed ones (for a limited time).
  *
  * This class is not thread-safe, accessing it concurrently with the main thread may lead to undefined behaviour.
  */
 object TileIndexer {
-	val indexedTypes = HashSet<Block>()
-
 	/** All indexed buildings. May contain block that are already being deconstructed (i.e. replaced with ConstructBuild). */
 	val indices = Queue<Building>()
 	/**
@@ -57,23 +55,20 @@ object TileIndexer {
 				indices.find { it.tile == event.tile }?.let { build ->
 					removalSubjects.add(build)
 					deconstructionIndices.add(DeconstructedBuilding(build, System.currentTimeMillis() + 5000L))
+					
+					AchievementManager.fireEvent(ObjectiveEvents.DeconstructionEvent(build))
 				}
 			}
 		}
 
 		Events.on(EventType.BlockBuildEndEvent::class.java) { event ->
-			if (event.breaking) {
-				// a building has been successfully deconstructed
-				deconstructionIndices.remove { it.get()?.tile == event.tile }
-				indices.remove { it.tile == event.tile } // it shouldn't be there but whatever
-			} else {
+			if (!event.breaking) {
 				addIndex(event.tile.build)
 			}
 		}
 	}
 
 	fun addIndex(building: Building) {
-		if (building.block !in indexedTypes) return
 		indices.addLast(building)
 	}
 
@@ -84,12 +79,8 @@ object TileIndexer {
 	/**
 	 * Iterates over each valid indexed block of the specified [kind], belonging to the specified [team].
 	 * Null [team] / [kind] mean that the respective properties of the blocks are ignored.
-	 *
-	 * @throws IllegalArgumentException if [kind] is not indexed ([indexBlock] hasn't been called for it).
 	 */
 	inline fun eachBuild(team: Team? = null, kind: Block? = null, action: (Building) -> Unit) {
-		require(kind == null || kind in indexedTypes) { "$kind is not indexed." }
-
 		indices.forEach {
 			if (it.isValid && (team == null || it.team == team) && (kind == null || it.block == kind)) {
 				action(it)
@@ -129,24 +120,11 @@ object TileIndexer {
 
 		indices.clear()
 		removalSubjects.clear()
-		if (indexedTypes.isNotEmpty()) {
-			Vars.indexer.eachBlock(null, 0f, 0f, Float.MAX_VALUE, { it.block in indexedTypes }) {
-				indices.add(it)
-			}
+		Vars.indexer.eachBlock(null, 0f, 0f, Float.MAX_VALUE, { true }) {
+			indices.add(it)
 		}
 
 		//Log.info("TileIndexer: indices rebuilt: took ${Time.elapsed()} ms.")
-	}
-
-	/**
-	 * Makes the indexer index this type of block, but does not rebuild the indexes.
-	 * Must be called before using [eachBuild] with [block] as the kind.
-	 *
-	 * This method is expected to be called before loading any map; if it has to be called after loading,
-	 * [rebuildIndices] should be called afterwards to index existing blocks of this type.
-	 */
-	fun indexBlock(block: Block) {
-		indexedTypes.add(block)
 	}
 
 	/**

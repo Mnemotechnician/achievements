@@ -108,6 +108,8 @@ object CoreAchievements {
 
 					achievement("steampunk", Blocks.steamGenerator) {
 						+ BuildBlocksObjective(3, Blocks.steamGenerator)
+							.with(ItemRequirement(5, Items.coal))
+							.with(LiquidRequirement(2f, Liquids.water))
 						+ UnlockAchievementObjective("pressure-powered")
 					}
 
@@ -128,7 +130,7 @@ object CoreAchievements {
 				achievement("maximum-efficiency", Blocks.coreNucleus) {
 					+ OwnBlocksObjective(1, Blocks.coreNucleus)
 
-					achievement("truly-rich", Items.copper) {
+					achievement("truly-rich", Items.surgeAlloy) {
 						+ CollectItemsObjective(5000, Items.surgeAlloy)
 						+ CollectItemsObjective(2500, Items.phaseFabric)
 						+ CollectItemsObjective(Items.silicon)

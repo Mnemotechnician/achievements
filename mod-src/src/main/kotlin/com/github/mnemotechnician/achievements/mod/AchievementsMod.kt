@@ -10,7 +10,7 @@ import com.github.mnemotechnician.achievements.mod.content.ASettings
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import com.github.mnemotechnician.mkui.extensions.dsl.imageButton
-import com.github.mnemotechnician.mkui.extensions.elements.findOrNull
+import com.github.mnemotechnician.mkui.extensions.elements.*
 import mindustry.Vars
 import mindustry.game.EventType
 import mindustry.mod.Mod
@@ -43,11 +43,12 @@ class AchievementsMod : Mod() {
 			achievementTree.show()
 		}.fill().with { button ->
 			// move the button
-			target.children.items.let {
-				val pos = it.indexOf(button)
+			val cell = button.cell()
+			target.cells.let {
+				val pos = it.indexOf(cell)
 				if (pos >= 1) {
-					it[pos] = it[pos - 1]
-					it[pos - 1] = button
+					it.remove(pos)
+					it.insert(pos - 1, cell)
 				}
 			}
 		}

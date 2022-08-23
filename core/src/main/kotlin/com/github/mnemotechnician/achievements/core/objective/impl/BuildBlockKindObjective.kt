@@ -24,10 +24,7 @@ import kotlin.math.max
  * (e.g. turret, wall) rather than a one of specific blocks.
  *
  * Like [BuildBlocksObjective], this class decrements [count] when the user deconstructs a block
- * specified in [kinds]. However, due to how [BlockKind] and [TileIndexer] work, it's rather
- * impossible to acquire the [Building] that was deconstructed. Therefore, when the player
- * deconstructs a block specified in [kinds], the counter is decremented without checking
- * the filters and requirements of this objective.
+ * specified in [kinds].
  */
 class BuildBlockKindObjective(
 	targetCount: Int,
@@ -46,13 +43,7 @@ class BuildBlockKindObjective(
 		if (event is ObjectiveEvents.ConstructionEvent) {
 			return event.building.team() == Vars.player.team() && kinds.any { it.check(event.building.block) }
 		} else if (event is ObjectiveEvents.DeconstructionEvent) {
-			val block: Block = (event.building as? ConstructBlock.ConstructBuild)?.let {
-				it.previous ?: it.prevBuild.takeIf { !it.isEmpty }?.first()?.block
-			} ?: event.building.block
-
-			// decrement if the target building was deconstructed...
-			// since we can't acquire a Building, which filters and requirements rely on, isAccepted() is not called.
-			if (event.building.team() == Vars.player.team() && kinds.any { it.check(block) }) {
+			if (event.building.team() == Vars.player.team() && kinds.any { it.check(event.building.block) } && isAccepted(event)) {
 				count = max(0, count - 1)
 			}
 		}

@@ -2,6 +2,8 @@ package com.github.mnemotechnician.achievements.core.objective.event
 
 import com.github.mnemotechnician.achievements.core.misc.playerTeam
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent.*
+import com.github.mnemotechnician.achievements.core.world.TileIndexer
+import mindustry.content.Blocks
 import mindustry.game.EventType.*
 import mindustry.gen.Building
 import mindustry.gen.Entityc
@@ -27,9 +29,7 @@ class ObjectiveEvents {
 
 	/** A building has been deconstructed */
 	class DeconstructionEvent(building: Building) : BuildingEvent(building) {
-		class Init : Listener({ fireOnIf(BlockBuildBeginEvent::class, { breaking && tile?.build != null }) {
-			DeconstructionEvent(tile.build)
-		} })
+		// fired externally from TileIndexer to avoid a race condition
 	}
 
 	class BuildingDestroyedEvent(building: Building) : BuildingEvent(building) {

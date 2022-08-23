@@ -1,5 +1,6 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
+import arc.util.Log
 import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
@@ -23,10 +24,6 @@ open class BuildBlocksObjective(
 ) : AbstractCounterObjective(number, "build-blocks", acceptedEvents) {
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
 
-	init {
-		kinds.forEach { TileIndexer.indexBlock(it) }
-	}
-
 	constructor(vararg blocks: Block) : this(1, *blocks)
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
@@ -37,9 +34,11 @@ open class BuildBlocksObjective(
 		if (event is ConstructionEvent) {
 			return event.building.team() == Vars.player.team() && event.building.block in kinds
 		} else if (event is DeconstructionEvent) {
-			val build = (event.building as? ConstructBuild)?.let { TileIndexer.getDeconstructedBuild(it) } ?: event.building
-
-			if (build.block in kinds) count = max(0, count - 1)
+			Log.info("received $event, build ${event.building}")
+			Log.info("team: ${event.building.team == Vars.player.team()}, kind: ${event.building.block in kinds} accepted: ${isAccepted(event)}")
+			if (event.building.team() == Vars.player.team() && event.building.block in kinds && isAccepted(event)) {
+				count = max(0, count - 1)
+			}
 		}
 		return false
 	}
