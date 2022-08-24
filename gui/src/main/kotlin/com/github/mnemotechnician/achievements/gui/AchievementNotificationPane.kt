@@ -1,11 +1,12 @@
 package com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
+import arc.graphics.g2d.*
 import arc.math.Interp
 import arc.scene.actions.Actions
 import arc.scene.actions.Actions.*
 import arc.scene.event.*
-import arc.scene.style.Drawable
+import arc.scene.style.*
 import arc.scene.ui.layout.*
 import arc.struct.Queue
 import arc.util.*
@@ -16,6 +17,7 @@ import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
 import mindustry.gen.Icon
 import mindustry.gen.Tex
 import mindustry.ui.Styles
+import kotlin.math.*
 
 /**
  * Displays notifications.
@@ -28,7 +30,7 @@ open class AchievementNotificationPane(
 	val achievementTree: AchievementTreeDialog? = null
 ) : WidgetGroup() {
 	/** The time for which notifications are shown, in seconds. */
-	var visibilityTime = 5f
+	var visibilityTime = 4f
 	/** Visibility timer for [currentNotification], in seconds. */
 	protected var visibilityTimer = 0f
 	val pendingNotifications = Queue<Notification>(10)
@@ -45,11 +47,22 @@ open class AchievementNotificationPane(
 		if (notification != null) {
 			visibilityTimer -= delta
 			if (visibilityTimer <= 0f) {
+				// remove the notification if its time is out
+				notification.touchable = Touchable.disabled
 				notification.actions(
 					moveTo(width + notification.width, notification.y, 1f, Interp.exp10In),
 					Actions.remove()
 				)
 				currentNotification = null
+			} else {
+				// ...or update its size and position otherwise
+				val time = min(visibilityTime - visibilityTimer, 1f)
+				notification.validate()
+				notification.pack()
+				notification.setPosition(
+					x + width / 2f - notification.width / 2f, 
+					y + height - notification.height * Interp.smooth.apply(time)
+				)
 			}
 		}
 		if (currentNotification == null && !pendingNotifications.isEmpty) {
@@ -71,6 +84,7 @@ open class AchievementNotificationPane(
 		showNotification(Notification(icon ?: Icon.none, title.orEmpty(), description))
 	}
 
+	/** @param important if true, the achievement is added to the beginning of the queue. */
 	open fun showNotification(notification: Notification, important: Boolean = false) {
 		if (currentNotification == null && pendingNotifications.isEmpty) {
 			showNotificationImpl(notification)
@@ -92,13 +106,7 @@ open class AchievementNotificationPane(
 		notification.validate()
 		notification.pack()
 		notification.setPosition(width / 2f - notification.width / 2f, height, Align.bottomLeft)
-		notification.actions(
-			alpha(0f),
-			parallel(
-				alpha(1f, 0.3f, Interp.pow3In),
-				moveBy(0f, -notification.height, 1f, Interp.swingOut)
-			)
-		)
+		notification.actions(alpha(0f), alpha(1f, 0.3f, Interp.pow3In))
 	}
 
 	/** Text notification, not necessarily an achievement-related one. */
@@ -106,7 +114,7 @@ open class AchievementNotificationPane(
 		val icon: Drawable,
 		val title: String,
 		val description: String?
-	) : Table(Tex.button) {
+	) : Table(AStyles.notificationBackground) {
 		init {
 			top()
 

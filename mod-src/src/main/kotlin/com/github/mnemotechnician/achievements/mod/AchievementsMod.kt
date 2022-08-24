@@ -14,6 +14,7 @@ import com.github.mnemotechnician.mkui.extensions.elements.*
 import mindustry.Vars
 import mindustry.game.EventType
 import mindustry.mod.Mod
+import mindustry.ui.Styles
 
 class AchievementsMod : Mod() {
 	val achievementTree by lazy { AchievementTreeDialog() }
@@ -39,7 +40,7 @@ class AchievementsMod : Mod() {
 			return
 		}
 
-		target.imageButton(ASprites.iconAchievements) {
+		target.imageButton(ASprites.iconAchievements, Styles.cleari) {
 			achievementTree.show()
 		}.fill().with { button ->
 			// move the button

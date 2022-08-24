@@ -19,6 +19,7 @@ object AStyles {
 	val flatBorder1 = drawable("flat-border-1") as ScaledNinePatchDrawable
 
 	val achievementBackground = drawable("achievement-background")
+	val notificationBackground = (Tex.button as ScaledNinePatchDrawable).tint("ffffffdd")
 	val iconBackground = drawable("icon-background")
 
 	val achievementCornerUp = drawable("achievement-button-corner-up")
