@@ -446,9 +446,8 @@ open class AchievementTreePane : WidgetGroup() {
 		}
 
 		override fun draw() {
-			super.draw()
-
 			// lines between this and child nodes
+			// if the real line stroke is less than 1 px, increase it
 			Lines.stroke(if (connectionThickness * zoom < 1f) 1 / zoom else connectionThickness)
 
 			val lineMargin = min(prefWidth / childNodes.size, 10f)
@@ -465,7 +464,7 @@ open class AchievementTreePane : WidgetGroup() {
 					else -> Color.crimson // locked
 				}, parentAlpha)
 				Lines.curve(
-					from.x, from.y,
+					from.x, from.y - connectionThickness / 2f,
 					from.x, from.y + vmiddle,
 					to.x, to.y - vmiddle,
 					to.x, to.y,
@@ -474,6 +473,8 @@ open class AchievementTreePane : WidgetGroup() {
 
 				from.add(lineMargin, 0f)
 			}
+
+			super.draw()
 		}
 	}
 
