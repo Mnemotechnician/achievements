@@ -68,7 +68,7 @@ open class AchievementTreePane : WidgetGroup() {
 	val rootNodes = ArrayList<Node>()
 	/** All nodes, both root and child ones. */
 	val allNodes = ArrayList<Node>()
-	var nodePadding = 20f
+	var nodePadding = 15f
 
 	init {
 		transform = true
@@ -298,7 +298,7 @@ open class AchievementTreePane : WidgetGroup() {
 			child.pack()
 
 			child.x = node.x + node.prefWidth / 2 - child.prefWidth / 2 + offset + child.branchSize / 2 - node.childrenBranchSize / 2
-			child.y = node.y + node.height + 40f
+			child.y = node.y + node.height + 60f
 			offset += child.branchSize + nodePadding
 
 			rebuildNodeChildren(child)
@@ -420,7 +420,7 @@ open class AchievementTreePane : WidgetGroup() {
 						addLabel(Bundles.objectives, align = left).color(Color.gray).row()
 						add(ObjectivesList(achievement)).growX()
 					}.also { lastCollapser = it.get() }.growX().row()
-				}.minWidth(300f)
+				}.minWidth(340f)
 			} else {
 				// "locked"
 				addStack {

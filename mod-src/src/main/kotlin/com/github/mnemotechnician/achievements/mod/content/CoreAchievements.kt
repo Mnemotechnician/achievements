@@ -111,6 +111,21 @@ object CoreAchievements {
 							.with(ItemRequirement(5, Items.coal))
 							.with(LiquidRequirement(2f, Liquids.water))
 						+ UnlockAchievementObjective("pressure-powered")
+
+						achievement("nuclear-power", Blocks.thoriumReactor) {
+							+ OwnBlocksObjective(1, Blocks.thoriumReactor)
+								.with(LiquidRequirement(Blocks.thoriumReactor.liquidCapacity, Liquids.cryofluid))
+								.with(ItemRequirement(Blocks.thoriumReactor.itemCapacity, Items.thorium))
+
+							achievement("safe-way", Blocks.rtgGenerator) {
+								+ BuildBlocksObjective(10, Blocks.rtgGenerator)
+							}
+
+							achievement("feel-power", Blocks.impactReactor) {
+								+ OwnBlocksObjective(1, Blocks.impactReactor)
+									.with(WarmupRequirement(1f))
+							}
+						}
 					}
 
 					achievement("ecological", Blocks.solarPanel) {
@@ -146,6 +161,14 @@ object CoreAchievements {
 				achievement("quite-stock", Items.copper) {
 					+ CollectItemsObjective(Items.copper)
 					+ CollectItemsObjective(Items.lead)
+
+					achievement("garbage-piles", Items.scrap) {
+						+ either(
+							CollectItemsObjective(Items.scrap),
+							CollectItemsObjective(Items.sand),
+							CollectItemsObjective(Items.coal)
+						)
+					}
 				}
 			}
 		}

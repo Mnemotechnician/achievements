@@ -13,7 +13,7 @@ import mindustry.world.Block
 import mindustry.world.Tile
 import mindustry.world.blocks.environment.Floor
 import mindustry.world.blocks.production.Drill
-import kotlin.math.max
+import kotlin.math.*
 
 /**
  * Requires a block in proximity of the block that's being placed or removed.
@@ -159,5 +159,35 @@ class LiquidRequirement(
 			}
 			count >= targetAmount
 		} else true
+	} else true
+}
+
+/**
+ * Requires the block to have an efficienc of at least [targetAmount].
+ * If [invert] is true, the requirement is the opposite.
+ */
+class EfficiencyRequirement(
+	val targetAmount: Float,
+	val invert: Boolean = false
+) : Requirement("efficiency") {
+	override val description by bundle(bundlePrefix, invert.int, (targetAmount * 100).roundToInt())
+
+	override fun isAccepted(event: ObjectiveEvent) = if (event is BuildingEvent) {
+		(event.building.efficiency() >= targetAmount) xor invert
+	} else true
+}
+
+/**
+ * Requires the block to warm up to at least [targetAmount].
+ * If [invert] is true, the requirement is the opposite.
+ */
+class WarmupRequirement(
+	val targetAmount: Float,
+	val invert: Boolean = false
+) : Requirement("warmup") {
+	override val description by bundle(bundlePrefix, invert.int, (targetAmount * 100).roundToInt())
+
+	override fun isAccepted(event: ObjectiveEvent) = if (event is BuildingEvent) {
+		(event.building.warmup() >= targetAmount) xor invert
 	} else true
 }
