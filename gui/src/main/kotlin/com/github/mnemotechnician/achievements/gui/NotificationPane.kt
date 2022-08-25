@@ -1,23 +1,25 @@
 package com.github.mnemotechnician.achievements.gui
 
 import arc.graphics.Color
-import arc.graphics.g2d.*
 import arc.math.Interp
 import arc.scene.actions.Actions
-import arc.scene.actions.Actions.*
-import arc.scene.event.*
-import arc.scene.style.*
-import arc.scene.ui.layout.*
+import arc.scene.actions.Actions.alpha
+import arc.scene.actions.Actions.moveTo
+import arc.scene.event.Touchable
+import arc.scene.style.Drawable
+import arc.scene.ui.layout.Table
+import arc.scene.ui.layout.WidgetGroup
 import arc.struct.Queue
-import arc.util.*
+import arc.util.Align
+import arc.util.Scaling
 import com.github.mnemotechnician.achievements.core.Achievement
 import com.github.mnemotechnician.achievements.gui.misc.Bundles
 import com.github.mnemotechnician.mkui.extensions.dsl.*
 import com.github.mnemotechnician.mkui.extensions.elements.scaleFont
 import mindustry.gen.Icon
-import mindustry.gen.Tex
+import mindustry.graphics.Pal
 import mindustry.ui.Styles
-import kotlin.math.*
+import kotlin.math.min
 
 /**
  * Displays notifications.
@@ -26,7 +28,7 @@ import kotlin.math.*
  *
  * @param achievementTree if not null, will be used to show the player the completed achievement.
  */
-open class AchievementNotificationPane(
+open class NotificationPane(
 	val achievementTree: AchievementTreeDialog? = null
 ) : WidgetGroup() {
 	/** The time for which notifications are shown, in seconds. */
@@ -102,7 +104,7 @@ open class AchievementNotificationPane(
 		currentNotification = notification
 		addChild(notification)
 
-		notification.align(Align.topRight)
+		notification.build()
 		notification.validate()
 		notification.pack()
 		notification.setPosition(width / 2f - notification.width / 2f, height, Align.bottomLeft)
@@ -110,12 +112,13 @@ open class AchievementNotificationPane(
 	}
 
 	/** Text notification, not necessarily an achievement-related one. */
-	open class Notification(
+	open inner class Notification(
 		val icon: Drawable,
 		val title: String,
 		val description: String?
 	) : Table(AStyles.notificationBackground) {
-		init {
+		/** Called when this notification is about to be displayed. */
+		open fun build() {
 			top()
 
 			addImage(icon, scaling = Scaling.fill).size(64f).top()
@@ -125,22 +128,21 @@ open class AchievementNotificationPane(
 				addLabel(title).scaleFont(1.1f).growX()
 
 				if (description != null) {
-					var collapser: Collapser? = null
-					// show / hide button on the title row
-					imageButton({ if (collapser?.isCollapsed == true) Icon.down else Icon.up }, Styles.clearNonei) {
-						collapser?.toggle()
-					}.row()
-					// collapser
-					addCollapser(true) {
+					// dismiss button
+					imageButton(Icon.cancel, Styles.cleari) {
+						visibilityTimer = 0f
+					}.color(Pal.redderDust)
+					// content
+					addTable {
 						buildContent(this)
-					}.with { collapser = it }.colspan(2).growX()
+					}.colspan(2).growX()
 				}
 			}.grow()
 		}
 
 		/** Builds the content table of this notification. By default, a description label. */
 		protected open fun buildContent(target: Table) {
-			target.addLabel(description.orEmpty(), wrap = true).scaleFont(0.9f).growX()
+			target.addLabel(description.orEmpty(), wrap = true).color(Pal.lightishGray).scaleFont(0.9f).growX()
 		}
 	}
 

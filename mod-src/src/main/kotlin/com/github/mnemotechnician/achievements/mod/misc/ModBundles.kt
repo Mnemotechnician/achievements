@@ -11,6 +11,8 @@ object ModBundles {
 	val enterPassword by mbundle()
 
 	val resetCurrentWarning by mdynamic({ StateManager.determineSaveName() })
+	val resetCurrentNotification by mbundle()
+	val resetCurrentNotificationDescription by mbundle()
 	val resetAllWarning by mbundle()
 
 	const val prefix = "achievements-mod"

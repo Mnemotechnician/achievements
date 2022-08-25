@@ -11,6 +11,7 @@ import com.github.mnemotechnician.achievements.core.*
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.impl.EitherObjective
+import com.github.mnemotechnician.achievements.mod.AchievementsMod
 import com.github.mnemotechnician.achievements.mod.misc.ModBundles
 import com.github.mnemotechnician.achievements.mod.ui.PasswordInputDialog
 import com.github.mnemotechnician.mkui.extensions.dsl.*
@@ -44,6 +45,7 @@ object ASettings {
 				button(ModBundles.resetCurrent, Icon.trash, Styles.flatt) {
 					Vars.ui.showConfirm(ModBundles.resetCurrentWarning) {
 						StateManager.loadState(null)
+						AchievementsMod.notificationPane.showNotification(Icon.warning, ModBundles.resetCurrentNotification, ModBundles.resetCurrentNotificationDescription)
 					}
 				}.row()
 

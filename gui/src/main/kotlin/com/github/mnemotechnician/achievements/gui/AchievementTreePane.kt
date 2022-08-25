@@ -25,7 +25,7 @@ import mindustry.gen.Icon
 import mindustry.graphics.Pal
 import kotlin.math.*
 
-// this class might be partially backported to mkui as ViewPane or smth.
+// this class might get partially backported to mkui as ViewPane or smth.
 /**
  * Displays all achievements registered in tue [AchievementManager] in the form of a tree.
  */

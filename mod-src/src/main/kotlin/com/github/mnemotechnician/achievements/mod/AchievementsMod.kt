@@ -4,22 +4,20 @@ import arc.Events
 import arc.scene.ui.layout.Table
 import arc.util.Log
 import com.github.mnemotechnician.achievements.core.Achievement.AchievementUnlockEvent
-import com.github.mnemotechnician.achievements.gui.AchievementNotificationPane
 import com.github.mnemotechnician.achievements.gui.AchievementTreeDialog
+import com.github.mnemotechnician.achievements.gui.NotificationPane
 import com.github.mnemotechnician.achievements.mod.content.ASettings
 import com.github.mnemotechnician.achievements.mod.content.CoreAchievements
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import com.github.mnemotechnician.mkui.extensions.dsl.imageButton
-import com.github.mnemotechnician.mkui.extensions.elements.*
+import com.github.mnemotechnician.mkui.extensions.elements.cell
+import com.github.mnemotechnician.mkui.extensions.elements.findOrNull
 import mindustry.Vars
 import mindustry.game.EventType
 import mindustry.mod.Mod
 import mindustry.ui.Styles
 
 class AchievementsMod : Mod() {
-	val achievementTree by lazy { AchievementTreeDialog() }
-	val notificationPane by lazy { AchievementNotificationPane(achievementTree) }
-
 	init {
 		Events.on(EventType.ClientLoadEvent::class.java) {
 			CoreAchievements.load()
@@ -57,5 +55,10 @@ class AchievementsMod : Mod() {
 		Vars.ui.hudGroup.addChild(notificationPane.also {
 			it.setFillParent(true)
 		})
+	}
+
+	companion object {
+		val achievementTree by lazy { AchievementTreeDialog() }
+		val notificationPane by lazy { NotificationPane(achievementTree) }
 	}
 }
