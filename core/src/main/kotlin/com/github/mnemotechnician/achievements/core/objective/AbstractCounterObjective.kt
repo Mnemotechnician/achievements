@@ -6,17 +6,15 @@ import arc.util.Align.left
 import com.github.mnemotechnician.achievements.core.StateManager
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle
-import com.github.mnemotechnician.mkui.extensions.dsl.addLabel
-import com.github.mnemotechnician.mkui.extensions.dsl.addTable
+import com.github.mnemotechnician.mkui.extensions.dsl.*
 import mindustry.graphics.Pal
 import kotlin.math.min
 
 /**
  * Represents a simple objective that requires the player to do the same thing [targetCount] times.
  *
- * It's assumed that the bundle entry associated with this objective
- * accepts at least 2 parameters (total count, target count),
- * more can be added by implementing [modifyBundleParams].
+ * By default the bundle entry associated with the objective does not accept any arguments.
+ * This can be changed by implementing [modifyBundleParams].
  */
 abstract class AbstractCounterObjective(
 	val targetCount: Int,
@@ -44,9 +42,7 @@ abstract class AbstractCounterObjective(
 	@Suppress("UNCHECKED_CAST")
 	override val description by dynamicBundle(
 		bundleName,
-		*mutableListOf({ min(targetCount, count) }, { targetCount }).also {
-			modifyBundleParams(it as MutableList<() -> Any?>)
-		}.toTypedArray()
+		*mutableListOf<() -> Any?>().also { modifyBundleParams(it) }.toTypedArray()
 	)
 
 	override fun handleEvent(event: ObjectiveEvent) {
@@ -61,8 +57,9 @@ abstract class AbstractCounterObjective(
 
 	override fun display(target: Table) {
 		target.apply {
-			addTable {
+			top().addTable {
 				super.display(this)
+				addLabels(elems = arrayOf({ min(count, targetCount) }, "/", targetCount))
 			}.growX().row()
 
 			requirements?.forEach {
@@ -97,12 +94,14 @@ abstract class AbstractCounterObjective(
 	}
 
 	/**
-	 * Should modify the list of bundle parameters, if necessary.
-	 * Called during the construction of the class.
+	 * Should populate the list of bundle parameters, if necessary.
+	 * Called during the construction of the instance of this class.
 	 *
-	 * This method is invoked before the class is fully initialised!
-	 * It's implementations must not access any fields in a non-lazy way,
+	 * It's implementation must not access any properties in a non-lazy way,
 	 * as these are very likely to be uninitialised by the invocation time.
+	 *
+	 * After the invocation of this function [list] becomes useless,
+	 * storing a reference to it is worthless.
 	 */
 	protected abstract fun modifyBundleParams(list: MutableList<() -> Any?>)
 

@@ -129,9 +129,9 @@ open class NotificationPane(
 
 				if (description != null) {
 					// dismiss button
-					imageButton(Icon.cancel, Styles.cleari) {
+					imageButton(Icon.cancel.tint(Pal.redderDust), Styles.cleari) {
 						visibilityTimer = 0f
-					}.color(Pal.redderDust)
+					}.size(48f).padLeft(5f).row()
 					// content
 					addTable {
 						buildContent(this)

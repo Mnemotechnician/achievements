@@ -12,14 +12,10 @@ import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNot
  * You must manually create bundle entries for this kind of objective,
  * see the KDoc of [Objective] and [AbstractCounterObjective] to get more info.
  *
- * By default, two parameters are providen to the underlying description
- * bundle of this objective:
- * * {0} - current count
- * * {1} - target count.
- *
  * Optionally, you can provide a list of lambdas as the [bundleArgs]
- * parameter. The values they return will be added to the list of parameters:
- * {2} - the return value of the first lambda, {3} - of the second, etc.
+ * parameter. The values they return will be added to the list of parameters
+ * of the bundle entry; the 0th lambda replaces `{0}` in the entry,
+ * the 1st replaces `{1}` and so on.
  *
  * @param internalName the internal name of this objective.
  * Used for bundle entry resolution and state saving. Do not change.

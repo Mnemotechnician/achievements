@@ -1,11 +1,13 @@
 package com.github.mnemotechnician.achievements.core.objective.impl
 
+import arc.scene.ui.layout.Table
 import com.github.mnemotechnician.achievements.core.StateManager.state
 import com.github.mnemotechnician.achievements.core.misc.emojiOrName
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNotifications.ItemsChangeNotification
 import com.github.mnemotechnician.mkui.delegates.dynamicBundle
+import com.github.mnemotechnician.mkui.extensions.dsl.*
 import mindustry.Vars
 import mindustry.type.Item
 import kotlin.math.max
@@ -33,7 +35,7 @@ open class CollectItemsObjective : Objective {
 	/** If true, [targetCount] is set to the maximum capacity of the core. */
 	val maxCapacity: Boolean
 
-	override val description by dynamicBundle({ bundleName }, { item.emojiOrName() }, { lastCount }, { targetCount })
+	override val description by dynamicBundle({ bundleName }, { item.emojiOrName() })
 
 	override var isFulfilled by state(false) { uniqueName }
 	/**
@@ -102,6 +104,12 @@ open class CollectItemsObjective : Objective {
 
 	override fun update() {
 		updateCount()
+	}
+
+	override fun display(target: Table) {
+		target.top()
+		super.display(target)
+		target.addLabels(elems = arrayOf({ lastCount }, "/", { targetCount }))
 	}
 
 	companion object {

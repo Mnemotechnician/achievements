@@ -16,3 +16,6 @@ The functionality of this project is split into 3 different modules:
 * Create an annotation processor for listeners of `ObjectiveEvent`s / `ObjectiveNotification`s
 * Custom icons for achievements
 * Add an objective that requires the player to play in a specific environment
+
+# TOFIX
+* Fix updating objectives being able to complete their parents before unlocking them

@@ -47,7 +47,7 @@ open class EitherObjective(
 				addTable {
 					left()
 					it.display(this)
-				}.padLeft(3f).growX().row()
+				}.padLeft(10f).growX().row()
 			}
 		}.growX()
 	}

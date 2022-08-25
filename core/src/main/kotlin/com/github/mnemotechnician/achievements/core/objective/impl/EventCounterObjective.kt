@@ -12,9 +12,7 @@ import com.github.mnemotechnician.achievements.core.objective.impl.EventCounterO
  *
  * In addiction to creating an instance of this class,
  * you must also create the following bundle entry:
- * * objective.<[name]>.description - the description. It should accept two parameters:
- *     * `{0}` - The amount of times it's been scored.
- *     * `{1}` - [targetCount], aka how many times it has to be scored.
+ * objective.<[name]>.description - the description of this objective.
  */
 open class EventCounterObjective<T : ObjectiveEvent>(
 	targetCount: Int,
