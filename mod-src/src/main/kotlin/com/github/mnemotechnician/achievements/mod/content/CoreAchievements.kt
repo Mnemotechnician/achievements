@@ -8,8 +8,10 @@ import com.github.mnemotechnician.achievements.core.objective.impl.*
 import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlockKindObjective.BlockKind
 import com.github.mnemotechnician.achievements.core.objective.requirement.*
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
+import mindustry.Vars
 import mindustry.content.*
 import mindustry.gen.Icon
+import mindustry.world.blocks.power.PowerNode.PowerNodeBuild
 
 object CoreAchievements {
 	lateinit var root: Achievement
@@ -49,7 +51,7 @@ object CoreAchievements {
 							it.unit.type.flying
 						}
 
-						achievement("retired-villain") {
+						achievement("retired-villain", UnitTypes.antumbra) {
 							+ KillUnitsObjective(1, UnitTypes.antumbra, UnitTypes.eclipse)
 						}
 					}
@@ -125,6 +127,13 @@ object CoreAchievements {
 								+ OwnBlocksObjective(1, Blocks.impactReactor)
 									.with(WarmupRequirement(1f))
 							}
+						}
+
+						achievement("share-power", Blocks.surgeTower) {
+							+ OwnBlocksObjective(2, Blocks.surgeTower)
+								.with(CustomRequirement<PowerNodeBuild>("connected-to-surge-tower") {
+									this.block == Blocks.surgeTower && config().any { Vars.world.build(it.x, it.y)?.block == Blocks.surgeTower }
+								})
 						}
 					}
 

@@ -2,7 +2,8 @@ package com.github.mnemotechnician.achievements.core.misc
 
 import mindustry.Vars
 import mindustry.ctype.UnlockableContent
-import mindustry.gen.Unit as MindustryUnit
+
+typealias MindustryUnit = mindustry.gen.Unit
 
 val MindustryUnit?.isThePlayer get() = this != null && this == Vars.player?.unit()
 
