@@ -39,13 +39,13 @@ object CoreAchievements {
 						+ KillUnitsObjective(6, UnitTypes.flare, UnitTypes.horizon)
 						+ KillUnitsObjective(2, UnitTypes.mace)
 
-						achievement("massive-grind", ASprites.iconTower.tint(1f, 0.7f, 0.7f, 1f)) {
+						achievement("massive-grind", ASprites.iconGrind) {
 							// kill 1000 units
-							+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(1000, "kill-enemies-total", { true })
+							+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(1000, "kill-enemies-total") { true }
 						}
 					}
 
-					achievement("air-threat") {
+					achievement("air-threat", ASprites.iconFlakTurret) {
 						+ BuildBlocksObjective(4, Blocks.scatter)
 						+ EventCounterObjective<ObjectiveEvents.UnitDestroyedEvent>(20, "kill-air-enemies") {
 							it.unit.type.flying
@@ -93,7 +93,7 @@ object CoreAchievements {
 				+ BuildBlockKindObjective(35, BlockKind.CONVEYOR)
 				+ BuildBlockKindObjective(5, BlockKind.DISTRIBUTION)
 
-				achievement("upgrades-people", Icon.up.tint(Color.green)) {
+				achievement("upgrades-people", ASprites.iconUpgrade) {
 					+ BuildBlocksObjective(10, Blocks.titaniumConveyor)
 
 					achievement("why", Blocks.router) {
@@ -132,7 +132,7 @@ object CoreAchievements {
 						achievement("share-power", Blocks.surgeTower) {
 							+ OwnBlocksObjective(2, Blocks.surgeTower)
 								.with(CustomRequirement<PowerNodeBuild>("connected-to-surge-tower") {
-									this.block == Blocks.surgeTower && config().any { Vars.world.build(it.x, it.y)?.block == Blocks.surgeTower }
+									this.block == Blocks.surgeTower && power.links.items.any { it != 0 && Vars.world.build(it)?.block == Blocks.surgeTower }
 								})
 						}
 					}

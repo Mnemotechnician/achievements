@@ -5,13 +5,14 @@ import arc.math.Mathf
 import arc.scene.style.TextureRegionDrawable
 import arc.scene.ui.TextField
 import arc.scene.ui.layout.Table
-import arc.util.Log
-import arc.util.Reflect
+import arc.util.*
 import com.github.mnemotechnician.achievements.core.*
 import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObjective
 import com.github.mnemotechnician.achievements.core.objective.Objective
+import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.impl.EitherObjective
 import com.github.mnemotechnician.achievements.mod.AchievementsMod
+import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import com.github.mnemotechnician.achievements.mod.misc.ModBundles
 import com.github.mnemotechnician.achievements.mod.ui.PasswordInputDialog
 import com.github.mnemotechnician.mkui.extensions.dsl.*
@@ -83,7 +84,7 @@ object ASettings {
 
 				imageButton(Icon.terminal, Styles.flati) {
 					debugDialog.show()
-				}.color(Color.valueOf("494d5655"))
+				}.color(Color.valueOf("3c434255"))
 			}.fillY()
 		}
 
@@ -120,9 +121,11 @@ object ASettings {
 				textButton("define") {
 					// possible icons
 					val iconVariants = mapOf(
-						"icon" to Icon::class.java.declaredFields.filter { Modifier.isStatic(it.modifiers) }.mapNotNull {
-							(it.get(null) as? TextureRegionDrawable)?.region
-						},
+						"icon" to (Icon::class.java.declaredFields + ASprites::class.java.declaredFields)
+							.filter { Modifier.isStatic(it.modifiers) }.mapNotNull {
+								it.isAccessible = true
+								(it.get(null) as? TextureRegionDrawable)?.region
+							},
 						"blocks" to Vars.content.blocks().map { it.fullIcon },
 						"resources" to Vars.content.run { items() + liquids() }.map { it.fullIcon },
 						"units" to Vars.content.units().map { it.fullIcon }
@@ -135,6 +138,7 @@ object ASettings {
 						lateinit var parentAchievement: TextField
 						var achievementIcon = Icon.none.region
 						var iconTint = Color.white
+						val objectives = mutableListOf<Objective>()
 
 						defaults().fill()
 
@@ -199,6 +203,8 @@ object ASettings {
 								val achievement = Achievement(name.content, achievementIcon, iconTint).also {
 									if (displayName.content.isNotEmpty()) it.displayName = displayName.content
 									if (description.content.isNotEmpty()) it.description = description.content
+
+									it.objectives.addAll(objectives)
 								}
 								if (parentAchievement.content.isNotEmpty()) {
 									val parent = AchievementManager.getForName(parentAchievement.content, true)
@@ -209,7 +215,30 @@ object ASettings {
 							} catch (e: Exception) {
 								Vars.ui.showException(e)
 							}
-						}.fillX()
+						}.marginBottom(40f).fillX().row()
+						// list of objectives
+						addTable(Tex.button) {
+							addLabel("Fake objectives. Real ones must be created manually.", align = Align.left).growX().row()
+							val container = addTable().left().growX().get()
+
+							row().addTable {
+								val field = textField().with { it.hint = "description" }.get()
+								val toggle = textToggle("fulfilled").get()
+
+								textButton("add") {
+									val objDescription = field.content
+
+									container.addLabel(objDescription, align = Align.left).growX().marginBottom(5f).row()
+									objectives.add(object : Objective("fake") {
+										override val description = objDescription
+										override val isFulfilled = toggle.isEnabled
+
+										override fun reset() {}
+										override fun handleEvent(event: ObjectiveEvent) {}
+									})
+								}
+							}
+						}.colspan(4).fillX()
 					}.show()
 				}
 
