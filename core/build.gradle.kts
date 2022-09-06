@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	kotlin("jvm")
 	id("org.jetbrains.dokka") version "1.6.10"
+	id("org.jetbrains.kotlin.plugin.allopen") version "1.7.10"
 	`maven-publish`
 }
 

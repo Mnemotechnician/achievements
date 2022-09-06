@@ -9,8 +9,9 @@ import com.github.mnemotechnician.achievements.core.objective.impl.BuildBlockKin
 import com.github.mnemotechnician.achievements.core.objective.requirement.*
 import com.github.mnemotechnician.achievements.mod.gen.ASprites
 import mindustry.Vars
+import mindustry.ai.types.LogicAI
 import mindustry.content.*
-import mindustry.gen.Icon
+import mindustry.gen.*
 import mindustry.world.blocks.power.PowerNode.PowerNodeBuild
 
 object CoreAchievements {
@@ -57,8 +58,26 @@ object CoreAchievements {
 					}
 				}
 
+				achievement("unbreakable", Blocks.mendProjector) {
+					+ BuildBlocksObjective(8, Blocks.mender, Blocks.mendProjector)
+				}
+
+				achievement("little-miner", UnitTypes.mono) {
+					+ BuildUnitsObjective(1, UnitTypes.mono)
+
+					achievement("french-polyce", UnitTypes.poly) {
+						+ BuildUnitsObjective(1, UnitTypes.poly)
+					}
+				}
+
 				achievement("alien-technology", Blocks.logicProcessor) {
-					+ BuildBlocksObjective(1, Blocks.microProcessor, Blocks.logicProcessor)
+					+ BuildBlockKindObjective(1, BlockKind.PROCESSOR)
+
+					achievement("slavery", UnitTypes.flare) {
+						+ CustomObjective("logic-control-unit") {
+							Groups.unit.contains { it.team == Vars.player.team() && it.controller() is LogicAI }
+						}
+					}
 				}
 			}
 
@@ -83,6 +102,16 @@ object CoreAchievements {
 					+ BuildBlockKindObjective(BlockKind.PUMP)
 					+ BuildBlockKindObjective(10, BlockKind.CONDUIT)
 
+					achievement("cold-water", Blocks.cryofluidMixer) {
+						+ OwnBlocksObjective(4, Blocks.cryofluidMixer)
+							.with(EfficiencyRequirement(1f))
+
+						achievement("well-stuffed", Blocks.liquidTank) {
+							+ OwnBlocksObjective(2, Blocks.liquidTank)
+								.with(LiquidRequirement(Blocks.liquidTank.liquidCapacity, Liquids.cryofluid))
+						}
+					}
+
 					achievement("underground-waters", Blocks.waterExtractor) {
 						+ BuildBlocksObjective(5, Blocks.waterExtractor)
 					}
@@ -99,6 +128,12 @@ object CoreAchievements {
 					achievement("why", Blocks.router) {
 						+ BuildBlocksObjective(5, Blocks.router)
 							.with(ProximityRequirement(Blocks.router))
+
+						achievement("traitor", Blocks.router, Color.red) {
+						//	+ CustomObjective("possess-router") {
+						//		(Vars.player.unit() as? BlockUnitUnit)?.blockOn() == Blocks.router
+						//	}
+						}
 					}
 				}
 
@@ -136,15 +171,31 @@ object CoreAchievements {
 								})
 						}
 					}
+					
+					achievement("power-savings", Blocks.batteryLarge) {
+						+ BuildBlockKindObjective(20, BlockKind.BATTERY)
 
-					achievement("ecological", Blocks.solarPanel) {
-						+ BuildBlocksObjective(10, Blocks.solarPanel, Blocks.largeSolarPanel)
-						+ BuildBlockKindObjective(5, BlockKind.BATTERY)
+						achievement("ecological", Blocks.solarPanel) {
+							+ BuildBlocksObjective(10, Blocks.solarPanel, Blocks.largeSolarPanel)
+						}
 					}
 				}
 
 				achievement("better-choice", Blocks.overflowGate) {
 					+ BuildBlocksObjective(1, Blocks.overflowGate, Blocks.underflowGate)
+
+				//	achievement("conveyor-loop") {
+				//		+ BuildBlockKindObjective(1, BlockKind.CONVEYOR)
+				//			.with(CustomRequirement<ConveyorBuild>("looped-conveyor") {
+				//				var current: Building = this
+				//				var c = 0
+				//				while (current != null && ++c < 100) {
+				//					current = current.next()
+				//					if (current == this) return@CustomRequirement true
+				//				}
+				//				false
+				//			})
+				//	}
 				}
 			}
 

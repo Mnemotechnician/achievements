@@ -20,6 +20,7 @@ object AchievementManager {
 	val allAchievements = ArrayList<Achievement>(50)
 	/** Objectives with updates = true, updated on every frame. */
 	val updatingObjectives = ArrayList<Objective>(100)
+
 	/**
 	 * All kinds of events accepted by [fireEvent].
 	 * When an objective is created, it adds an entry to this set
@@ -29,7 +30,9 @@ object AchievementManager {
 
 	init {
 		Events.run(EventType.Trigger.update) {
-			updatingObjectives.forEach { it.update() }
+			updatingObjectives.forEach { 
+				if (it.parent.isUnlocked) it.update() 
+			}
 		}
 	}
 

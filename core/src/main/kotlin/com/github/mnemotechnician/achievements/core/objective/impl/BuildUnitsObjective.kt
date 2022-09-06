@@ -14,7 +14,7 @@ import mindustry.type.UnitType
 open class BuildUnitsObjective(
 	number: Int = 1,
 	vararg val kinds: UnitType
-) : AbstractCounterObjective(number, "building-units", acceptedEvents) {
+) : AbstractCounterObjective(number, "build-units", acceptedEvents) {
 	val kindsDescription by lazy { kinds.joinToString(", ") { it.emojiOrName() } }
 
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {

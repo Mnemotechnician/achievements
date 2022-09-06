@@ -15,7 +15,8 @@ open class EitherObjective(
 	vararg val objectives: Objective
 ) : Objective("either") {
 	override val description by bundle(bundleName)
-	override val isFulfilled = objectives.any { it.isFulfilled }
+	override val isFulfilled get() = objectives.any { it.isFulfilled }
+	override val progress get() = objectives.maxOf { it.progress }
 
 	init {
 		require(objectives.isNotEmpty()) { "The array of objectives of EitherObjective must not be empty." }
@@ -36,6 +37,10 @@ open class EitherObjective(
 
 	override fun handleEvent(event: ObjectiveEvent) {
 		objectives.forEach { it.handleEvent(event) }
+	}
+
+	override fun update() {
+		objectives.forEach { it.update() }
 	}
 
 	override fun display(target: Table) {

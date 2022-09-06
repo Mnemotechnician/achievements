@@ -19,3 +19,4 @@ The functionality of this project is split into 3 different modules:
 
 # TOFIX
 * Fix updating objectives being able to complete their parents before unlocking them
+* Fix EitherObjective not completing & breaking when one of the subobjectives is met

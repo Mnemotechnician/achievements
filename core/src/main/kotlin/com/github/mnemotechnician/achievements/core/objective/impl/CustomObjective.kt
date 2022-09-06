@@ -4,7 +4,6 @@ import com.github.mnemotechnician.achievements.core.objective.AbstractCounterObj
 import com.github.mnemotechnician.achievements.core.objective.Objective
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveEvent
 import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNotification
-import com.github.mnemotechnician.achievements.core.objective.event.ObjectiveNotifications.UpdateNotification
 
 /**
  * An objective that requires the [checker] function to return true [targetCount] times.
@@ -31,18 +30,16 @@ open class CustomObjective(
 	targetCount: Int = 1,
 	val bundleArgs: Iterable<() -> Any?>? = null,
 	val checker: () -> Boolean
-) : AbstractCounterObjective(targetCount, internalName, acceptedEvents){
+) : AbstractCounterObjective(targetCount, internalName, NO_EVENTS){
 	override fun modifyBundleParams(list: MutableList<() -> Any?>) {
 		bundleArgs?.forEach {
 			list.add(it)
 		}
 	}
 
-	override fun receiveEvent(event: ObjectiveEvent): Boolean {
-		return event is ObjectiveNotification && checker()
-	}
+	override fun receiveEvent(event: ObjectiveEvent) = false
 
-	companion object {
-		val acceptedEvents = setOf(UpdateNotification::class.java)
+	override fun update() {
+		if (checker()) count++
 	}
 }

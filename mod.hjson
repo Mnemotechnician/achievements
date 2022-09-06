@@ -13,6 +13,7 @@ or extend fhe existing one.
 '''
 
 displayName: "Mindustry Achievements"
+subtitle: "adds an achievement system to mindustry."
 author: "Mnemotechnician"
 minGameVersion: "136"
 version: "v0.2"

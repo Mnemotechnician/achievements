@@ -6,13 +6,6 @@ import mindustry.game.EventType.Trigger
 import mindustry.type.Item
 
 class ObjectiveNotifications {
-	/** Fired on every frame. */
-	object UpdateNotification : ObjectiveNotification() {
-		class Init : Notifier(Trigger.update, {
-			UpdateNotification
-		})
-	}
-
 	/** Fired when the amount of items in the core changes. */
 	object ItemsChangeNotification : ObjectiveNotification() {
 		private val lastItems = IntSeq(Vars.content.items().size)
